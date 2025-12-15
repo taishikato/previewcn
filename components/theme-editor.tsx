@@ -1,30 +1,51 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ColorPresetSelector } from "@/components/color-preset-selector";
 import { RadiusSelector } from "@/components/radius-selector";
+import { UrlInput } from "@/components/url-input";
 import {
   ThemeConfig,
   defaultThemeConfig,
   generateCssVars,
   generateThemeCss,
 } from "@/lib/theme-presets";
-import { Sun, Moon, Copy, Check } from "lucide-react";
+import {
+  getStoredUrl,
+  setStoredUrl,
+  isValidUrl,
+  DEFAULT_URL,
+} from "@/lib/url-storage";
+import { Sun, Moon, Copy, Check, Loader2, AlertCircle } from "lucide-react";
 
 type ThemeEditorProps = {
-  targetUrl?: string;
+  initialUrl?: string;
   onThemeChange?: (config: ThemeConfig) => void;
 };
 
 export function ThemeEditor({
-  targetUrl = "http://localhost:3000",
+  initialUrl,
   onThemeChange,
 }: ThemeEditorProps) {
   const [config, setConfig] = useState<ThemeConfig>(defaultThemeConfig);
   const [copied, setCopied] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // URL state
+  const [targetUrl, setTargetUrl] = useState<string>("");
+  const [inputUrl, setInputUrl] = useState<string>("");
+  const [urlError, setUrlError] = useState<string | null>(null);
+  const [isIframeLoading, setIsIframeLoading] = useState(true);
+  const [iframeError, setIframeError] = useState<string | null>(null);
+
+  // Initialize URL from localStorage on mount
+  useEffect(() => {
+    const stored = initialUrl || getStoredUrl();
+    setTargetUrl(stored);
+    setInputUrl(stored);
+  }, [initialUrl]);
 
   // Send theme to iframe
   const sendThemeToIframe = useCallback((themeConfig: ThemeConfig) => {
@@ -50,10 +71,33 @@ export function ThemeEditor({
     [sendThemeToIframe, onThemeChange]
   );
 
-  // Send initial theme when iframe loads
+  // Handle iframe load - send initial theme
   const handleIframeLoad = useCallback(() => {
+    setIsIframeLoading(false);
+    setIframeError(null);
     sendThemeToIframe(config);
   }, [config, sendThemeToIframe]);
+
+  // Handle iframe error
+  const handleIframeError = useCallback(() => {
+    setIsIframeLoading(false);
+    setIframeError("Failed to load the target URL. Make sure the app is running.");
+  }, []);
+
+  // Apply new URL
+  const handleApplyUrl = useCallback(() => {
+    const validation = isValidUrl(inputUrl);
+    if (!validation.valid) {
+      setUrlError(validation.error || "Invalid URL");
+      return;
+    }
+
+    setUrlError(null);
+    setIframeError(null);
+    setIsIframeLoading(true);
+    setTargetUrl(inputUrl);
+    setStoredUrl(inputUrl);
+  }, [inputUrl]);
 
   // Copy CSS to clipboard
   const handleCopyCss = useCallback(async () => {
@@ -163,9 +207,14 @@ export function ThemeEditor({
               <CardTitle className="text-sm font-medium">Target URL</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-xs text-muted-foreground">
-                Preview shows: {targetUrl}
-              </div>
+              <UrlInput
+                value={inputUrl}
+                appliedUrl={targetUrl}
+                onChange={setInputUrl}
+                onApply={handleApplyUrl}
+                isLoading={isIframeLoading}
+                error={urlError}
+              />
             </CardContent>
           </Card>
         </div>
@@ -184,14 +233,66 @@ export function ThemeEditor({
               </div>
             </div>
           </div>
-          <div className="flex-1 p-4">
-            <iframe
-              ref={iframeRef}
-              src={targetUrl}
-              className="h-full w-full rounded-lg border bg-white shadow-lg"
-              onLoad={handleIframeLoad}
-              title="Theme Preview"
-            />
+          <div className="relative flex-1 p-4">
+            {/* Loading overlay */}
+            {isIframeLoading && targetUrl && (
+              <div className="absolute inset-4 z-10 flex items-center justify-center rounded-lg bg-background/80">
+                <div className="flex flex-col items-center gap-2">
+                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Loading preview...</span>
+                </div>
+              </div>
+            )}
+
+            {/* Error state */}
+            {iframeError ? (
+              <div className="flex h-full flex-col items-center justify-center rounded-lg border bg-background p-8 text-center shadow-lg">
+                <AlertCircle className="mb-4 h-12 w-12 text-destructive" />
+                <p className="text-lg font-medium">Unable to load preview</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {iframeError}
+                </p>
+                <div className="mt-6 max-w-md rounded-lg bg-muted p-4 text-left">
+                  <p className="text-sm font-medium">Setup Required</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Your target app needs to allow iframe embedding. Add this to your Next.js config:
+                  </p>
+                  <pre className="mt-2 overflow-x-auto rounded bg-background p-2 text-xs">
+{`// next.config.js
+async headers() {
+  return [{
+    source: '/:path*',
+    headers: [
+      {
+        key: 'Content-Security-Policy',
+        value: "frame-ancestors 'self' http://localhost:*"
+      }
+    ]
+  }];
+}`}
+                  </pre>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Also add <code className="rounded bg-background px-1">ThemeReceiver</code> component to receive theme updates.
+                  </p>
+                </div>
+              </div>
+            ) : targetUrl ? (
+              <iframe
+                ref={iframeRef}
+                src={targetUrl}
+                className="h-full w-full rounded-lg border bg-white shadow-lg"
+                onLoad={handleIframeLoad}
+                onError={handleIframeError}
+                title="Theme Preview"
+              />
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center rounded-lg border bg-background p-8 text-center shadow-lg">
+                <p className="text-lg font-medium">No URL configured</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Enter a target URL to preview your theme
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
