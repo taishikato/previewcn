@@ -53,7 +53,7 @@ export function UrlInput({
           disabled={isDisabled}
           className="shrink-0"
         >
-          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Apply"}
+          {isLoading ? <Loader2 className="size-4 animate-spin" /> : "Apply"}
         </Button>
       </div>
       {error && <p className="text-xs text-destructive">{error}</p>}

@@ -93,7 +93,7 @@ export function ThemeEditorSidebar({
                 onClick={() => updateConfig({ darkMode: false })}
                 className="flex-1"
               >
-                <Sun className="mr-2 h-4 w-4" />
+                <Sun className="mr-2 size-4" />
                 Light
               </Button>
               <Button
@@ -102,7 +102,7 @@ export function ThemeEditorSidebar({
                 onClick={() => updateConfig({ darkMode: true })}
                 className="flex-1"
               >
-                <Moon className="mr-2 h-4 w-4" />
+                <Moon className="mr-2 size-4" />
                 Dark
               </Button>
             </div>
@@ -122,12 +122,12 @@ export function ThemeEditorSidebar({
             >
               {copied ? (
                 <>
-                  <Check className="mr-2 h-4 w-4" />
+                  <Check className="mr-2 size-4" />
                   Copied!
                 </>
               ) : (
                 <>
-                  <Copy className="mr-2 h-4 w-4" />
+                  <Copy className="mr-2 size-4" />
                   Copy CSS Variables
                 </>
               )}

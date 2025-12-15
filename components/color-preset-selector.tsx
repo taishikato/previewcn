@@ -43,14 +43,14 @@ export function ColorPresetSelector({
             >
               <span
                 className={cn(
-                  "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
+                  "flex size-5 shrink-0 items-center justify-center rounded-full",
                   isSelected && "ring-2 ring-offset-1 ring-foreground"
                 )}
                 style={{ backgroundColor: displayColor }}
               >
                 {isSelected && (
                   <svg
-                    className="h-3 w-3 text-white drop-shadow-md"
+                    className="size-3 text-white drop-shadow-md"
                     aria-hidden="true"
                     focusable="false"
                     fill="none"
@@ -89,7 +89,7 @@ export function ColorPresetSelector({
             aria-label={preset.label}
             aria-pressed={isSelected}
             className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all",
+              "flex size-10 items-center justify-center rounded-full border-2 transition-all",
               isSelected
                 ? "border-foreground ring-2 ring-foreground ring-offset-2"
                 : "border-transparent hover:border-muted-foreground/50"
@@ -99,7 +99,7 @@ export function ColorPresetSelector({
           >
             {isSelected && (
               <svg
-                className="h-5 w-5 text-white drop-shadow-md"
+                className="size-5 text-white drop-shadow-md"
                 aria-hidden="true"
                 focusable="false"
                 fill="none"

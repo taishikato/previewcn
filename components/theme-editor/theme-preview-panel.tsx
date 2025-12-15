@@ -25,9 +25,9 @@ export function ThemePreviewPanel({
           <span className="text-sm text-muted-foreground">Preview</span>
           <div className="flex items-center gap-2">
             <div className="flex gap-1.5">
-              <div className="h-3 w-3 rounded-full bg-destructive" />
-              <div className="h-3 w-3 rounded-full bg-muted-foreground/60" />
-              <div className="h-3 w-3 rounded-full bg-primary" />
+              <div className="size-3 rounded-full bg-[#ff5f57]" />
+              <div className="size-3 rounded-full bg-[#febc2e]" />
+              <div className="size-3 rounded-full bg-[#28c840]" />
             </div>
           </div>
         </div>
@@ -36,7 +36,7 @@ export function ThemePreviewPanel({
           {isIframeLoading && targetUrl && (
             <div className="absolute inset-4 z-10 flex items-center justify-center rounded-lg bg-background/80">
               <div className="flex flex-col items-center gap-2">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <Loader2 className="size-8 animate-spin text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
                   Loading preview...
                 </span>
@@ -46,9 +46,11 @@ export function ThemePreviewPanel({
 
           {iframeError ? (
             <div className="flex h-full flex-col items-center justify-center rounded-lg border bg-background p-8 text-center shadow-lg">
-              <AlertCircle className="mb-4 h-12 w-12 text-destructive" />
+              <AlertCircle className="mb-4 size-12 text-destructive" />
               <p className="text-lg font-medium">Unable to load preview</p>
-              <p className="mt-2 text-sm text-muted-foreground">{iframeError}</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {iframeError}
+              </p>
               <div className="mt-6 max-w-md rounded-lg bg-muted p-4 text-left">
                 <p className="text-sm font-medium">Setup Required</p>
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -82,7 +84,7 @@ async headers() {
             <iframe
               ref={iframeRef}
               src={targetUrl}
-              className="h-full w-full rounded-lg border bg-background shadow-lg"
+              className="size-full rounded-lg border bg-background shadow-lg"
               onLoad={onIframeLoad}
               onError={onIframeError}
               title="Theme Preview"
