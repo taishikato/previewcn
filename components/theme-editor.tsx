@@ -15,6 +15,7 @@ import {
 import { getStoredUrl, setStoredUrl, isValidUrl } from "@/lib/url-storage";
 import { Sun, Moon, Copy, Check, Loader2, AlertCircle } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
+import Image from "next/image";
 
 type ThemeEditorProps = {
   initialUrl?: string;
@@ -113,7 +114,16 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
       <div className="w-80 shrink-0 overflow-y-auto border-r bg-background p-4">
         <div className="mb-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold">previewcn</h1>
+            <div className="flex items-center gap-2">
+              <Image
+                src="/logo.svg"
+                alt="previewcn logo"
+                width={20}
+                height={20}
+                className="dark:invert"
+              />
+              <h1 className="text-xl font-bold">previewcn</h1>
+            </div>
             <ModeToggle />
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
