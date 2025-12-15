@@ -113,7 +113,7 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
       {/* Left panel - Editor */}
       <div className="w-80 shrink-0 overflow-y-auto border-r bg-background p-4">
         <div className="mb-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Image
                 src="/logo.svg"
