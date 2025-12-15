@@ -12,13 +12,9 @@ import {
   generateCssVars,
   generateThemeCss,
 } from "@/lib/theme-presets";
-import {
-  getStoredUrl,
-  setStoredUrl,
-  isValidUrl,
-  DEFAULT_URL,
-} from "@/lib/url-storage";
+import { getStoredUrl, setStoredUrl, isValidUrl } from "@/lib/url-storage";
 import { Sun, Moon, Copy, Check, Loader2, AlertCircle } from "lucide-react";
+import { ModeToggle } from "@/components/mode-toggle";
 
 type ThemeEditorProps = {
   initialUrl?: string;
@@ -40,8 +36,13 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
   // Initialize URL from localStorage on mount
   useEffect(() => {
     const stored = initialUrl || getStoredUrl();
-    setTargetUrl(stored);
-    setInputUrl(stored);
+
+    // Defer state updates to avoid sync setState inside an effect body.
+    // We only need this on mount / initialUrl change to hydrate URL from localStorage.
+    queueMicrotask(() => {
+      setTargetUrl(stored);
+      setInputUrl(stored);
+    });
   }, [initialUrl]);
 
   // Send theme to iframe
@@ -49,7 +50,7 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
     const cssVars = generateCssVars(themeConfig);
     if (iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage(
-        { type: "APPLY_THEME", cssVars },
+        { type: "APPLY_THEME", cssVars, darkMode: themeConfig.darkMode },
         "*"
       );
     }
@@ -111,8 +112,11 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
       {/* Left panel - Editor */}
       <div className="w-80 shrink-0 overflow-y-auto border-r bg-background p-4">
         <div className="mb-6">
-          <h1 className="text-xl font-bold">previewcn</h1>
-          <p className="text-sm text-muted-foreground">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold">previewcn</h1>
+            <ModeToggle />
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
             Preview shadcn/ui themes on your actual app
           </p>
         </div>
