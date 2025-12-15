@@ -85,124 +85,149 @@ function createColorPreset(spec: PresetSpec): ThemePreset {
       light: {
         ...neutralColors.light,
         primary: spec.primary.light,
-        "primary-foreground": spec.primaryForeground?.light ?? defaultPrimaryForeground.light,
+        "primary-foreground":
+          spec.primaryForeground?.light ?? defaultPrimaryForeground.light,
         destructive: spec.destructive?.light ?? defaultDestructive.light,
       },
       dark: {
         ...neutralColors.dark,
         primary: spec.primary.dark,
-        "primary-foreground": spec.primaryForeground?.dark ?? defaultPrimaryForeground.dark,
+        "primary-foreground":
+          spec.primaryForeground?.dark ?? defaultPrimaryForeground.dark,
         destructive: spec.destructive?.dark ?? defaultDestructive.dark,
       },
     },
   };
 }
 
+// Color values from shadcn/ui create (color-theme.json)
 const colorPresetSpecs: PresetSpec[] = [
   {
     name: "neutral",
     label: "Neutral",
-    primary: { light: "oklch(0.205 0 0)", dark: "oklch(0.922 0 0)" },
+    primary: { light: "oklch(0.556 0 0)", dark: "oklch(0.708 0 0)" },
     primaryForeground: { dark: "oklch(0.205 0 0)" },
   },
   {
     name: "red",
     label: "Red",
-    primary: { light: "oklch(0.577 0.245 27.325)", dark: "oklch(0.637 0.237 25.331)" },
+    primary: {
+      light: "oklch(0.577 0.245 27.325)",
+      dark: "oklch(0.637 0.237 25.331)",
+    },
     destructive: { light: "oklch(0.505 0.213 27.518)" },
   },
   {
     name: "orange",
     label: "Orange",
-    primary: { light: "oklch(0.646 0.222 41.116)", dark: "oklch(0.705 0.213 47.604)" },
+    primary: {
+      light: "oklch(0.646 0.222 41.116)",
+      dark: "oklch(0.705 0.213 47.604)",
+    },
     primaryForeground: { dark: "oklch(0.145 0 0)" },
   },
   {
     name: "amber",
     label: "Amber",
-    primary: { light: "oklch(0.666 0.179 58.318)", dark: "oklch(0.769 0.188 70.08)" },
+    primary: { light: "oklch(0.67 0.16 58)", dark: "oklch(0.77 0.16 70)" },
     primaryForeground: { light: "oklch(0.145 0 0)", dark: "oklch(0.145 0 0)" },
   },
   {
     name: "yellow",
     label: "Yellow",
-    primary: { light: "oklch(0.681 0.162 75.834)", dark: "oklch(0.795 0.184 86.047)" },
+    primary: {
+      light: "oklch(0.541 0.281 293.009)",
+      dark: "oklch(0.795 0.184 86.047)",
+    },
     primaryForeground: { light: "oklch(0.145 0 0)", dark: "oklch(0.145 0 0)" },
   },
   {
     name: "lime",
     label: "Lime",
-    primary: { light: "oklch(0.648 0.2 131.684)", dark: "oklch(0.768 0.233 130.85)" },
+    primary: { light: "oklch(0.65 0.18 132)", dark: "oklch(0.77 0.20 131)" },
     primaryForeground: { light: "oklch(0.145 0 0)", dark: "oklch(0.145 0 0)" },
   },
   {
     name: "green",
     label: "Green",
-    primary: { light: "oklch(0.627 0.194 149.214)", dark: "oklch(0.723 0.219 142.495)" },
+    primary: {
+      light: "oklch(0.648 0.2 131.684)",
+      dark: "oklch(0.648 0.2 131.684)",
+    },
     primaryForeground: { dark: "oklch(0.145 0 0)" },
   },
   {
     name: "emerald",
     label: "Emerald",
-    primary: { light: "oklch(0.596 0.145 163.225)", dark: "oklch(0.696 0.17 162.48)" },
+    primary: { light: "oklch(0.60 0.13 163)", dark: "oklch(0.70 0.15 162)" },
     primaryForeground: { dark: "oklch(0.145 0 0)" },
   },
   {
     name: "teal",
     label: "Teal",
-    primary: { light: "oklch(0.6 0.118 184.704)", dark: "oklch(0.704 0.14 182.503)" },
+    primary: { light: "oklch(0.60 0.10 185)", dark: "oklch(0.70 0.12 183)" },
     primaryForeground: { dark: "oklch(0.145 0 0)" },
   },
   {
     name: "cyan",
     label: "Cyan",
-    primary: { light: "oklch(0.609 0.126 221.723)", dark: "oklch(0.715 0.143 215.221)" },
+    primary: { light: "oklch(0.61 0.11 222)", dark: "oklch(0.71 0.13 215)" },
     primaryForeground: { dark: "oklch(0.145 0 0)" },
   },
   {
     name: "sky",
     label: "Sky",
-    primary: { light: "oklch(0.588 0.158 241.966)", dark: "oklch(0.685 0.169 237.323)" },
+    primary: { light: "oklch(0.59 0.14 242)", dark: "oklch(0.68 0.15 237)" },
     primaryForeground: { dark: "oklch(0.145 0 0)" },
   },
   {
     name: "blue",
     label: "Blue",
-    primary: { light: "oklch(0.546 0.245 262.881)", dark: "oklch(0.623 0.214 259.815)" },
+    primary: {
+      light: "oklch(0.488 0.243 264.376)",
+      dark: "oklch(0.42 0.18 266)",
+    },
   },
   {
     name: "indigo",
     label: "Indigo",
-    primary: { light: "oklch(0.511 0.262 276.966)", dark: "oklch(0.585 0.233 277.117)" },
+    primary: { light: "oklch(0.51 0.23 277)", dark: "oklch(0.59 0.20 277)" },
   },
   {
     name: "violet",
     label: "Violet",
-    primary: { light: "oklch(0.541 0.281 293.009)", dark: "oklch(0.606 0.25 292.717)" },
+    primary: {
+      light: "oklch(0.541 0.281 293.009)",
+      dark: "oklch(0.70 0.12 183)",
+    },
   },
   {
     name: "purple",
     label: "Purple",
-    primary: { light: "oklch(0.558 0.288 302.321)", dark: "oklch(0.627 0.265 303.9)" },
+    primary: { light: "oklch(0.56 0.25 302)", dark: "oklch(0.63 0.23 304)" },
   },
   {
     name: "fuchsia",
     label: "Fuchsia",
-    primary: { light: "oklch(0.591 0.293 322.896)", dark: "oklch(0.667 0.295 322.15)" },
+    primary: { light: "oklch(0.59 0.26 323)", dark: "oklch(0.67 0.26 322)" },
   },
   {
     name: "pink",
     label: "Pink",
-    primary: { light: "oklch(0.592 0.249 0.584)", dark: "oklch(0.656 0.241 354.308)" },
+    primary: { light: "oklch(0.59 0.22 1)", dark: "oklch(0.66 0.21 354)" },
   },
   {
     name: "rose",
     label: "Rose",
-    primary: { light: "oklch(0.586 0.253 17.585)", dark: "oklch(0.645 0.246 16.439)" },
+    primary: {
+      light: "oklch(0.586 0.253 17.585)",
+      dark: "oklch(0.645 0.246 16.439)",
+    },
   },
 ];
 
-export const colorPresets: ThemePreset[] = colorPresetSpecs.map(createColorPreset);
+export const colorPresets: ThemePreset[] =
+  colorPresetSpecs.map(createColorPreset);
 
 // Radius presets
 export const radiusPresets = [

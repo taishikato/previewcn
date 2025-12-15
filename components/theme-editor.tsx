@@ -148,6 +148,7 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
               />
             </CardContent>
           </Card>
+
           {/* Color Preset */}
           <Card>
             <CardHeader className="pb-3">
@@ -158,6 +159,7 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
                 value={config.colorPreset}
                 onChange={(colorPreset) => updateConfig({ colorPreset })}
                 showLabels
+                darkMode={config.darkMode}
               />
             </CardContent>
           </Card>

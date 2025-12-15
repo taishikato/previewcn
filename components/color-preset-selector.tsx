@@ -7,39 +7,23 @@ type ColorPresetSelectorProps = {
   value: string;
   onChange: (value: string) => void;
   showLabels?: boolean;
+  darkMode?: boolean;
 };
-
-// Convert OKLCH to a display-friendly hex approximation
-function oklchToDisplayColor(oklch: string): string {
-  // Extract values from oklch string
-  const match = oklch.match(/oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)/);
-  if (!match) return "#888888";
-
-  const [, l, c, h] = match.map(Number);
-
-  // Simple approximation for display
-  // This is not a perfect conversion but good enough for preview
-  const lightness = Math.round(l * 100);
-  const chroma = c;
-  const hue = h;
-
-  // Convert to HSL-like values for CSS
-  const s = Math.min(100, chroma * 200);
-
-  return `hsl(${hue}, ${s}%, ${lightness}%)`;
-}
 
 export function ColorPresetSelector({
   value,
   onChange,
   showLabels = false,
+  darkMode = false,
 }: ColorPresetSelectorProps) {
+  const mode = darkMode ? "dark" : "light";
+
   if (showLabels) {
     return (
       <div className="grid grid-cols-2 gap-2">
         {colorPresets.map((preset) => {
-          const primaryColor = preset.colors.light.primary;
-          const displayColor = oklchToDisplayColor(primaryColor);
+          // Use OKLCH directly - modern browsers support it natively
+          const displayColor = preset.colors[mode].primary;
           const isSelected = value === preset.name;
 
           return (
@@ -93,8 +77,8 @@ export function ColorPresetSelector({
   return (
     <div className="flex flex-wrap gap-2">
       {colorPresets.map((preset) => {
-        const primaryColor = preset.colors.light.primary;
-        const displayColor = oklchToDisplayColor(primaryColor);
+        // Use OKLCH directly - modern browsers support it natively
+        const displayColor = preset.colors[mode].primary;
         const isSelected = value === preset.name;
 
         return (
