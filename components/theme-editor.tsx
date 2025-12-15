@@ -111,9 +111,9 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
       {/* Left panel - Editor */}
       <div className="w-80 flex-shrink-0 overflow-y-auto border-r bg-background p-4">
         <div className="mb-6">
-          <h1 className="text-xl font-bold">Theme Editor</h1>
+          <h1 className="text-xl font-bold">previewcn</h1>
           <p className="text-sm text-muted-foreground">
-            Customize your shadcn/ui theme
+            Preview shadcn/ui themes on your actual app
           </p>
         </div>
 
