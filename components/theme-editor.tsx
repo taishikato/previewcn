@@ -109,7 +109,7 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
   return (
     <div className="flex h-screen">
       {/* Left panel - Editor */}
-      <div className="w-80 flex-shrink-0 overflow-y-auto border-r bg-background p-4">
+      <div className="w-80 shrink-0 overflow-y-auto border-r bg-background p-4">
         <div className="mb-6">
           <h1 className="text-xl font-bold">previewcn</h1>
           <p className="text-sm text-muted-foreground">
@@ -121,7 +121,7 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
           {/* Color Preset */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Color</CardTitle>
+              <CardTitle className="text-sm font-medium">Theme Color</CardTitle>
             </CardHeader>
             <CardContent>
               <ColorPresetSelector
