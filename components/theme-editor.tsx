@@ -132,6 +132,22 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
         </div>
 
         <div className="space-y-6">
+          {/* Target URL Input */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium">Target URL</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <UrlInput
+                value={inputUrl}
+                appliedUrl={targetUrl}
+                onChange={setInputUrl}
+                onApply={handleApplyUrl}
+                isLoading={isIframeLoading}
+                error={urlError}
+              />
+            </CardContent>
+          </Card>
           {/* Color Preset */}
           <Card>
             <CardHeader className="pb-3">
@@ -212,23 +228,6 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
                   </>
                 )}
               </Button>
-            </CardContent>
-          </Card>
-
-          {/* Target URL Input */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium">Target URL</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <UrlInput
-                value={inputUrl}
-                appliedUrl={targetUrl}
-                onChange={setInputUrl}
-                onApply={handleApplyUrl}
-                isLoading={isIframeLoading}
-                error={urlError}
-              />
             </CardContent>
           </Card>
         </div>
