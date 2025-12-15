@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "shadcn Theme Editor",
   description: "Real-time theme editor for shadcn/ui",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({
