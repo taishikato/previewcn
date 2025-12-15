@@ -25,10 +25,7 @@ type ThemeEditorProps = {
   onThemeChange?: (config: ThemeConfig) => void;
 };
 
-export function ThemeEditor({
-  initialUrl,
-  onThemeChange,
-}: ThemeEditorProps) {
+export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
   const [config, setConfig] = useState<ThemeConfig>(defaultThemeConfig);
   const [copied, setCopied] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -81,7 +78,9 @@ export function ThemeEditor({
   // Handle iframe error
   const handleIframeError = useCallback(() => {
     setIsIframeLoading(false);
-    setIframeError("Failed to load the target URL. Make sure the app is running.");
+    setIframeError(
+      "Failed to load the target URL. Make sure the app is running."
+    );
   }, []);
 
   // Apply new URL
@@ -228,9 +227,9 @@ export function ThemeEditor({
             <span className="text-sm text-muted-foreground">Preview</span>
             <div className="flex items-center gap-2">
               <div className="flex gap-1.5">
-                <div className="h-3 w-3 rounded-full bg-red-500" />
-                <div className="h-3 w-3 rounded-full bg-yellow-500" />
-                <div className="h-3 w-3 rounded-full bg-green-500" />
+                <div className="h-3 w-3 rounded-full bg-destructive" />
+                <div className="h-3 w-3 rounded-full bg-muted-foreground/60" />
+                <div className="h-3 w-3 rounded-full bg-primary" />
               </div>
             </div>
           </div>
@@ -240,7 +239,9 @@ export function ThemeEditor({
               <div className="absolute inset-4 z-10 flex items-center justify-center rounded-lg bg-background/80">
                 <div className="flex flex-col items-center gap-2">
                   <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Loading preview...</span>
+                  <span className="text-sm text-muted-foreground">
+                    Loading preview...
+                  </span>
                 </div>
               </div>
             )}
@@ -256,10 +257,11 @@ export function ThemeEditor({
                 <div className="mt-6 max-w-md rounded-lg bg-muted p-4 text-left">
                   <p className="text-sm font-medium">Setup Required</p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Your target app needs to allow iframe embedding. Add this to your Next.js config:
+                    Your target app needs to allow iframe embedding. Add this to
+                    your Next.js config:
                   </p>
                   <pre className="mt-2 overflow-x-auto rounded bg-background p-2 text-xs">
-{`// next.config.js
+                    {`// next.config.js
 async headers() {
   return [{
     source: '/:path*',
@@ -273,7 +275,11 @@ async headers() {
 }`}
                   </pre>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    Also add <code className="rounded bg-background px-1">ThemeReceiver</code> component to receive theme updates.
+                    Also add{" "}
+                    <code className="rounded bg-background px-1">
+                      ThemeReceiver
+                    </code>{" "}
+                    component to receive theme updates.
                   </p>
                 </div>
               </div>
@@ -281,7 +287,7 @@ async headers() {
               <iframe
                 ref={iframeRef}
                 src={targetUrl}
-                className="h-full w-full rounded-lg border bg-white shadow-lg"
+                className="h-full w-full rounded-lg border bg-background shadow-lg"
                 onLoad={handleIframeLoad}
                 onError={handleIframeError}
                 title="Theme Preview"
