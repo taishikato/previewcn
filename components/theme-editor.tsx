@@ -128,6 +128,7 @@ export function ThemeEditor({
               <ColorPresetSelector
                 value={config.colorPreset}
                 onChange={(colorPreset) => updateConfig({ colorPreset })}
+                showLabels
               />
             </CardContent>
           </Card>
