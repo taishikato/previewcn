@@ -49,7 +49,6 @@ export function UrlInput({
         />
         <Button
           variant="outline"
-          size="sm"
           onClick={onApply}
           disabled={isDisabled}
           className="shrink-0"
