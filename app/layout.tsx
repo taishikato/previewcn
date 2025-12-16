@@ -13,10 +13,26 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "shadcn Theme Editor",
-  description: "Real-time theme editor for shadcn/ui",
+  title: "previewcn - Real-time Theme Editor for shadcn/ui",
+  description:
+    "Preview and customize your shadcn/ui theme in real-time. Edit colors, radius, and modes with instant visual feedback on your actual application.",
   icons: {
     icon: "/logo.svg",
+  },
+  metadataBase: new URL("https://previewcn.vercel.app"),
+  openGraph: {
+    title: "previewcn - Real-time Theme Editor for shadcn/ui",
+    description:
+      "Preview and customize your shadcn/ui theme in real-time. Edit colors, radius, and modes with instant visual feedback on your actual application.",
+    siteName: "previewcn",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "previewcn - Real-time Theme Editor for shadcn/ui",
+    description:
+      "Preview and customize your shadcn/ui theme in real-time. Edit colors, radius, and modes with instant visual feedback on your actual application.",
   },
 };
 
