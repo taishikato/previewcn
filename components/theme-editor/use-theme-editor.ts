@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import {
   defaultThemeConfig,
-  generateColorVars,
+  generateBothModeColorVars,
   generateCssVars,
   generateThemeCss,
 } from "@/lib/theme-presets";
@@ -93,7 +93,7 @@ export function useThemeEditor({
   }, []);
 
   const sendColorsToIframe = useCallback((themeConfig: ThemeConfig) => {
-    const cssVars = generateColorVars(themeConfig);
+    const cssVars = generateBothModeColorVars(themeConfig);
 
     iframeRef.current?.contentWindow?.postMessage(
       { type: "UPDATE_COLORS", cssVars },

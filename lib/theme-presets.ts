@@ -344,14 +344,43 @@ export function generateColorVars(config: ThemeConfig): Record<string, string> {
   if (!preset) return {};
 
   const colors = config.darkMode ? preset.colors.dark : preset.colors.light;
+  const colorsRecord = colors as Record<string, string | undefined>;
 
   const result: Record<string, string> = {};
   for (const key of THEME_COLOR_KEYS) {
-    if (colors[key as keyof typeof colors]) {
-      result[key] = colors[key as keyof typeof colors];
+    const value = colorsRecord[key];
+    if (value !== undefined) {
+      result[key] = value;
     }
   }
   return result;
+}
+
+// Generate color CSS variables for both light and dark modes
+export function generateBothModeColorVars(config: ThemeConfig): {
+  light: Record<string, string>;
+  dark: Record<string, string>;
+} {
+  const preset = colorPresets.find((p) => p.name === config.colorPreset);
+  if (!preset) return { light: {}, dark: {} };
+
+  const lightResult: Record<string, string> = {};
+  const darkResult: Record<string, string> = {};
+  const lightColors = preset.colors.light as Record<string, string | undefined>;
+  const darkColors = preset.colors.dark as Record<string, string | undefined>;
+
+  for (const key of THEME_COLOR_KEYS) {
+    const lightValue = lightColors[key];
+    if (lightValue !== undefined) {
+      lightResult[key] = lightValue;
+    }
+    const darkValue = darkColors[key];
+    if (darkValue !== undefined) {
+      darkResult[key] = darkValue;
+    }
+  }
+
+  return { light: lightResult, dark: darkResult };
 }
 
 // Generate full CSS for export
