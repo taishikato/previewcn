@@ -237,7 +237,7 @@ const colorPresetSpecs: PresetSpec[] = [
     label: "Violet",
     primary: {
       light: "oklch(0.541 0.281 293.009)",
-      dark: "oklch(0.852 0.199 91.936)",
+      dark: "oklch(0.606 0.25 292.717)",
     },
     primaryForeground: {
       light: "oklch(0.969 0.016 293.756)",
