@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import {
   defaultThemeConfig,
+  generateColorVars,
   generateCssVars,
   generateThemeCss,
 } from "@/lib/theme-presets";
@@ -70,6 +71,7 @@ export function useThemeEditor({
 
   const sendThemeToIframe = useCallback((themeConfig: ThemeConfig) => {
     const cssVars = generateCssVars(themeConfig);
+
     iframeRef.current?.contentWindow?.postMessage(
       { type: "APPLY_THEME", cssVars, darkMode: themeConfig.darkMode },
       "*"
@@ -83,6 +85,22 @@ export function useThemeEditor({
     );
   }, []);
 
+  const sendRadiusToIframe = useCallback((radius: string) => {
+    iframeRef.current?.contentWindow?.postMessage(
+      { type: "UPDATE_RADIUS", radius },
+      "*"
+    );
+  }, []);
+
+  const sendColorsToIframe = useCallback((themeConfig: ThemeConfig) => {
+    const cssVars = generateColorVars(themeConfig);
+
+    iframeRef.current?.contentWindow?.postMessage(
+      { type: "UPDATE_COLORS", cssVars },
+      "*"
+    );
+  }, []);
+
   const updateConfig = useCallback(
     (updates: Partial<ThemeConfig>) => {
       setConfig((prev) => {
@@ -92,8 +110,21 @@ export function useThemeEditor({
         const isDarkModeOnlyChange =
           Object.keys(updates).length === 1 && updates.darkMode !== undefined;
 
+        // Check if only radius is being changed
+        const isRadiusOnlyChange =
+          Object.keys(updates).length === 1 && updates.radius !== undefined;
+
+        // Check if only colorPreset is being changed
+        const isColorPresetOnlyChange =
+          Object.keys(updates).length === 1 &&
+          updates.colorPreset !== undefined;
+
         if (isDarkModeOnlyChange) {
           sendDarkModeToIframe(newConfig.darkMode);
+        } else if (isRadiusOnlyChange) {
+          sendRadiusToIframe(newConfig.radius);
+        } else if (isColorPresetOnlyChange) {
+          sendColorsToIframe(newConfig);
         } else {
           sendThemeToIframe(newConfig);
         }
@@ -102,14 +133,19 @@ export function useThemeEditor({
         return newConfig;
       });
     },
-    [onThemeChange, sendThemeToIframe, sendDarkModeToIframe]
+    [
+      onThemeChange,
+      sendThemeToIframe,
+      sendDarkModeToIframe,
+      sendRadiusToIframe,
+      sendColorsToIframe,
+    ]
   );
 
   const handleIframeLoad = useCallback(() => {
     setIsIframeLoading(false);
     setIframeError(null);
-    sendThemeToIframe(config);
-  }, [config, sendThemeToIframe]);
+  }, []);
 
   const handleIframeError = useCallback(() => {
     setIsIframeLoading(false);

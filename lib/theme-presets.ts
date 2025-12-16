@@ -323,6 +323,37 @@ export function generateCssVars(config: ThemeConfig): Record<string, string> {
   };
 }
 
+// Keys that are updated when theme color changes (matching shadcn/create behavior)
+const THEME_COLOR_KEYS = [
+  "primary",
+  "primary-foreground",
+  "secondary",
+  "secondary-foreground",
+  "chart-1",
+  "chart-2",
+  "chart-3",
+  "chart-4",
+  "chart-5",
+  "sidebar-primary",
+  "sidebar-primary-foreground",
+] as const;
+
+// Generate color CSS variables only (excludes radius)
+export function generateColorVars(config: ThemeConfig): Record<string, string> {
+  const preset = colorPresets.find((p) => p.name === config.colorPreset);
+  if (!preset) return {};
+
+  const colors = config.darkMode ? preset.colors.dark : preset.colors.light;
+
+  const result: Record<string, string> = {};
+  for (const key of THEME_COLOR_KEYS) {
+    if (colors[key as keyof typeof colors]) {
+      result[key] = colors[key as keyof typeof colors];
+    }
+  }
+  return result;
+}
+
 // Generate full CSS for export
 export function generateThemeCss(config: ThemeConfig): string {
   const lightPreset = colorPresets.find((p) => p.name === config.colorPreset);

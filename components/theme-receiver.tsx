@@ -4,7 +4,9 @@ import { useEffect } from "react";
 
 export type ThemeMessage =
   | { type: "APPLY_THEME"; cssVars: Record<string, string>; darkMode?: boolean }
-  | { type: "TOGGLE_DARK_MODE"; darkMode: boolean };
+  | { type: "TOGGLE_DARK_MODE"; darkMode: boolean }
+  | { type: "UPDATE_RADIUS"; radius: string }
+  | { type: "UPDATE_COLORS"; cssVars: Record<string, string> };
 
 export function ThemeReceiver() {
   useEffect(() => {
@@ -45,6 +47,20 @@ export function ThemeReceiver() {
 
         // Set color-scheme style
         root.style.colorScheme = event.data.darkMode ? "dark" : "light";
+      }
+
+      // Handle radius update only (no color variables)
+      if (event.data?.type === "UPDATE_RADIUS") {
+        const root = document.documentElement;
+        root.style.setProperty("--radius", event.data.radius);
+      }
+
+      // Handle color update only (no radius variable)
+      if (event.data?.type === "UPDATE_COLORS") {
+        const root = document.documentElement;
+        Object.entries(event.data.cssVars).forEach(([key, value]) => {
+          root.style.setProperty(`--${key}`, value);
+        });
       }
     };
 
