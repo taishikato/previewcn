@@ -63,7 +63,6 @@ export function ThemeEditorSidebar({
             <ColorPresetSelector
               value={config.colorPreset}
               onChange={(colorPreset) => updateConfig({ colorPreset })}
-              showLabels
               darkMode={config.darkMode}
             />
           </CardContent>
