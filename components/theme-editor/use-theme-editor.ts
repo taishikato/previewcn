@@ -76,16 +76,33 @@ export function useThemeEditor({
     );
   }, []);
 
+  const sendDarkModeToIframe = useCallback((darkMode: boolean) => {
+    iframeRef.current?.contentWindow?.postMessage(
+      { type: "TOGGLE_DARK_MODE", darkMode },
+      "*"
+    );
+  }, []);
+
   const updateConfig = useCallback(
     (updates: Partial<ThemeConfig>) => {
       setConfig((prev) => {
         const newConfig = { ...prev, ...updates };
-        sendThemeToIframe(newConfig);
+
+        // Check if only darkMode is being changed
+        const isDarkModeOnlyChange =
+          Object.keys(updates).length === 1 && updates.darkMode !== undefined;
+
+        if (isDarkModeOnlyChange) {
+          sendDarkModeToIframe(newConfig.darkMode);
+        } else {
+          sendThemeToIframe(newConfig);
+        }
+
         onThemeChange?.(newConfig);
         return newConfig;
       });
     },
-    [onThemeChange, sendThemeToIframe]
+    [onThemeChange, sendThemeToIframe, sendDarkModeToIframe]
   );
 
   const handleIframeLoad = useCallback(() => {
