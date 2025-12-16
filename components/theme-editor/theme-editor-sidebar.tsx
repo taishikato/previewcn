@@ -88,7 +88,6 @@ export function ThemeEditorSidebar({
             <div className="flex gap-2">
               <Button
                 variant={!config.darkMode ? "default" : "outline"}
-                size="sm"
                 onClick={() => updateConfig({ darkMode: false })}
                 className="flex-1"
               >
@@ -97,7 +96,6 @@ export function ThemeEditorSidebar({
               </Button>
               <Button
                 variant={config.darkMode ? "default" : "outline"}
-                size="sm"
                 onClick={() => updateConfig({ darkMode: true })}
                 className="flex-1"
               >
@@ -113,12 +111,7 @@ export function ThemeEditorSidebar({
             <CardTitle className="text-sm font-medium">Export</CardTitle>
           </CardHeader>
           <CardContent>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onCopyCss}
-              className="w-full"
-            >
+            <Button variant="outline" onClick={onCopyCss} className="w-full">
               {copied ? (
                 <>
                   <Check className="mr-2 size-4" />

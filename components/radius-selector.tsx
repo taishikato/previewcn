@@ -2,6 +2,7 @@
 
 import { radiusPresets } from "@/lib/theme-presets";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
 
 type RadiusSelectorProps = {
   value: string;
@@ -15,19 +16,15 @@ export function RadiusSelector({ value, onChange }: RadiusSelectorProps) {
         const isSelected = value === preset.value;
 
         return (
-          <button
+          <Button
             key={preset.name}
             onClick={() => onChange(preset.value)}
-            className={cn(
-              "flex h-10 min-w-[60px] items-center justify-center border px-3 text-sm transition-all",
-              isSelected
-                ? "border-foreground bg-foreground text-background"
-                : "border-border bg-background hover:bg-muted"
-            )}
+            variant={isSelected ? "default" : "outline"}
+            size="lg"
             style={{ borderRadius: preset.value }}
           >
             {preset.label}
-          </button>
+          </Button>
         );
       })}
     </div>

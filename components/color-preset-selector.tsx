@@ -20,7 +20,6 @@ export function ColorPresetSelector({
   return (
     <div className="grid grid-cols-2 gap-2">
       {colorPresets.map((preset) => {
-        // Use OKLCH directly - modern browsers support it natively
         const displayColor = preset.colors[mode].primary;
         const isSelected = value === preset.name;
 
