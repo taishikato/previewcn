@@ -2,7 +2,7 @@
 
 import { colorPresets } from "@/lib/theme-presets";
 import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 type ColorPresetSelectorProps = {
   value: string;

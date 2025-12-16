@@ -1,8 +1,7 @@
 "use client";
 
 import { radiusPresets } from "@/lib/theme-presets";
-import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 type RadiusSelectorProps = {
   value: string;
