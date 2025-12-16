@@ -1,36 +1,159 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PreviewCN 🎨
 
-## Getting Started
+> A real-time shadcn/ui theme editor that lets you preview theme changes on your actual application, not just demo components.
 
-First, run the development server:
+> 🧪 Note: PreviewCN is early-stage and moving fast. Expect rough edges, breaking changes, and rapid improvements. Buckle up!
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ What's this?
+
+Tired of tweaking CSS variables, refreshing your browser, and hoping your app looks right? PreviewCN embeds your app in an iframe and applies theme changes **instantly** as you edit. See exactly how your buttons, cards, and forms will look before you commit to a theme.
+
+## 🛠 Tech Stack
+
+- **Next.js 16** with App Router
+- **React 19**
+- **Tailwind CSS v4**
+- **shadcn/ui** components
+- **OKLCH** color space for beautiful, perceptually uniform colors
+
+---
+
+## 🚀 Getting Started
+
+### ⚠️ Important: You need TWO apps running!
+
+PreviewCN works by embedding **your app** inside it. This means you need to run both:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Terminal 1: Your App                                       │
+│  $ cd your-nextjs-app                                       │
+│  $ pnpm dev                                                 │
+│  → Running at http://localhost:3000                         │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│  Terminal 2: PreviewCN (this project)                       │
+│  $ cd previewcn                                             │
+│  $ pnpm dev --port 3001                                     │
+│  → Running at http://localhost:3001                         │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Step-by-Step Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### 1️⃣ Add ThemeReceiver to YOUR app first
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Before anything else, add this component to your app so it can receive theme updates:
 
-## Learn More
+```tsx
+// your-app/components/theme-receiver.tsx
+"use client";
 
-To learn more about Next.js, take a look at the following resources:
+import { useEffect } from "react";
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+export function ThemeReceiver() {
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      if (event.data?.type === "APPLY_THEME") {
+        const root = document.documentElement;
+        Object.entries(event.data.cssVars).forEach(([key, value]) => {
+          root.style.setProperty(`--${key}`, value as string);
+        });
+      }
+    };
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, []);
 
-## Deploy on Vercel
+  return null;
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Then include it in your root layout (dev only):
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```tsx
+// your-app/app/layout.tsx
+import { ThemeReceiver } from "@/components/theme-receiver";
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {children}
+        {process.env.NODE_ENV === "development" && <ThemeReceiver />}
+      </body>
+    </html>
+  );
+}
+```
+
+#### 2️⃣ Start YOUR app
+
+```bash
+cd your-nextjs-app
+pnpm dev
+```
+
+#### 3️⃣ Start PreviewCN
+
+Open a **new terminal** and run:
+
+```bash
+cd previewcn
+pnpm install
+pnpm dev --port 3001
+```
+
+#### 4️⃣ Open PreviewCN and enter your app's URL
+
+1. Open [http://localhost:3001](http://localhost:3001) in your browser
+2. **Enter your app's URL** (e.g., `http://localhost:3000`) in the URL input field
+3. Your app will appear in the preview panel!
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  PreviewCN (localhost:3001)                                          │
+├─────────────────────┬────────────────────────────────────────────────┤
+│                     │                                                │
+│  📍 URL Input       │   ┌────────────────────────────────────────┐  │
+│  ┌───────────────┐  │   │                                        │  │
+│  │localhost:3000 │  │   │   👀 YOUR APP APPEARS HERE!            │  │
+│  └───────────────┘  │   │                                        │  │
+│                     │   │   (embedded via iframe)                │  │
+│  🎨 Color Presets   │   │                                        │  │
+│  🔘 Radius          │   │   Theme changes apply instantly!       │  │
+│  🌙 Dark Mode       │   │                                        │  │
+│  📋 Export CSS      │   └────────────────────────────────────────┘  │
+│                     │                                                │
+└─────────────────────┴────────────────────────────────────────────────┘
+```
+
+---
+
+## 💡 How to Use
+
+1. **Pick a color**: Choose from 18 beautiful color presets (Neutral, Blue, Rose, Violet, and more!)
+2. **Adjust the radius**: From sharp corners to fully rounded, find your vibe
+3. **Toggle dark mode**: See how your theme looks in both light and dark
+4. **Copy the CSS**: Export your theme and paste it into your app's `globals.css`
+
+---
+
+## 📦 Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Create a production build |
+| `pnpm start` | Run the production server |
+| `pnpm lint` | Run ESLint |
+
+## 🤝 Contributing
+
+PRs are welcome! Please run `pnpm lint` before submitting.
+
+## 📄 License
+
+MIT
