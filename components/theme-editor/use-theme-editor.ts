@@ -71,7 +71,6 @@ export function useThemeEditor({
 
   const sendThemeToIframe = useCallback((themeConfig: ThemeConfig) => {
     const cssVars = generateCssVars(themeConfig);
-    console.log({ sendThemeToIframe: cssVars });
 
     iframeRef.current?.contentWindow?.postMessage(
       { type: "APPLY_THEME", cssVars, darkMode: themeConfig.darkMode },
@@ -80,8 +79,6 @@ export function useThemeEditor({
   }, []);
 
   const sendDarkModeToIframe = useCallback((darkMode: boolean) => {
-    console.log({ sendDarkModeToIframe: darkMode });
-
     iframeRef.current?.contentWindow?.postMessage(
       { type: "TOGGLE_DARK_MODE", darkMode },
       "*"
@@ -89,8 +86,6 @@ export function useThemeEditor({
   }, []);
 
   const sendRadiusToIframe = useCallback((radius: string) => {
-    console.log({ sendRadiusToIframe: radius });
-
     iframeRef.current?.contentWindow?.postMessage(
       { type: "UPDATE_RADIUS", radius },
       "*"
@@ -99,7 +94,6 @@ export function useThemeEditor({
 
   const sendColorsToIframe = useCallback((themeConfig: ThemeConfig) => {
     const cssVars = generateColorVars(themeConfig);
-    console.log({ sendColorsToIframe: cssVars });
 
     iframeRef.current?.contentWindow?.postMessage(
       { type: "UPDATE_COLORS", cssVars },
