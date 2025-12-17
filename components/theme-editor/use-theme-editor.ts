@@ -9,7 +9,7 @@ import {
   generateThemeCss,
 } from "@/lib/theme-presets";
 import type { ThemeConfig } from "@/lib/theme-presets";
-import { getFontPreset } from "@/lib/font-presets";
+import { defaultFont, getFontPreset } from "@/lib/font-presets";
 import type { ThemeMessage } from "@/lib/theme-messages";
 import { getStoredUrl, isValidUrl, setStoredUrl } from "@/lib/url-storage";
 
@@ -111,8 +111,16 @@ export function useThemeEditor({
 
   const sendFontToIframe = useCallback(
     (font: string) => {
-      const preset = getFontPreset(font);
-      if (!preset) return;
+      let preset = getFontPreset(font);
+
+      // Fallback to default font if preset not found
+      if (!preset) {
+        console.warn(
+          `[PreviewCN] Unknown font "${font}", falling back to "${defaultFont}"`
+        );
+        preset = getFontPreset(defaultFont);
+        if (!preset) return;
+      }
 
       postToIframe({
         type: "UPDATE_FONT",
