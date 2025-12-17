@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ColorPresetSelector } from "@/components/color-preset-selector";
+import { FontSelector } from "@/components/font-selector";
 import { RadiusSelector } from "@/components/radius-selector";
 import { ThemeEditorHeader } from "@/components/theme-editor/theme-editor-header";
 import { UrlInput } from "@/components/url-input";
@@ -64,6 +65,18 @@ export function ThemeEditorSidebar({
               value={config.colorPreset}
               onChange={(colorPreset) => updateConfig({ colorPreset })}
               darkMode={config.darkMode}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Font</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <FontSelector
+              value={config.font}
+              onChange={(font) => updateConfig({ font })}
             />
           </CardContent>
         </Card>

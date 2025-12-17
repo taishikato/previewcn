@@ -1,6 +1,8 @@
 // Theme presets compatible with shadcn/ui create
 // Uses OKLCH color space for better perceptual uniformity
 
+import { defaultFont, getFontPreset } from "./font-presets";
+
 export type ThemePreset = {
   name: string;
   label: string;
@@ -302,12 +304,14 @@ export type ThemeConfig = {
   colorPreset: string;
   radius: string;
   darkMode: boolean;
+  font: string;
 };
 
 export const defaultThemeConfig: ThemeConfig = {
   colorPreset: "neutral",
   radius: "0.625rem",
   darkMode: false,
+  font: defaultFont,
 };
 
 // Generate CSS variables from theme config
@@ -388,6 +392,8 @@ export function generateThemeCss(config: ThemeConfig): string {
   const lightPreset = colorPresets.find((p) => p.name === config.colorPreset);
   if (!lightPreset) return "";
 
+  const fontPreset = getFontPreset(config.font);
+
   const lightVars = Object.entries(lightPreset.colors.light)
     .map(([key, value]) => `  --${key}: ${value};`)
     .join("\n");
@@ -396,9 +402,11 @@ export function generateThemeCss(config: ThemeConfig): string {
     .map(([key, value]) => `  --${key}: ${value};`)
     .join("\n");
 
+  const fontVar = fontPreset ? `  --font-sans: ${fontPreset.fontFamily};\n` : "";
+
   return `:root {
   --radius: ${config.radius};
-${lightVars}
+${fontVar}${lightVars}
 }
 
 .dark {
