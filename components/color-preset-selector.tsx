@@ -5,17 +5,18 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 type ColorPresetSelectorProps = {
-  value: string;
+  value: string | null;
   onChange: (value: string) => void;
-  darkMode?: boolean;
+  darkMode?: boolean | null;
 };
 
 export function ColorPresetSelector({
   value,
   onChange,
-  darkMode = false,
+  darkMode,
 }: ColorPresetSelectorProps) {
-  const mode = darkMode ? "dark" : "light";
+  // Default to light mode when darkMode is null or undefined
+  const mode = darkMode === true ? "dark" : "light";
 
   return (
     <div className="grid grid-cols-2 gap-2">

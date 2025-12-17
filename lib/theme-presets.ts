@@ -1,7 +1,7 @@
 // Theme presets compatible with shadcn/ui create
 // Uses OKLCH color space for better perceptual uniformity
 
-import { defaultFont, getFontPreset } from "./font-presets";
+import { getFontPreset } from "./font-presets";
 
 export type ThemePreset = {
   name: string;
@@ -301,30 +301,41 @@ export const radiusPresets = [
 ];
 
 export type ThemeConfig = {
-  colorPreset: string;
-  radius: string;
-  darkMode: boolean;
-  font: string;
+  colorPreset: string | null;
+  radius: string | null;
+  darkMode: boolean | null;
+  font: string | null;
 };
 
 export const defaultThemeConfig: ThemeConfig = {
-  colorPreset: "neutral",
-  radius: "0.625rem",
-  darkMode: false,
-  font: defaultFont,
+  colorPreset: null,
+  radius: null,
+  darkMode: null,
+  font: null,
 };
 
 // Generate CSS variables from theme config
 export function generateCssVars(config: ThemeConfig): Record<string, string> {
-  const preset = colorPresets.find((p) => p.name === config.colorPreset);
-  if (!preset) return {};
+  const result: Record<string, string> = {};
 
-  const colors = config.darkMode ? preset.colors.dark : preset.colors.light;
+  // Add colors only when a preset is selected.
+  const preset =
+    config.colorPreset !== null
+      ? colorPresets.find((p) => p.name === config.colorPreset)
+      : undefined;
+  if (preset) {
+    // Default to light mode when darkMode is null.
+    const colors =
+      config.darkMode === true ? preset.colors.dark : preset.colors.light;
+    Object.assign(result, colors);
+  }
 
-  return {
-    ...colors,
-    radius: config.radius,
-  };
+  // Add radius only when selected.
+  if (config.radius !== null) {
+    result.radius = config.radius;
+  }
+
+  return result;
 }
 
 // Keys that are updated when theme color changes (matching shadcn/create behavior)
@@ -389,27 +400,48 @@ export function generateBothModeColorVars(config: ThemeConfig): {
 
 // Generate full CSS for export
 export function generateThemeCss(config: ThemeConfig): string {
-  const lightPreset = colorPresets.find((p) => p.name === config.colorPreset);
-  if (!lightPreset) return "";
+  const preset =
+    config.colorPreset !== null
+      ? colorPresets.find((p) => p.name === config.colorPreset)
+      : undefined;
 
-  const fontPreset = getFontPreset(config.font);
+  const fontPreset = config.font ? getFontPreset(config.font) : undefined;
 
-  const lightVars = Object.entries(lightPreset.colors.light)
-    .map(([key, value]) => `  --${key}: ${value};`)
-    .join("\n");
+  const rootLines: string[] = [];
+  const darkLines: string[] = [];
 
-  const darkVars = Object.entries(lightPreset.colors.dark)
-    .map(([key, value]) => `  --${key}: ${value};`)
-    .join("\n");
+  // Only include radius if it's selected.
+  if (config.radius !== null) {
+    rootLines.push(`  --radius: ${config.radius};`);
+  }
 
-  const fontVar = fontPreset ? `  --font-sans: ${fontPreset.fontFamily};\n` : "";
+  // Font export is a best-effort CSS var (font loading is handled by receiver).
+  if (fontPreset) {
+    rootLines.push(`  --font-sans: ${fontPreset.fontFamily};`);
+  }
 
-  return `:root {
-  --radius: ${config.radius};
-${fontVar}${lightVars}
-}
+  // Add color vars only when a preset is selected.
+  if (preset) {
+    rootLines.push(
+      ...Object.entries(preset.colors.light).map(
+        ([key, value]) => `  --${key}: ${value};`
+      )
+    );
+    darkLines.push(
+      ...Object.entries(preset.colors.dark).map(
+        ([key, value]) => `  --${key}: ${value};`
+      )
+    );
+  }
 
-.dark {
-${darkVars}
-}`;
+  // If there's nothing to export, return an empty string.
+  if (rootLines.length === 0 && darkLines.length === 0) {
+    return "";
+  }
+
+  const rootBlock = `:root {\n${rootLines.join("\n")}\n}`;
+  const darkBlock =
+    darkLines.length > 0 ? `\n\n.dark {\n${darkLines.join("\n")}\n}` : "";
+
+  return `${rootBlock}${darkBlock}`;
 }

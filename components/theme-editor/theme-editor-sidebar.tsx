@@ -7,6 +7,7 @@ import { ThemeEditorHeader } from "@/components/theme-editor/theme-editor-header
 import { UrlInput } from "@/components/url-input";
 import { Moon, Sun, Copy, Check } from "lucide-react";
 import type { ThemeConfig } from "@/lib/theme-presets";
+import { generateThemeCss } from "@/lib/theme-presets";
 
 type ThemeEditorSidebarProps = {
   config: ThemeConfig;
@@ -35,6 +36,8 @@ export function ThemeEditorSidebar({
   isIframeLoading,
   urlError,
 }: ThemeEditorSidebarProps) {
+  const isExportDisabled = generateThemeCss(config).trim().length === 0;
+
   return (
     <div className="w-80 shrink-0 overflow-y-auto border-r bg-background p-4">
       <ThemeEditorHeader />
@@ -60,7 +63,12 @@ export function ThemeEditorSidebar({
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium">Theme Color</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
+            {config.colorPreset === null && (
+              <p className="text-xs text-muted-foreground">
+                Select a color preset to apply
+              </p>
+            )}
             <ColorPresetSelector
               value={config.colorPreset}
               onChange={(colorPreset) => updateConfig({ colorPreset })}
@@ -73,7 +81,12 @@ export function ThemeEditorSidebar({
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium">Font</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
+            {config.font === null && (
+              <p className="text-xs text-muted-foreground">
+                Select a font to apply
+              </p>
+            )}
             <FontSelector
               value={config.font}
               onChange={(font) => updateConfig({ font })}
@@ -85,7 +98,12 @@ export function ThemeEditorSidebar({
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium">Radius</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
+            {config.radius === null && (
+              <p className="text-xs text-muted-foreground">
+                Select a radius to apply
+              </p>
+            )}
             <RadiusSelector
               value={config.radius}
               onChange={(radius) => updateConfig({ radius })}
@@ -97,10 +115,15 @@ export function ThemeEditorSidebar({
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium">Mode</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
+            {config.darkMode === null && (
+              <p className="text-xs text-muted-foreground">
+                Select a mode to apply
+              </p>
+            )}
             <div className="flex gap-2">
               <Button
-                variant={!config.darkMode ? "default" : "outline"}
+                variant={config.darkMode === false ? "default" : "outline"}
                 onClick={() => updateConfig({ darkMode: false })}
                 className="flex-1"
               >
@@ -108,7 +131,7 @@ export function ThemeEditorSidebar({
                 Light
               </Button>
               <Button
-                variant={config.darkMode ? "default" : "outline"}
+                variant={config.darkMode === true ? "default" : "outline"}
                 onClick={() => updateConfig({ darkMode: true })}
                 className="flex-1"
               >
@@ -124,7 +147,12 @@ export function ThemeEditorSidebar({
             <CardTitle className="text-sm font-medium">Export</CardTitle>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" onClick={onCopyCss} className="w-full">
+            <Button
+              variant="outline"
+              onClick={onCopyCss}
+              className="w-full"
+              disabled={isExportDisabled}
+            >
               {copied ? (
                 <>
                   <Check className="mr-2 size-4" />
@@ -137,6 +165,11 @@ export function ThemeEditorSidebar({
                 </>
               )}
             </Button>
+            {isExportDisabled && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Select at least one setting to export
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>

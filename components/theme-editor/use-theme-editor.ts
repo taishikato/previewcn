@@ -81,7 +81,8 @@ export function useThemeEditor({
       postToIframe({
         type: "APPLY_THEME",
         cssVars,
-        darkMode: themeConfig.darkMode,
+        // Convert null to undefined for the message protocol
+        darkMode: themeConfig.darkMode ?? undefined,
       });
     },
     [postToIframe]
@@ -137,31 +138,30 @@ export function useThemeEditor({
       setConfig((prev) => {
         const newConfig = { ...prev, ...updates };
 
-        // Check if only darkMode is being changed
-        const isDarkModeOnlyChange =
-          Object.keys(updates).length === 1 && updates.darkMode !== undefined;
+        const keys = Object.keys(updates) as (keyof ThemeConfig)[];
 
-        // Check if only radius is being changed
-        const isRadiusOnlyChange =
-          Object.keys(updates).length === 1 && updates.radius !== undefined;
-
-        // Check if only colorPreset is being changed
-        const isColorPresetOnlyChange =
-          Object.keys(updates).length === 1 &&
-          updates.colorPreset !== undefined;
-
-        // Check if only font is being changed
-        const isFontOnlyChange =
-          Object.keys(updates).length === 1 && updates.font !== undefined;
-
-        if (isDarkModeOnlyChange) {
-          sendDarkModeToIframe(newConfig.darkMode);
-        } else if (isRadiusOnlyChange) {
-          sendRadiusToIframe(newConfig.radius);
-        } else if (isColorPresetOnlyChange) {
-          sendColorsToIframe(newConfig);
-        } else if (isFontOnlyChange) {
-          sendFontToIframe(newConfig.font);
+        // Prefer granular messages for single-field updates.
+        if (keys.length === 1) {
+          const key = keys[0];
+          if (key === "darkMode") {
+            if (newConfig.darkMode !== null) {
+              sendDarkModeToIframe(newConfig.darkMode);
+            }
+          } else if (key === "radius") {
+            if (newConfig.radius !== null) {
+              sendRadiusToIframe(newConfig.radius);
+            }
+          } else if (key === "colorPreset") {
+            if (newConfig.colorPreset !== null) {
+              sendColorsToIframe(newConfig);
+            }
+          } else if (key === "font") {
+            if (newConfig.font !== null) {
+              sendFontToIframe(newConfig.font);
+            }
+          } else {
+            sendThemeToIframe(newConfig);
+          }
         } else {
           sendThemeToIframe(newConfig);
         }
@@ -208,6 +208,10 @@ export function useThemeEditor({
 
   const handleCopyCss = useCallback(async () => {
     const css = generateThemeCss(config);
+    if (!css.trim()) {
+      // No-op when there's nothing to export yet.
+      return;
+    }
     await navigator.clipboard.writeText(css);
 
     if (copiedResetTimeoutId.current !== null) {

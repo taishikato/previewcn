@@ -4,7 +4,7 @@ import { radiusPresets } from "@/lib/theme-presets";
 import { Button } from "@/components/ui/button";
 
 type RadiusSelectorProps = {
-  value: string;
+  value: string | null;
   onChange: (value: string) => void;
 };
 

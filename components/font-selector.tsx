@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 type FontSelectorProps = {
-  value: string;
+  value: string | null;
   onChange: (value: string) => void;
 };
 
