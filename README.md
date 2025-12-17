@@ -156,6 +156,12 @@ export function ThemeReceiver() {
       if (event.data?.type === "UPDATE_FONT") {
         const { fontId, fontFamily, googleFontsUrl } = event.data;
 
+        // Validate Google Fonts URL to prevent XSS attacks
+        if (!googleFontsUrl.startsWith("https://fonts.googleapis.com/")) {
+          console.warn("Invalid font URL");
+          return;
+        }
+
         // Inject Google Fonts link if not already present
         const linkId = `previewcn-font-${fontId}`;
         if (!document.getElementById(linkId)) {
