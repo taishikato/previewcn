@@ -42,7 +42,6 @@ This repo includes `pnpm-lock.yaml`; prefer `pnpm`.
 - Keep config changes isolated (e.g., `next.config.ts`, `eslint.config.mjs`) and explain them in the PR description.
 
 ## Do
-- Write your responses to me in Japanese, but write comments in the source code in English.
 - Write a semantic commit messages:
   - Example:
     ```
