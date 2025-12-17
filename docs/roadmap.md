@@ -80,6 +80,24 @@ Important: **This handshake must not trigger theme application**. It is only for
 - When blocked, PreviewCN points to the specific configuration needed (e.g. CSP for iframe mode).
 - When not connected, PreviewCN points to “Install/enable receiver” steps.
 
+#### Status
+- Implemented ✅
+
+#### Implementation notes (current behavior)
+- **Message protocol**:
+  - Added `PREVIEWCN_READY`, `PREVIEWCN_PING`, `PREVIEWCN_PONG` message types (separate from theme-apply messages).
+  - Receiver sends `PREVIEWCN_READY` on mount and responds to `PREVIEWCN_PING` with `PREVIEWCN_PONG`.
+- **Editor polling**:
+  - Editor sends `PREVIEWCN_PING` periodically and marks `Not connected` if no recent `PONG` is received.
+  - Ping/pong is for connection visibility only; it does not apply any theme.
+- **UI**:
+  - Connection status is shown under **Target URL**.
+  - `Connected`: receiver is present and responding.
+  - `Not connected`: no handshake response; UI suggests installing/enabling `ThemeReceiver`.
+  - `Preview blocked`: iframe load error; UI suggests allowing iframe embedding via CSP/headers.
+- **Docs**:
+  - `README.md` includes updated receiver snippet with the handshake messages.
+
 ---
 
 ### 3) CLI + npm packages (remove copy/paste, remove manual edits)
