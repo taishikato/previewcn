@@ -1,9 +1,9 @@
 "use client";
 
+import type { ThemeConfig } from "@/lib/theme-presets";
 import { ThemeEditorSidebar } from "@/components/theme-editor/theme-editor-sidebar";
 import { ThemePreviewPanel } from "@/components/theme-editor/theme-preview-panel";
 import { useThemeEditor } from "@/components/theme-editor/use-theme-editor";
-import type { ThemeConfig } from "@/lib/theme-presets";
 
 type ThemeEditorProps = {
   initialUrl?: string;

@@ -1,10 +1,11 @@
 import Image from "next/image";
+
 import { ModeToggle } from "@/components/mode-toggle";
 
 export function ThemeEditorHeader() {
   return (
     <div className="mb-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Image
             src="/logo.svg"
@@ -17,10 +18,9 @@ export function ThemeEditorHeader() {
         </div>
         <ModeToggle />
       </div>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-1 text-sm">
         Preview shadcn/ui themes on your actual app
       </p>
     </div>
   );
 }
-

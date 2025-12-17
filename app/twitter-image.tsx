@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+
 import { SocialImage } from "@/lib/social-image";
 
 export const runtime = "edge";
@@ -12,4 +13,3 @@ export const contentType = "image/png";
 export default async function Image() {
   return new ImageResponse(<SocialImage />, { ...size });
 }
-

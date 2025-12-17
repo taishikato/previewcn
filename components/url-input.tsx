@@ -1,10 +1,11 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { type KeyboardEvent } from "react";
 import { Loader2 } from "lucide-react";
+
 import { cn } from "@/lib/utils";
-import { KeyboardEvent } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type UrlInputProps = {
   value: string;
@@ -56,7 +57,7 @@ export function UrlInput({
           {isLoading ? <Loader2 className="size-4 animate-spin" /> : "Apply"}
         </Button>
       </div>
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p className="text-destructive text-xs">{error}</p>}
     </div>
   );
 }

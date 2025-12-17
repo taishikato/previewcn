@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+
 import type { PreviewCNMessage } from "@/lib/theme-messages";
 
 const THEME_COLOR_STYLE_ID = "previewcn-theme-colors";

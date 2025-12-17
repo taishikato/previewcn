@@ -2,6 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
+
+import { defaultFont, getFontPreset } from "@/lib/font-presets";
+import type {
+  ConnectionStatus,
+  HandshakeMessage,
+  PreviewCNMessage,
+} from "@/lib/theme-messages";
 import {
   defaultThemeConfig,
   generateBothModeColorVars,
@@ -9,12 +16,6 @@ import {
   generateThemeCss,
 } from "@/lib/theme-presets";
 import type { ThemeConfig } from "@/lib/theme-presets";
-import { defaultFont, getFontPreset } from "@/lib/font-presets";
-import type {
-  ConnectionStatus,
-  HandshakeMessage,
-  PreviewCNMessage,
-} from "@/lib/theme-messages";
 import { getStoredUrl, isValidUrl, setStoredUrl } from "@/lib/url-storage";
 
 // How often to ping the receiver to check connection (ms)

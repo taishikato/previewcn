@@ -1,3 +1,8 @@
+import { Check, Copy, Moon, ShieldX, Sun, Wifi, WifiOff } from "lucide-react";
+
+import type { ConnectionStatus } from "@/lib/theme-messages";
+import type { ThemeConfig } from "@/lib/theme-presets";
+import { generateThemeCss } from "@/lib/theme-presets";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ColorPresetSelector } from "@/components/color-preset-selector";
@@ -5,10 +10,6 @@ import { FontSelector } from "@/components/font-selector";
 import { RadiusSelector } from "@/components/radius-selector";
 import { ThemeEditorHeader } from "@/components/theme-editor/theme-editor-header";
 import { UrlInput } from "@/components/url-input";
-import { Moon, Sun, Copy, Check, Wifi, WifiOff, ShieldX } from "lucide-react";
-import type { ThemeConfig } from "@/lib/theme-presets";
-import { generateThemeCss } from "@/lib/theme-presets";
-import type { ConnectionStatus } from "@/lib/theme-messages";
 
 type ThemeEditorSidebarProps = {
   config: ThemeConfig;
@@ -59,11 +60,11 @@ function ConnectionStatusIndicator({
         aria-label="Connection status: blocked"
         className="space-y-2"
       >
-        <div className="flex items-center gap-2 rounded-md bg-destructive/10 px-3 py-2 text-destructive">
+        <div className="bg-destructive/10 text-destructive flex items-center gap-2 rounded-md px-3 py-2">
           <ShieldX className="size-4" />
           <span className="text-xs font-medium">Preview blocked</span>
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           The target app blocks iframe embedding. Add CSP headers to allow
           PreviewCN.
         </p>
@@ -83,8 +84,8 @@ function ConnectionStatusIndicator({
         <WifiOff className="size-4" />
         <span className="text-xs font-medium">Not connected</span>
       </div>
-      <p className="text-xs text-muted-foreground">
-        Add <code className="rounded bg-muted px-1">ThemeReceiver</code> to your
+      <p className="text-muted-foreground text-xs">
+        Add <code className="bg-muted rounded px-1">ThemeReceiver</code> to your
         app to receive theme updates.
       </p>
     </div>
@@ -107,7 +108,7 @@ export function ThemeEditorSidebar({
   const isExportDisabled = generateThemeCss(config).trim().length === 0;
 
   return (
-    <div className="w-80 shrink-0 overflow-y-auto border-r bg-background p-4">
+    <div className="bg-background w-80 shrink-0 overflow-y-auto border-r p-4">
       <ThemeEditorHeader />
 
       <div className="space-y-6">
@@ -137,7 +138,7 @@ export function ThemeEditorSidebar({
           </CardHeader>
           <CardContent className="space-y-3">
             {config.colorPreset === null && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Select a color preset to apply
               </p>
             )}
@@ -155,7 +156,7 @@ export function ThemeEditorSidebar({
           </CardHeader>
           <CardContent className="space-y-3">
             {config.font === null && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Select a font to apply
               </p>
             )}
@@ -172,7 +173,7 @@ export function ThemeEditorSidebar({
           </CardHeader>
           <CardContent className="space-y-3">
             {config.radius === null && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Select a radius to apply
               </p>
             )}
@@ -189,7 +190,7 @@ export function ThemeEditorSidebar({
           </CardHeader>
           <CardContent className="space-y-3">
             {config.darkMode === null && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Select a mode to apply
               </p>
             )}
@@ -238,7 +239,7 @@ export function ThemeEditorSidebar({
               )}
             </Button>
             {isExportDisabled && (
-              <p className="mt-2 text-xs text-muted-foreground">
+              <p className="text-muted-foreground mt-2 text-xs">
                 Select at least one setting to export
               </p>
             )}

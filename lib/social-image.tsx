@@ -210,5 +210,3 @@ export function SocialImage() {
     </div>
   );
 }
-
-
