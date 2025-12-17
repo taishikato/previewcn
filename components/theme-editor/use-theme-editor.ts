@@ -9,6 +9,8 @@ import {
   generateThemeCss,
 } from "@/lib/theme-presets";
 import type { ThemeConfig } from "@/lib/theme-presets";
+import { defaultFont, getFontPreset } from "@/lib/font-presets";
+import type { ThemeMessage } from "@/lib/theme-messages";
 import { getStoredUrl, isValidUrl, setStoredUrl } from "@/lib/url-storage";
 
 type UseThemeEditorOptions = {
@@ -69,37 +71,66 @@ export function useThemeEditor({
     };
   }, []);
 
-  const sendThemeToIframe = useCallback((themeConfig: ThemeConfig) => {
-    const cssVars = generateCssVars(themeConfig);
-
-    iframeRef.current?.contentWindow?.postMessage(
-      { type: "APPLY_THEME", cssVars, darkMode: themeConfig.darkMode },
-      "*"
-    );
+  const postToIframe = useCallback((message: ThemeMessage) => {
+    iframeRef.current?.contentWindow?.postMessage(message, "*");
   }, []);
 
-  const sendDarkModeToIframe = useCallback((darkMode: boolean) => {
-    iframeRef.current?.contentWindow?.postMessage(
-      { type: "TOGGLE_DARK_MODE", darkMode },
-      "*"
-    );
-  }, []);
+  const sendThemeToIframe = useCallback(
+    (themeConfig: ThemeConfig) => {
+      const cssVars = generateCssVars(themeConfig);
+      postToIframe({
+        type: "APPLY_THEME",
+        cssVars,
+        darkMode: themeConfig.darkMode,
+      });
+    },
+    [postToIframe]
+  );
 
-  const sendRadiusToIframe = useCallback((radius: string) => {
-    iframeRef.current?.contentWindow?.postMessage(
-      { type: "UPDATE_RADIUS", radius },
-      "*"
-    );
-  }, []);
+  const sendDarkModeToIframe = useCallback(
+    (darkMode: boolean) => {
+      postToIframe({ type: "TOGGLE_DARK_MODE", darkMode });
+    },
+    [postToIframe]
+  );
 
-  const sendColorsToIframe = useCallback((themeConfig: ThemeConfig) => {
-    const cssVars = generateBothModeColorVars(themeConfig);
+  const sendRadiusToIframe = useCallback(
+    (radius: string) => {
+      postToIframe({ type: "UPDATE_RADIUS", radius });
+    },
+    [postToIframe]
+  );
 
-    iframeRef.current?.contentWindow?.postMessage(
-      { type: "UPDATE_COLORS", cssVars },
-      "*"
-    );
-  }, []);
+  const sendColorsToIframe = useCallback(
+    (themeConfig: ThemeConfig) => {
+      const cssVars = generateBothModeColorVars(themeConfig);
+      postToIframe({ type: "UPDATE_COLORS", cssVars });
+    },
+    [postToIframe]
+  );
+
+  const sendFontToIframe = useCallback(
+    (font: string) => {
+      let preset = getFontPreset(font);
+
+      // Fallback to default font if preset not found
+      if (!preset) {
+        console.warn(
+          `[PreviewCN] Unknown font "${font}", falling back to "${defaultFont}"`
+        );
+        preset = getFontPreset(defaultFont);
+        if (!preset) return;
+      }
+
+      postToIframe({
+        type: "UPDATE_FONT",
+        fontId: preset.value,
+        fontFamily: preset.fontFamily,
+        googleFontsUrl: preset.googleFontsUrl,
+      });
+    },
+    [postToIframe]
+  );
 
   const updateConfig = useCallback(
     (updates: Partial<ThemeConfig>) => {
@@ -119,12 +150,18 @@ export function useThemeEditor({
           Object.keys(updates).length === 1 &&
           updates.colorPreset !== undefined;
 
+        // Check if only font is being changed
+        const isFontOnlyChange =
+          Object.keys(updates).length === 1 && updates.font !== undefined;
+
         if (isDarkModeOnlyChange) {
           sendDarkModeToIframe(newConfig.darkMode);
         } else if (isRadiusOnlyChange) {
           sendRadiusToIframe(newConfig.radius);
         } else if (isColorPresetOnlyChange) {
           sendColorsToIframe(newConfig);
+        } else if (isFontOnlyChange) {
+          sendFontToIframe(newConfig.font);
         } else {
           sendThemeToIframe(newConfig);
         }
@@ -139,6 +176,7 @@ export function useThemeEditor({
       sendDarkModeToIframe,
       sendRadiusToIframe,
       sendColorsToIframe,
+      sendFontToIframe,
     ]
   );
 

@@ -85,6 +85,12 @@ export type ThemeMessage =
   | {
       type: "UPDATE_COLORS";
       cssVars: { light: Record<string, string>; dark: Record<string, string> };
+    }
+  | {
+      type: "UPDATE_FONT";
+      fontId: string;
+      fontFamily: string;
+      googleFontsUrl: string;
     };
 
 export function ThemeReceiver() {
@@ -143,6 +149,33 @@ export function ThemeReceiver() {
         const darkCss = serializeCssVars(dark);
 
         styleEl.textContent = `:root { ${lightCss} } .dark { ${darkCss} }`;
+      }
+
+      // Handle font update
+      // Dynamically loads Google Font and updates CSS variable
+      if (event.data?.type === "UPDATE_FONT") {
+        const { fontId, fontFamily, googleFontsUrl } = event.data;
+
+        // Validate Google Fonts URL to prevent XSS attacks
+        if (!googleFontsUrl.startsWith("https://fonts.googleapis.com/")) {
+          console.warn("Invalid font URL");
+          return;
+        }
+
+        // Inject Google Fonts link if not already present
+        const linkId = `previewcn-font-${fontId}`;
+        if (!document.getElementById(linkId)) {
+          const link = document.createElement("link");
+          link.id = linkId;
+          link.rel = "stylesheet";
+          link.href = googleFontsUrl;
+          document.head.appendChild(link);
+        }
+
+        // Update CSS variable (use override variable for Tailwind v4 compatibility)
+        root.style.setProperty("--font-sans-override", fontFamily);
+        // Also set --font-sans for external sites that don't use the override pattern
+        root.style.setProperty("--font-sans", fontFamily);
       }
     };
 
