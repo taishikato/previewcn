@@ -26,6 +26,7 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
         onApplyUrl={editor.handleApplyUrl}
         isIframeLoading={editor.isIframeLoading}
         urlError={editor.urlError}
+        connectionStatus={editor.connectionStatus}
       />
 
       <ThemePreviewPanel
@@ -39,4 +40,3 @@ export function ThemeEditor({ initialUrl, onThemeChange }: ThemeEditorProps) {
     </div>
   );
 }
-

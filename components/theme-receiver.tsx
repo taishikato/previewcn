@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import type { ThemeMessage } from "@/lib/theme-messages";
+import type { PreviewCNMessage } from "@/lib/theme-messages";
 
 const THEME_COLOR_STYLE_ID = "previewcn-theme-colors";
 
@@ -28,11 +28,27 @@ function serializeCssVars(cssVars: Record<string, string>): string {
     .join(" ");
 }
 
+function sendToParent(message: PreviewCNMessage) {
+  // Send to parent window (iframe scenario)
+  if (window.parent !== window) {
+    window.parent.postMessage(message, "*");
+  }
+}
+
 export function ThemeReceiver() {
   useEffect(() => {
-    const handler = (event: MessageEvent<ThemeMessage>) => {
+    // Send READY message on mount to signal the receiver is active
+    sendToParent({ type: "PREVIEWCN_READY" });
+
+    const handler = (event: MessageEvent<PreviewCNMessage>) => {
       // Allow messages from any origin in development
       const root = document.documentElement;
+
+      // Handle handshake ping - respond with pong (does not trigger theme application)
+      if (event.data?.type === "PREVIEWCN_PING") {
+        sendToParent({ type: "PREVIEWCN_PONG" });
+        return;
+      }
 
       if (event.data?.type === "APPLY_THEME") {
         // Apply CSS variables

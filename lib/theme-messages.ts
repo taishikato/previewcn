@@ -29,9 +29,29 @@ export type UpdateFontMessage = {
   googleFontsUrl: string;
 };
 
+// Handshake messages for connection status (does not trigger theme application)
+export type ReadyMessage = {
+  type: "PREVIEWCN_READY";
+};
+
+export type PingMessage = {
+  type: "PREVIEWCN_PING";
+};
+
+export type PongMessage = {
+  type: "PREVIEWCN_PONG";
+};
+
 export type ThemeMessage =
   | ApplyThemeMessage
   | ToggleDarkModeMessage
   | UpdateRadiusMessage
   | UpdateColorsMessage
   | UpdateFontMessage;
+
+export type HandshakeMessage = ReadyMessage | PingMessage | PongMessage;
+
+export type PreviewCNMessage = ThemeMessage | HandshakeMessage;
+
+// Connection status states
+export type ConnectionStatus = "disconnected" | "connected" | "blocked";

@@ -10,8 +10,17 @@ import {
 } from "@/lib/theme-presets";
 import type { ThemeConfig } from "@/lib/theme-presets";
 import { defaultFont, getFontPreset } from "@/lib/font-presets";
-import type { ThemeMessage } from "@/lib/theme-messages";
+import type {
+  ConnectionStatus,
+  HandshakeMessage,
+  PreviewCNMessage,
+} from "@/lib/theme-messages";
 import { getStoredUrl, isValidUrl, setStoredUrl } from "@/lib/url-storage";
+
+// How often to ping the receiver to check connection (ms)
+const PING_INTERVAL = 3000;
+// How long to wait for a pong response before marking as disconnected (ms)
+const PONG_TIMEOUT = 2000;
 
 type UseThemeEditorOptions = {
   initialUrl?: string;
@@ -36,6 +45,8 @@ type UseThemeEditorReturn = {
   setInputUrl: (url: string) => void;
   urlError: string | null;
   handleApplyUrl: () => void;
+
+  connectionStatus: ConnectionStatus;
 };
 
 export function useThemeEditor({
@@ -54,6 +65,21 @@ export function useThemeEditor({
 
   const [isIframeLoading, setIsIframeLoading] = useState(true);
   const [iframeError, setIframeError] = useState<string | null>(null);
+  // Whether we have received a handshake response from the receiver
+  const [receiverConnected, setReceiverConnected] = useState(false);
+
+  // Refs for ping/pong timing
+  const pingIntervalRef = useRef<number | null>(null);
+  const pongTimeoutRef = useRef<number | null>(null);
+  const lastPongRef = useRef<number>(0);
+
+  // Derive connection status from state
+  // This avoids calling setState synchronously within effects
+  const connectionStatus: ConnectionStatus = (() => {
+    if (!targetUrl || isIframeLoading) return "disconnected";
+    if (iframeError) return "blocked";
+    return receiverConnected ? "connected" : "disconnected";
+  })();
 
   useEffect(() => {
     const stored = initialUrl || getStoredUrl();
@@ -71,9 +97,76 @@ export function useThemeEditor({
     };
   }, []);
 
-  const postToIframe = useCallback((message: ThemeMessage) => {
+  const postToIframe = useCallback((message: PreviewCNMessage) => {
     iframeRef.current?.contentWindow?.postMessage(message, "*");
   }, []);
+
+  // Listen for handshake messages from the receiver
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent<HandshakeMessage>) => {
+      if (event.data?.type === "PREVIEWCN_READY") {
+        setReceiverConnected(true);
+        lastPongRef.current = Date.now();
+      }
+
+      if (event.data?.type === "PREVIEWCN_PONG") {
+        setReceiverConnected(true);
+        lastPongRef.current = Date.now();
+        // Clear the pong timeout since we got a response
+        if (pongTimeoutRef.current !== null) {
+          window.clearTimeout(pongTimeoutRef.current);
+          pongTimeoutRef.current = null;
+        }
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
+  // Ping the receiver periodically to check connection status
+  useEffect(() => {
+    // Only ping when we have a target URL and the iframe is loaded
+    if (!targetUrl || isIframeLoading || iframeError) {
+      return;
+    }
+
+    const sendPing = () => {
+      postToIframe({ type: "PREVIEWCN_PING" });
+
+      // Set a timeout to mark as disconnected if no pong received
+      if (pongTimeoutRef.current !== null) {
+        window.clearTimeout(pongTimeoutRef.current);
+      }
+      pongTimeoutRef.current = window.setTimeout(() => {
+        // Only mark as disconnected if we haven't received a pong recently
+        const timeSinceLastPong = Date.now() - lastPongRef.current;
+        if (timeSinceLastPong > PONG_TIMEOUT) {
+          setReceiverConnected(false);
+        }
+      }, PONG_TIMEOUT);
+    };
+
+    // Send initial ping
+    sendPing();
+
+    // Set up interval for periodic pings
+    pingIntervalRef.current = window.setInterval(sendPing, PING_INTERVAL);
+
+    return () => {
+      if (pingIntervalRef.current !== null) {
+        window.clearInterval(pingIntervalRef.current);
+        pingIntervalRef.current = null;
+      }
+      if (pongTimeoutRef.current !== null) {
+        window.clearTimeout(pongTimeoutRef.current);
+        pongTimeoutRef.current = null;
+      }
+      // Reset connection state when effect cleans up (URL change, unmount, etc.)
+      // This runs in cleanup, not synchronously in the effect body
+      setReceiverConnected(false);
+    };
+  }, [targetUrl, isIframeLoading, iframeError, postToIframe]);
 
   const sendThemeToIframe = useCallback(
     (themeConfig: ThemeConfig) => {
@@ -240,5 +333,6 @@ export function useThemeEditor({
     setInputUrl,
     urlError,
     handleApplyUrl,
+    connectionStatus,
   };
 }

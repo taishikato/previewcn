@@ -5,9 +5,10 @@ import { FontSelector } from "@/components/font-selector";
 import { RadiusSelector } from "@/components/radius-selector";
 import { ThemeEditorHeader } from "@/components/theme-editor/theme-editor-header";
 import { UrlInput } from "@/components/url-input";
-import { Moon, Sun, Copy, Check } from "lucide-react";
+import { Moon, Sun, Copy, Check, Wifi, WifiOff, ShieldX } from "lucide-react";
 import type { ThemeConfig } from "@/lib/theme-presets";
 import { generateThemeCss } from "@/lib/theme-presets";
+import type { ConnectionStatus } from "@/lib/theme-messages";
 
 type ThemeEditorSidebarProps = {
   config: ThemeConfig;
@@ -22,7 +23,73 @@ type ThemeEditorSidebarProps = {
   onApplyUrl: () => void;
   isIframeLoading: boolean;
   urlError: string | null;
+  connectionStatus: ConnectionStatus;
 };
+
+function ConnectionStatusIndicator({
+  status,
+  targetUrl,
+}: {
+  status: ConnectionStatus;
+  targetUrl: string;
+}) {
+  if (!targetUrl) {
+    return null;
+  }
+
+  if (status === "connected") {
+    return (
+      <div
+        role="status"
+        aria-live="polite"
+        aria-label="Connection status: connected"
+        className="flex items-center gap-2 rounded-md bg-green-500/10 px-3 py-2 text-green-600 dark:text-green-400"
+      >
+        <Wifi className="size-4" />
+        <span className="text-xs font-medium">Connected</span>
+      </div>
+    );
+  }
+
+  if (status === "blocked") {
+    return (
+      <div
+        role="status"
+        aria-live="polite"
+        aria-label="Connection status: blocked"
+        className="space-y-2"
+      >
+        <div className="flex items-center gap-2 rounded-md bg-destructive/10 px-3 py-2 text-destructive">
+          <ShieldX className="size-4" />
+          <span className="text-xs font-medium">Preview blocked</span>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          The target app blocks iframe embedding. Add CSP headers to allow
+          PreviewCN.
+        </p>
+      </div>
+    );
+  }
+
+  // disconnected
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      aria-label="Connection status: not connected"
+      className="space-y-2"
+    >
+      <div className="flex items-center gap-2 rounded-md bg-amber-500/10 px-3 py-2 text-amber-600 dark:text-amber-400">
+        <WifiOff className="size-4" />
+        <span className="text-xs font-medium">Not connected</span>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Add <code className="rounded bg-muted px-1">ThemeReceiver</code> to your
+        app to receive theme updates.
+      </p>
+    </div>
+  );
+}
 
 export function ThemeEditorSidebar({
   config,
@@ -35,6 +102,7 @@ export function ThemeEditorSidebar({
   onApplyUrl,
   isIframeLoading,
   urlError,
+  connectionStatus,
 }: ThemeEditorSidebarProps) {
   const isExportDisabled = generateThemeCss(config).trim().length === 0;
 
@@ -47,7 +115,7 @@ export function ThemeEditorSidebar({
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium">Target URL</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <UrlInput
               value={inputUrl}
               appliedUrl={targetUrl}
@@ -55,6 +123,10 @@ export function ThemeEditorSidebar({
               onApply={onApplyUrl}
               isLoading={isIframeLoading}
               error={urlError}
+            />
+            <ConnectionStatusIndicator
+              status={connectionStatus}
+              targetUrl={targetUrl}
             />
           </CardContent>
         </Card>

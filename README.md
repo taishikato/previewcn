@@ -78,26 +78,72 @@ function serializeCssVars(cssVars: Record<string, string>): string {
     .join(" ");
 }
 
-export type ThemeMessage =
-  | { type: "APPLY_THEME"; cssVars: Record<string, string>; darkMode?: boolean }
-  | { type: "TOGGLE_DARK_MODE"; darkMode: boolean }
-  | { type: "UPDATE_RADIUS"; radius: string }
-  | {
-      type: "UPDATE_COLORS";
-      cssVars: { light: Record<string, string>; dark: Record<string, string> };
-    }
-  | {
-      type: "UPDATE_FONT";
-      fontId: string;
-      fontFamily: string;
-      googleFontsUrl: string;
-    };
+// Shared postMessage payload types (kept local here for copy/paste).
+type ApplyThemeMessage = {
+  type: "APPLY_THEME";
+  cssVars: Record<string, string>;
+  darkMode?: boolean;
+};
+
+type ToggleDarkModeMessage = {
+  type: "TOGGLE_DARK_MODE";
+  darkMode: boolean;
+};
+
+type UpdateRadiusMessage = {
+  type: "UPDATE_RADIUS";
+  radius: string;
+};
+
+type UpdateColorsMessage = {
+  type: "UPDATE_COLORS";
+  cssVars: { light: Record<string, string>; dark: Record<string, string> };
+};
+
+type UpdateFontMessage = {
+  type: "UPDATE_FONT";
+  fontId: string;
+  fontFamily: string;
+  googleFontsUrl: string;
+};
+
+// Handshake messages for connection status visibility (does not trigger theme application).
+type ReadyMessage = { type: "PREVIEWCN_READY" };
+type PingMessage = { type: "PREVIEWCN_PING" };
+type PongMessage = { type: "PREVIEWCN_PONG" };
+
+type PreviewCNMessage =
+  | ApplyThemeMessage
+  | ToggleDarkModeMessage
+  | UpdateRadiusMessage
+  | UpdateColorsMessage
+  | UpdateFontMessage
+  | ReadyMessage
+  | PingMessage
+  | PongMessage;
+
+function sendToParent(message: ReadyMessage | PongMessage) {
+  // Send to parent window (iframe scenario)
+  if (window.parent !== window) {
+    window.parent.postMessage(message, "*");
+  }
+}
 
 export function ThemeReceiver() {
   useEffect(() => {
-    const handler = (event: MessageEvent<ThemeMessage>) => {
+    // Send READY message on mount to signal the receiver is active
+    // This enables connection status detection in PreviewCN
+    sendToParent({ type: "PREVIEWCN_READY" });
+
+    const handler = (event: MessageEvent<PreviewCNMessage>) => {
       // Allow messages from any origin in development
       const root = document.documentElement;
+
+      // Handle handshake ping - respond with pong (does not trigger theme application)
+      if (event.data?.type === "PREVIEWCN_PING") {
+        sendToParent({ type: "PREVIEWCN_PONG" });
+        return;
+      }
 
       if (event.data?.type === "APPLY_THEME") {
         // Apply CSS variables
