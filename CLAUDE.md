@@ -62,3 +62,4 @@ This repo includes `pnpm-lock.yaml`; prefer `pnpm`.
     - chore: (updating grunt tasks etc; no production code change)
 - Use `type` instead of `interface` whenever possible.
 - When creating a new component file, name the file in kebab case, like `query-provider.tsx`.
+- When the `h` and `w` values are the same in Tailwind CSS classes (like `h-3 w-3`), use `size-3` instead.
