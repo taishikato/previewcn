@@ -1,6 +1,7 @@
 import { Check, Copy, Moon, ShieldX, Sun, Wifi, WifiOff } from "lucide-react";
 
-import type { ConnectionStatus } from "@/lib/theme-messages";
+import type { ConnectionStatus } from "@previewcn/receiver";
+
 import type { ThemeConfig } from "@/lib/theme-presets";
 import { generateThemeCss } from "@/lib/theme-presets";
 import { Button } from "@/components/ui/button";

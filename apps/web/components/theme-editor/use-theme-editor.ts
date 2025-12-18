@@ -3,12 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 
-import { defaultFont, getFontPreset } from "@/lib/font-presets";
 import type {
   ConnectionStatus,
   HandshakeMessage,
   PreviewCNMessage,
-} from "@/lib/theme-messages";
+} from "@previewcn/receiver";
+
+import { defaultFont, getFontPreset } from "@/lib/font-presets";
 import {
   defaultThemeConfig,
   generateBothModeColorVars,
