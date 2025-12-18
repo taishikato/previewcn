@@ -1,6 +1,9 @@
 {
   "name": "previewcn",
   "version": "0.1.0",
+  "engines": {
+    "node": ">=18"
+  },
   "description": "CLI for PreviewCN - real-time shadcn/ui theme editor",
   "keywords": [
     "shadcn",
