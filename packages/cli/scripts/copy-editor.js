@@ -67,8 +67,14 @@ async function main() {
         });
       }
     }
-  } catch {
-    await fs.mkdir(EDITOR_DIR, { recursive: true });
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      // Directory doesn't exist, create it
+      await fs.mkdir(EDITOR_DIR, { recursive: true });
+    } else {
+      // Unexpected error (permissions, etc.)
+      throw error;
+    }
   }
 
   // Copy standalone output
