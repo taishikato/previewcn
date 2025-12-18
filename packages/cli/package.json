@@ -1,0 +1,40 @@
+{
+  "name": "previewcn",
+  "version": "0.1.0",
+  "description": "CLI for PreviewCN - real-time shadcn/ui theme editor",
+  "keywords": ["shadcn", "shadcn-ui", "theme", "preview", "cli", "next.js"],
+  "license": "MIT",
+  "author": "PreviewCN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/previewcn/previewcn.git",
+    "directory": "packages/cli"
+  },
+  "type": "module",
+  "bin": {
+    "previewcn": "./dist/index.js"
+  },
+  "files": ["dist", "editor", "README.md"],
+  "scripts": {
+    "build": "tsup",
+    "build:editor": "node scripts/copy-editor.js",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules",
+    "prepublishOnly": "pnpm build && pnpm build:editor"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "detect-package-manager": "^3.0.2",
+    "execa": "^9.3.0",
+    "ora": "^8.0.1",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/prompts": "^2.4.9",
+    "tsup": "^8.5.0",
+    "typescript": "^5"
+  }
+}
