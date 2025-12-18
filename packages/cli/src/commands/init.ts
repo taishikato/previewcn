@@ -1,5 +1,4 @@
 import path from "path";
-
 import chalk from "chalk";
 import { detect } from "detect-package-manager";
 import { execa } from "execa";
@@ -109,6 +108,8 @@ export async function initCommand(options: InitOptions) {
   console.log(
     `  1. Start your development server: ${chalk.cyan(`${pkgManager} run dev`)}`
   );
-  console.log(`  2. Run the PreviewCN editor: ${chalk.cyan("npx previewcn dev")}`);
+  console.log(
+    `  2. Run the PreviewCN editor: ${chalk.cyan("npx previewcn dev")}`
+  );
   console.log();
 }

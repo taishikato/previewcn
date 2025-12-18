@@ -1,6 +1,5 @@
 import fs from "fs/promises";
 import path from "path";
-
 import chalk from "chalk";
 
 import { TARGET_DEFAULT_URL } from "../utils/constants";
@@ -33,7 +32,7 @@ export async function doctorCommand() {
     const pkg = JSON.parse(pkgContent);
     receiverInstalled = Boolean(
       pkg.dependencies?.["@previewcn/receiver"] ||
-        pkg.devDependencies?.["@previewcn/receiver"]
+      pkg.devDependencies?.["@previewcn/receiver"]
     );
   } catch {
     // package.json not found or invalid

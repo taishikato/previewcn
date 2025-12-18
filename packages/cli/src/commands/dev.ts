@@ -1,7 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
-
 import chalk from "chalk";
 import { execa } from "execa";
 import ora from "ora";
