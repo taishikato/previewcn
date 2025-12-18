@@ -47,6 +47,9 @@ I chose A.
 - **Export UX**: Export is disabled until at least one setting is selected (prevents copying empty CSS).
 - **Applied consistently**: The same “not selected yet” pattern is also used for Radius and Mode for UI consistency.
 
+#### Status
+- Implemented ✅
+
 ---
 
 ### 2) Make connection status visible (small–medium effort, immediate UX win)
