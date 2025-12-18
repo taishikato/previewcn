@@ -21,7 +21,9 @@
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist node_modules",
-    "prepublishOnly": "pnpm build && pnpm build:editor"
+    "prepublishOnly": "pnpm build && pnpm build:editor",
+    "format:write": "prettier --write \"**/*.ts\" --cache",
+    "format:check": "prettier --check \"**/*.ts\" --cache"
   },
   "dependencies": {
     "chalk": "^5.3.0",

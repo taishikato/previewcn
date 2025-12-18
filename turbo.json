@@ -19,6 +19,13 @@
     "lint": {
       "dependsOn": ["^build"]
     },
+    "format:check": {
+      "cache": false,
+      "outputs": []
+    },
+    "format:write": {
+      "outputs": []
+    },
     "typecheck": {
       "dependsOn": ["^build"]
     },
