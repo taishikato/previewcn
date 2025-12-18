@@ -160,6 +160,68 @@ Split into small, focused packages:
 - **Build pipeline**: Turborepo manages build order (`packages/receiver` → `apps/web` → `packages/cli`).
 - **Not yet published**: Packages are ready but not yet published to npm. Next step is to publish and test the full flow.
 
+#### Directory structure
+```
+previewcn/
+├── apps/
+│   └── web/                    # Editor UI (@previewcn/web, private)
+│       ├── app/                # Next.js App Router pages
+│       ├── components/
+│       │   └── theme-editor/   # Editor sidebar & preview
+│       └── lib/                # Theme presets, fonts, utilities
+├── packages/
+│   ├── receiver/               # @previewcn/receiver (npm publish)
+│   │   └── src/
+│   │       ├── index.ts        # Public exports
+│   │       ├── theme-receiver.tsx
+│   │       └── types.ts        # Message type definitions
+│   └── cli/                    # previewcn CLI (npm publish)
+│       └── src/
+│           ├── index.ts        # CLI entry (commander)
+│           └── commands/       # init, dev, doctor
+├── turbo.json
+├── pnpm-workspace.yaml
+└── tsconfig.base.json
+```
+
+#### Key files
+| File | Description |
+|------|-------------|
+| `packages/receiver/src/types.ts` | All PostMessage type definitions (`PreviewCNMessage`, `ConnectionStatus`, etc.) |
+| `packages/receiver/src/theme-receiver.tsx` | ThemeReceiver component that applies themes |
+| `packages/cli/src/commands/init.ts` | `npx previewcn init` implementation |
+| `packages/cli/src/commands/dev.ts` | `npx previewcn dev` implementation |
+| `apps/web/components/theme-editor/use-theme-editor.ts` | Editor state management & iframe communication |
+| `apps/web/lib/theme-presets.ts` | Color presets and CSS variable generation |
+
+#### Development workflow
+```bash
+pnpm install        # Install all dependencies
+pnpm build          # Build all packages (receiver → web → cli)
+pnpm dev:web        # Start editor at localhost:4000
+pnpm lint           # Run ESLint across all packages
+```
+
+#### Communication flow
+```
+┌─────────────────────┐         postMessage          ┌─────────────────────┐
+│   Editor (web)      │ ────────────────────────────▶│   ThemeReceiver     │
+│   localhost:4000    │                              │   (target app)      │
+└─────────────────────┘                              └─────────────────────┘
+
+Messages (Editor → Receiver):
+  - APPLY_THEME        : Full theme update (colors, font, radius, mode)
+  - UPDATE_COLORS      : Color variables only
+  - UPDATE_FONT        : Font family + Google Fonts URL
+  - UPDATE_RADIUS      : Border radius value
+  - TOGGLE_DARK_MODE   : Light/dark mode switch
+  - PREVIEWCN_PING     : Connection health check
+
+Messages (Receiver → Editor):
+  - PREVIEWCN_READY    : Sent on mount (receiver is present)
+  - PREVIEWCN_PONG     : Response to PING (connection alive)
+```
+
 ---
 
 ## Non-goals (for now)
