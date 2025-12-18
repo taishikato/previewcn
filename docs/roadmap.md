@@ -135,9 +135,32 @@ Split into small, focused packages:
   - Validate common requirements and explain failures in plain English.
 
 #### Definition of Done
-- A brand-new App Router app can be made “PreviewCN-ready” with `npx previewcn init`.
+- A brand-new App Router app can be made "PreviewCN-ready" with `npx previewcn init`.
 - No receiver code copy/paste is required.
 - No theme is applied automatically (first apply remains user-triggered).
+
+#### Status
+- Implemented ✅
+
+#### Implementation notes (current architecture)
+- **Monorepo structure**: Restructured to Turborepo + pnpm workspaces monorepo.
+  - `apps/web` - Editor UI (`@previewcn/web`, private)
+  - `packages/receiver` - ThemeReceiver component (`@previewcn/receiver`, npm publish)
+  - `packages/cli` - CLI tool (`previewcn`, npm publish)
+- **@previewcn/receiver**:
+  - Exports `ThemeReceiver` component and all message types (`ConnectionStatus`, `PreviewCNMessage`, etc.).
+  - Built with tsup (ESM + CJS + types), minified to ~1.7KB.
+  - `peerDependencies: react >= 18`.
+- **previewcn CLI**:
+  - Built with commander.js + chalk + ora + prompts.
+  - Commands: `init`, `dev`, `doctor`.
+  - `init`: Detects Next.js App Router, installs `@previewcn/receiver`, modifies `app/layout.tsx`.
+  - `dev`: Starts bundled editor server from `editor/` directory.
+  - `doctor`: Diagnoses setup issues (project type, receiver installation, layout integration).
+- **Build pipeline**: Turborepo manages build order (`packages/receiver` → `apps/web` → `packages/cli`).
+- **Not yet published**: Packages are ready but not yet published to npm. Next step is to publish and test the full flow.
+
+---
 
 ## Non-goals (for now)
 
