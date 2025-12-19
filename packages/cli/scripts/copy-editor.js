@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -80,7 +79,7 @@ async function main() {
       }
     }
   } catch (error) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       // Directory doesn't exist, create it
       await fs.mkdir(EDITOR_DIR, { recursive: true });
     } else {
@@ -95,12 +94,12 @@ async function main() {
 
   // Copy static files
   console.log("Copying static files...");
-  const staticDest = path.join(EDITOR_DIR, ".next", "static");
+  const staticDest = path.join(EDITOR_DIR, "apps", "web", ".next", "static");
   await copyDir(WEB_STATIC, staticDest);
 
   // Copy public files
   console.log("Copying public files...");
-  const publicDest = path.join(EDITOR_DIR, "public");
+  const publicDest = path.join(EDITOR_DIR, "apps", "web", "public");
   await copyDir(WEB_PUBLIC, publicDest);
 
   console.log("Editor build copied successfully!");
