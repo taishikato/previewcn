@@ -117,19 +117,17 @@ This is slow, error-prone, and discourages adoption.
 Make setup a **single command** and reduce the “human editing surface area” to near-zero.
 
 #### Proposed packaging
-Split into small, focused packages:
+Single CLI package (shadcn/ui-style file generation, no external dependencies):
 
-- `@previewcn/receiver`
-  - A small, framework-aware receiver for Next.js App Router apps.
-  - Dev-only integration recommended.
 - `previewcn` (CLI)
-  - Bootstraps receiver installation and starts the local editor UI.
+  - Generates receiver component directly into the target project (no npm install required).
+  - Starts the local editor UI.
 
 #### CLI commands (proposal)
 - `npx previewcn init`
   - Detect `app/layout.tsx` (App Router).
-  - Add receiver file (or install `@previewcn/receiver`).
-  - Add dev-only `<ThemeReceiver />` to `app/layout.tsx`.
+  - Generate `components/previewcn-theme-receiver.tsx` (no npm package install).
+  - Add dev-only `<PreviewCNThemeReceiver />` to `app/layout.tsx`.
   - Optionally provide instructions for iframe embedding requirements (if iframe mode is used).
 - `npx previewcn dev --target http://localhost:3000`
   - Start PreviewCN editor UI locally.
@@ -148,20 +146,22 @@ Split into small, focused packages:
 #### Implementation notes (current architecture)
 - **Monorepo structure**: Restructured to Turborepo + pnpm workspaces monorepo.
   - `apps/web` - Editor UI (`@previewcn/web`, private)
-  - `packages/receiver` - ThemeReceiver component (`@previewcn/receiver`, npm publish)
+  - `packages/receiver` - ThemeReceiver source (used as template, not published)
   - `packages/cli` - CLI tool (`previewcn`, npm publish)
-- **@previewcn/receiver**:
-  - Exports `ThemeReceiver` component and all message types (`ConnectionStatus`, `PreviewCNMessage`, etc.).
-  - Built with tsup (ESM + CJS + types), minified to ~1.7KB.
-  - `peerDependencies: react >= 18`.
+- **shadcn/ui-style approach**:
+  - No `@previewcn/receiver` npm package to install.
+  - CLI generates `components/previewcn-theme-receiver.tsx` directly in the target project.
+  - Types are inlined in the generated file for zero external dependencies.
+  - Users own their code and can customize if needed.
 - **previewcn CLI**:
   - Built with commander.js + chalk + ora + prompts.
   - Commands: `init`, `dev`, `doctor`.
-  - `init`: Detects Next.js App Router, installs `@previewcn/receiver`, modifies `app/layout.tsx`.
+  - `init`: Detects Next.js App Router, generates receiver file, modifies `app/layout.tsx`.
+  - `init --force`: Regenerates receiver file (useful for updates).
   - `dev`: Starts bundled editor server from `editor/` directory.
-  - `doctor`: Diagnoses setup issues (project type, receiver installation, layout integration).
-- **Build pipeline**: Turborepo manages build order (`packages/receiver` → `apps/web` → `packages/cli`).
-- **Not yet published**: Packages are ready but not yet published to npm. Next step is to publish and test the full flow.
+  - `doctor`: Diagnoses setup issues (project type, receiver file, layout integration).
+- **Build pipeline**: Turborepo manages build order (`apps/web` → `packages/cli`).
+- **Single package to publish**: Only `previewcn` CLI needs to be published to npm.
 
 #### Directory structure
 ```
@@ -173,15 +173,15 @@ previewcn/
 │       │   └── theme-editor/   # Editor sidebar & preview
 │       └── lib/                # Theme presets, fonts, utilities
 ├── packages/
-│   ├── receiver/               # @previewcn/receiver (npm publish)
+│   ├── receiver/               # ThemeReceiver source (template, not published)
 │   │   └── src/
-│   │       ├── index.ts        # Public exports
 │   │       ├── theme-receiver.tsx
 │   │       └── types.ts        # Message type definitions
 │   └── cli/                    # previewcn CLI (npm publish)
 │       └── src/
 │           ├── index.ts        # CLI entry (commander)
-│           └── commands/       # init, dev, doctor
+│           ├── commands/       # init, dev, doctor
+│           └── templates/      # Generated file templates
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── tsconfig.base.json
@@ -190,8 +190,7 @@ previewcn/
 #### Key files
 | File | Description |
 |------|-------------|
-| `packages/receiver/src/types.ts` | All PostMessage type definitions (`PreviewCNMessage`, `ConnectionStatus`, etc.) |
-| `packages/receiver/src/theme-receiver.tsx` | ThemeReceiver component that applies themes |
+| `packages/cli/src/templates/theme-receiver.ts` | Template for generating `previewcn-theme-receiver.tsx` |
 | `packages/cli/src/commands/init.ts` | `npx previewcn init` implementation |
 | `packages/cli/src/commands/dev.ts` | `npx previewcn dev` implementation |
 | `apps/web/components/theme-editor/use-theme-editor.ts` | Editor state management & iframe communication |

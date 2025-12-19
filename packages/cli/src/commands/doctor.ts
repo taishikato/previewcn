@@ -1,11 +1,12 @@
-import fs from "fs/promises";
-import path from "path";
 import chalk from "chalk";
 
 import { TARGET_DEFAULT_URL } from "../utils/constants";
 import { detectNextJsProject, findAppLayout } from "../utils/detect-project";
 import { logger } from "../utils/logger";
-import { checkThemeReceiverInLayout } from "../utils/modify-layout";
+import {
+  checkReceiverFileExists,
+  checkThemeReceiverInLayout,
+} from "../utils/modify-layout";
 
 export async function doctorCommand() {
   logger.info("Running PreviewCN diagnostics...\n");
@@ -24,23 +25,12 @@ export async function doctorCommand() {
       : "Not a Next.js project",
   });
 
-  // Check 2: @previewcn/receiver installed
-  let receiverInstalled = false;
-  try {
-    const pkgPath = path.join(process.cwd(), "package.json");
-    const pkgContent = await fs.readFile(pkgPath, "utf-8");
-    const pkg = JSON.parse(pkgContent);
-    receiverInstalled = Boolean(
-      pkg.dependencies?.["@previewcn/receiver"] ||
-      pkg.devDependencies?.["@previewcn/receiver"]
-    );
-  } catch {
-    // package.json not found or invalid
-  }
+  // Check 2: Receiver file exists
+  const receiverExists = await checkReceiverFileExists(process.cwd());
   checks.push({
-    name: "@previewcn/receiver installed",
-    pass: receiverInstalled,
-    message: receiverInstalled ? "Installed" : "Not installed",
+    name: "PreviewCN receiver file",
+    pass: receiverExists,
+    message: receiverExists ? "Found" : "Not found (run `npx previewcn init`)",
   });
 
   // Check 3: ThemeReceiver in layout

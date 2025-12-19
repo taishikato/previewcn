@@ -1,17 +1,44 @@
+import fs from "fs/promises";
 import path from "path";
 import chalk from "chalk";
-import { detect } from "detect-package-manager";
-import { execa } from "execa";
 import ora from "ora";
 import prompts from "prompts";
 
+import {
+  THEME_RECEIVER_FILENAME,
+  THEME_RECEIVER_TEMPLATE,
+} from "../templates/theme-receiver";
 import { detectNextJsProject, findAppLayout } from "../utils/detect-project";
 import { logger } from "../utils/logger";
 import { addThemeReceiverToLayout } from "../utils/modify-layout";
 
 type InitOptions = {
   yes?: boolean;
+  force?: boolean;
 };
+
+async function findComponentsDir(cwd: string): Promise<string> {
+  // Check common component directory locations
+  const candidates = [
+    path.join(cwd, "components"),
+    path.join(cwd, "src", "components"),
+    path.join(cwd, "app", "components"),
+  ];
+
+  for (const dir of candidates) {
+    try {
+      const stat = await fs.stat(dir);
+      if (stat.isDirectory()) {
+        return dir;
+      }
+    } catch {
+      // Directory doesn't exist, continue
+    }
+  }
+
+  // Default to components/ in project root
+  return path.join(cwd, "components");
+}
 
 export async function initCommand(options: InitOptions) {
   logger.info("Initializing PreviewCN...\n");
@@ -49,13 +76,44 @@ export async function initCommand(options: InitOptions) {
     `Found layout at: ${chalk.cyan(path.relative(process.cwd(), layoutPath))}`
   );
 
-  // Step 3: Confirmation
-  if (!options.yes) {
+  // Step 3: Find components directory
+  const componentsDir = await findComponentsDir(process.cwd());
+  const receiverPath = path.join(componentsDir, THEME_RECEIVER_FILENAME);
+  const relativeReceiverPath = path.relative(process.cwd(), receiverPath);
+
+  // Check if receiver already exists
+  let receiverExists = false;
+  try {
+    await fs.access(receiverPath);
+    receiverExists = true;
+  } catch {
+    // File doesn't exist
+  }
+
+  if (receiverExists && !options.force) {
+    logger.info(
+      `Receiver already exists at: ${chalk.cyan(relativeReceiverPath)}`
+    );
+    const response = await prompts({
+      type: "confirm",
+      name: "overwrite",
+      message: "Overwrite existing receiver file?",
+      initial: false,
+    });
+
+    if (!response.overwrite) {
+      logger.info("Skipping receiver file generation.");
+    } else {
+      receiverExists = false; // Mark for regeneration
+    }
+  }
+
+  // Step 4: Confirmation
+  if (!options.yes && !receiverExists) {
     const response = await prompts({
       type: "confirm",
       name: "proceed",
-      message:
-        "This will install @previewcn/receiver and modify your layout. Continue?",
+      message: `This will create ${chalk.cyan(relativeReceiverPath)} and modify your layout. Continue?`,
       initial: true,
     });
 
@@ -65,37 +123,37 @@ export async function initCommand(options: InitOptions) {
     }
   }
 
-  // Step 4: Install @previewcn/receiver
-  const pkgManager = await detect({ cwd: process.cwd() });
-  const installSpinner = ora("Installing @previewcn/receiver...").start();
+  // Step 5: Generate receiver file
+  if (!receiverExists || options.force) {
+    const generateSpinner = ora(`Creating ${relativeReceiverPath}...`).start();
 
-  try {
-    const installCmd = {
-      npm: ["npm", "install", "--save-dev", "@previewcn/receiver"],
-      yarn: ["yarn", "add", "--dev", "@previewcn/receiver"],
-      pnpm: ["pnpm", "add", "--save-dev", "@previewcn/receiver"],
-      bun: ["bun", "add", "--dev", "@previewcn/receiver"],
-    }[pkgManager];
+    try {
+      // Ensure components directory exists
+      await fs.mkdir(componentsDir, { recursive: true });
 
-    await execa(installCmd[0], installCmd.slice(1), { cwd: process.cwd() });
-    installSpinner.succeed("Installed @previewcn/receiver");
-  } catch (error) {
-    installSpinner.fail("Failed to install @previewcn/receiver");
-    logger.error(error instanceof Error ? error.message : String(error));
-    process.exit(1);
+      // Write the receiver file
+      await fs.writeFile(receiverPath, THEME_RECEIVER_TEMPLATE, "utf-8");
+      generateSpinner.succeed(`Created ${relativeReceiverPath}`);
+    } catch (error) {
+      generateSpinner.fail(`Failed to create ${relativeReceiverPath}`);
+      logger.error(error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    }
   }
 
-  // Step 5: Modify layout
-  const layoutSpinner = ora("Adding ThemeReceiver to layout...").start();
+  // Step 6: Modify layout
+  const layoutSpinner = ora(
+    "Adding PreviewCNThemeReceiver to layout..."
+  ).start();
 
   try {
-    await addThemeReceiverToLayout(layoutPath);
-    layoutSpinner.succeed("Added ThemeReceiver to layout");
+    await addThemeReceiverToLayout(layoutPath, componentsDir);
+    layoutSpinner.succeed("Added PreviewCNThemeReceiver to layout");
   } catch (error) {
     layoutSpinner.fail("Failed to modify layout");
     logger.error(error instanceof Error ? error.message : String(error));
     logger.hint(
-      "You may need to add ThemeReceiver manually. See documentation."
+      "You may need to add PreviewCNThemeReceiver manually. See documentation."
     );
     process.exit(1);
   }
@@ -105,9 +163,7 @@ export async function initCommand(options: InitOptions) {
   logger.success("PreviewCN initialized successfully!");
   console.log();
   logger.info("Next steps:");
-  console.log(
-    `  1. Start your development server: ${chalk.cyan(`${pkgManager} run dev`)}`
-  );
+  console.log(`  1. Start your development server`);
   console.log(
     `  2. Run the PreviewCN editor: ${chalk.cyan("npx previewcn dev")}`
   );

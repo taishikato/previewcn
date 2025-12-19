@@ -15,6 +15,7 @@ program
   .command("init")
   .description("Initialize PreviewCN in your Next.js project")
   .option("-y, --yes", "Skip confirmation prompts")
+  .option("-f, --force", "Overwrite existing receiver file")
   .action(initCommand);
 
 program
