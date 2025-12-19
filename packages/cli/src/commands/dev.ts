@@ -62,13 +62,20 @@ export async function devCommand(options: DevOptions) {
       stdio: "inherit",
     });
   } catch (error) {
-    const nodeError = error as NodeJS.ErrnoException;
-    if (nodeError.code === "ENOENT") {
-      spinner.fail("Failed to start editor");
-      logger.error("Node.js is required to run the editor.");
+    spinner.fail("Failed to start editor");
+
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+      logger.error("Could not find Node.js executable in PATH.");
+      logger.hint(
+        "Ensure Node.js is properly installed and available in your PATH."
+      );
     } else {
-      spinner.fail("Editor server stopped");
+      logger.error("Editor server failed to start.");
+      if (error instanceof Error) {
+        logger.error(`Error: ${error.message}`);
+      }
     }
+
     process.exit(1);
   }
 }
