@@ -20,14 +20,17 @@ export async function addThemeReceiverToLayout(
   let newContent = content;
 
   // Add import at the top (after existing imports)
-  const importMatch = newContent.match(/^(import .+\n)+/m);
-  if (importMatch) {
-    const lastImportIndex = importMatch.index! + importMatch[0].length;
+  // This regex handles multi-line imports like: import { Foo, Bar } from "pkg";
+  const importRegex = /^import[\s\S]*?from\s*['"][^'"]+['"];?\s*$/gm;
+  const matches = [...newContent.matchAll(importRegex)];
+  if (matches.length > 0) {
+    const lastMatch = matches[matches.length - 1];
+    const insertIndex = lastMatch.index! + lastMatch[0].length;
     newContent =
-      newContent.slice(0, lastImportIndex) +
-      IMPORT_STATEMENT +
+      newContent.slice(0, insertIndex) +
       "\n" +
-      newContent.slice(lastImportIndex);
+      IMPORT_STATEMENT +
+      newContent.slice(insertIndex);
   } else {
     // No imports found, add at top
     newContent = IMPORT_STATEMENT + "\n\n" + newContent;
