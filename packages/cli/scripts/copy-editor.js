@@ -34,12 +34,24 @@ async function copyDir(src, dest) {
   for (const entry of entries) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
+    const stats = await fs.lstat(srcPath);
 
-    if (entry.isDirectory()) {
+    if (stats.isDirectory()) {
       await copyDir(srcPath, destPath);
-    } else {
-      await fs.copyFile(srcPath, destPath);
+      continue;
     }
+
+    if (stats.isSymbolicLink()) {
+      const linkTarget = await fs.readlink(srcPath);
+      await fs.symlink(linkTarget, destPath);
+      continue;
+    }
+
+    if (stats.isSocket()) {
+      continue;
+    }
+
+    await fs.copyFile(srcPath, destPath);
   }
 }
 
