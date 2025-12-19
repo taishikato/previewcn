@@ -34,13 +34,9 @@ export async function addThemeReceiverToLayout(
 ): Promise<void> {
   const content = await fs.readFile(layoutPath, "utf-8");
 
-  // Check if already added (check for both old and new patterns)
-  if (
-    content.includes("@previewcn/receiver") ||
-    content.includes("PreviewCNThemeReceiver") ||
-    content.includes("ThemeReceiver")
-  ) {
-    return; // Already configured
+  // Check if already added
+  if (content.includes("PreviewCNThemeReceiver")) {
+    return;
   }
 
   const importPath = getImportPath(layoutPath, componentsDir);
@@ -83,12 +79,8 @@ export async function checkThemeReceiverInLayout(
 ): Promise<boolean> {
   try {
     const content = await fs.readFile(layoutPath, "utf-8");
-    return (
-      content.includes("PreviewCNThemeReceiver") ||
-      content.includes("ThemeReceiver") ||
-      content.includes("@previewcn/receiver") ||
-      content.includes("previewcn-theme-receiver")
-    );
+
+    return content.includes("PreviewCNThemeReceiver");
   } catch {
     return false;
   }
