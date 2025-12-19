@@ -24,6 +24,7 @@
       "outputs": []
     },
     "format:write": {
+      "cache": false,
       "outputs": []
     },
     "typecheck": {
