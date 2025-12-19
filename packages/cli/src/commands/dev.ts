@@ -24,7 +24,7 @@ export async function devCommand(options: DevOptions) {
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const editorPath = path.resolve(__dirname, "..", "editor");
-  const serverPath = path.join(editorPath, "server.js");
+  const serverPath = path.join(editorPath, "apps", "web", "server.js");
 
   // Check if editor is bundled
   try {
