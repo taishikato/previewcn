@@ -353,24 +353,6 @@ const THEME_COLOR_KEYS = [
   "sidebar-primary-foreground",
 ] as const;
 
-// Generate color CSS variables only (excludes radius)
-export function generateColorVars(config: ThemeConfig): Record<string, string> {
-  const preset = colorPresets.find((p) => p.name === config.colorPreset);
-  if (!preset) return {};
-
-  const colors = config.darkMode ? preset.colors.dark : preset.colors.light;
-  const colorsRecord = colors as Record<string, string | undefined>;
-
-  const result: Record<string, string> = {};
-  for (const key of THEME_COLOR_KEYS) {
-    const value = colorsRecord[key];
-    if (value !== undefined) {
-      result[key] = value;
-    }
-  }
-  return result;
-}
-
 // Generate color CSS variables for both light and dark modes
 export function generateBothModeColorVars(config: ThemeConfig): {
   light: Record<string, string>;

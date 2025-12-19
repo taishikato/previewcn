@@ -2,7 +2,6 @@
 // Uses Google Fonts for dynamic loading
 
 export type FontPreset = {
-  name: string;
   label: string;
   value: string;
   fontFamily: string;
@@ -11,7 +10,6 @@ export type FontPreset = {
 
 export const fontPresets: FontPreset[] = [
   {
-    name: "inter",
     label: "Inter",
     value: "inter",
     fontFamily: '"Inter", sans-serif',
@@ -19,7 +17,6 @@ export const fontPresets: FontPreset[] = [
       "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
   },
   {
-    name: "noto-sans",
     label: "Noto Sans",
     value: "noto-sans",
     fontFamily: '"Noto Sans", sans-serif',
@@ -27,7 +24,6 @@ export const fontPresets: FontPreset[] = [
       "https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap",
   },
   {
-    name: "nunito-sans",
     label: "Nunito Sans",
     value: "nunito-sans",
     fontFamily: '"Nunito Sans", sans-serif',
@@ -35,7 +31,6 @@ export const fontPresets: FontPreset[] = [
       "https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700&display=swap",
   },
   {
-    name: "figtree",
     label: "Figtree",
     value: "figtree",
     fontFamily: '"Figtree", sans-serif',
@@ -43,7 +38,6 @@ export const fontPresets: FontPreset[] = [
       "https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap",
   },
   {
-    name: "roboto",
     label: "Roboto",
     value: "roboto",
     fontFamily: '"Roboto", sans-serif',
@@ -51,7 +45,6 @@ export const fontPresets: FontPreset[] = [
       "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap",
   },
   {
-    name: "raleway",
     label: "Raleway",
     value: "raleway",
     fontFamily: '"Raleway", sans-serif',
@@ -59,7 +52,6 @@ export const fontPresets: FontPreset[] = [
       "https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap",
   },
   {
-    name: "dm-sans",
     label: "DM Sans",
     value: "dm-sans",
     fontFamily: '"DM Sans", sans-serif',
@@ -67,7 +59,6 @@ export const fontPresets: FontPreset[] = [
       "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap",
   },
   {
-    name: "public-sans",
     label: "Public Sans",
     value: "public-sans",
     fontFamily: '"Public Sans", sans-serif',
@@ -75,7 +66,6 @@ export const fontPresets: FontPreset[] = [
       "https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap",
   },
   {
-    name: "outfit",
     label: "Outfit",
     value: "outfit",
     fontFamily: '"Outfit", sans-serif',
@@ -83,7 +73,6 @@ export const fontPresets: FontPreset[] = [
       "https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap",
   },
   {
-    name: "jetbrains-mono",
     label: "JetBrains Mono",
     value: "jetbrains-mono",
     fontFamily: '"JetBrains Mono", monospace',

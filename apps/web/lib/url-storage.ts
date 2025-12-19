@@ -19,15 +19,6 @@ export function setStoredUrl(url: string): void {
   }
 }
 
-export function clearStoredUrl(): void {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch {
-    // localStorage not available, fail silently
-  }
-}
-
 export function isValidUrl(url: string): { valid: boolean; error?: string } {
   if (!url || url.trim() === "") {
     return { valid: false, error: "URL is required" };

@@ -24,19 +24,17 @@ export async function detectNextJsProject(cwd: string): Promise<ProjectInfo> {
     return result;
   }
 
-  // Check for app/ directory
-  try {
-    const appDir = path.join(cwd, "app");
-    const stat = await fs.stat(appDir);
-    result.isAppRouter = stat.isDirectory();
-  } catch {
-    // Check for src/app/ directory
+  // Check for app/ or src/app/ directory
+  const appDirs = [path.join(cwd, "app"), path.join(cwd, "src", "app")];
+  for (const dir of appDirs) {
     try {
-      const srcAppDir = path.join(cwd, "src", "app");
-      const stat = await fs.stat(srcAppDir);
-      result.isAppRouter = stat.isDirectory();
+      const stat = await fs.stat(dir);
+      if (stat.isDirectory()) {
+        result.isAppRouter = true;
+        break;
+      }
     } catch {
-      // app/ doesn't exist
+      // Directory doesn't exist, continue checking
     }
   }
 

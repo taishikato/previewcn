@@ -163,7 +163,6 @@ export function SocialImage() {
         >
           {swatchColors.map((color, i) => (
             <div
-              // eslint-disable-next-line react/no-array-index-key
               key={i}
               style={{
                 width: 48,
@@ -187,7 +186,6 @@ export function SocialImage() {
         >
           {["Live Preview", "OKLCH Colors", "Export CSS"].map((feature, i) => (
             <div
-              // eslint-disable-next-line react/no-array-index-key
               key={i}
               style={{
                 display: "flex",
