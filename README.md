@@ -55,9 +55,10 @@ Before anything else, add this component to your app so it can receive theme upd
 import { useEffect } from "react";
 
 const THEME_COLOR_STYLE_ID = "previewcn-theme-colors";
+const THEME_FONT_STYLE_ID = "previewcn-theme-font";
 
-function getOrCreateThemeColorStyleElement(): HTMLStyleElement {
-  const existing = document.getElementById(THEME_COLOR_STYLE_ID);
+function getOrCreateStyleElement(id: string): HTMLStyleElement {
+  const existing = document.getElementById(id);
   if (existing instanceof HTMLStyleElement) {
     return existing;
   }
@@ -67,9 +68,17 @@ function getOrCreateThemeColorStyleElement(): HTMLStyleElement {
   }
 
   const styleEl = document.createElement("style");
-  styleEl.id = THEME_COLOR_STYLE_ID;
+  styleEl.id = id;
   document.head.appendChild(styleEl);
   return styleEl;
+}
+
+function getOrCreateThemeColorStyleElement(): HTMLStyleElement {
+  return getOrCreateStyleElement(THEME_COLOR_STYLE_ID);
+}
+
+function getOrCreateThemeFontStyleElement(): HTMLStyleElement {
+  return getOrCreateStyleElement(THEME_FONT_STYLE_ID);
 }
 
 function serializeCssVars(cssVars: Record<string, string>): string {
@@ -198,7 +207,7 @@ export function ThemeReceiver() {
       }
 
       // Handle font update
-      // Dynamically loads Google Font and updates CSS variable
+      // Dynamically loads Google Font and injects CSS to override fonts universally
       if (event.data?.type === "UPDATE_FONT") {
         const { fontId, fontFamily, googleFontsUrl } = event.data;
 
@@ -218,10 +227,19 @@ export function ThemeReceiver() {
           document.head.appendChild(link);
         }
 
-        // Update CSS variable (use override variable for Tailwind v4 compatibility)
-        root.style.setProperty("--font-sans-override", fontFamily);
-        // Also set --font-sans for external sites that don't use the override pattern
-        root.style.setProperty("--font-sans", fontFamily);
+        // Use multiple strategies to ensure font override works universally
+        // This covers various Tailwind v4 and next/font configurations
+        const styleEl = getOrCreateThemeFontStyleElement();
+        styleEl.textContent = `
+          :root {
+            --font-sans: ${fontFamily} !important;
+            --font-sans-override: ${fontFamily} !important;
+            --font-geist-sans: ${fontFamily} !important;
+          }
+          html, body, .font-sans {
+            font-family: ${fontFamily} !important;
+          }
+        `;
       }
     };
 
@@ -313,6 +331,22 @@ pnpm dev --port 3001
 | `pnpm build` | Create a production build |
 | `pnpm start` | Run the production server |
 | `pnpm lint` | Run ESLint |
+
+## 🔧 Troubleshooting
+
+### Connection status shows "Not Connected"?
+
+Make sure you've added the `ThemeReceiver` component to your app and it's rendering in development mode.
+
+### Theme changes not applying?
+
+1. Check browser DevTools for console errors
+2. Verify the `ThemeReceiver` component is mounted (look for `PREVIEWCN_READY` in network/console)
+3. Check if `<style id="previewcn-theme-colors">` or `<style id="previewcn-theme-font">` elements are being created in `<head>`
+
+For detailed implementation information, see [Font Override Setup](./docs/font-override-setup.md).
+
+---
 
 ## 🤝 Contributing
 

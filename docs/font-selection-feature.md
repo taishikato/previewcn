@@ -1,5 +1,7 @@
 # Font Selection Feature Implementation
 
+> ⚠️ **DEPRECATED**: This document contains outdated implementation details. Please refer to [font-override-setup.md](./font-override-setup.md) for the current implementation guide.
+
 ## Purpose
 
 Add a real-time font preview feature to the theme editor, allowing users to select from the same fonts available in shadcn/ui's create app and see changes instantly in the iframe preview.
