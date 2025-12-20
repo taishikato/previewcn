@@ -5,9 +5,10 @@ import { useEffect } from "react";
 import type { PreviewCNMessage } from "./types";
 
 const THEME_COLOR_STYLE_ID = "previewcn-theme-colors";
+const THEME_FONT_STYLE_ID = "previewcn-theme-font";
 
-function getOrCreateThemeColorStyleElement(): HTMLStyleElement {
-  const existing = document.getElementById(THEME_COLOR_STYLE_ID);
+function getOrCreateStyleElement(id: string): HTMLStyleElement {
+  const existing = document.getElementById(id);
   if (existing instanceof HTMLStyleElement) {
     return existing;
   }
@@ -18,9 +19,17 @@ function getOrCreateThemeColorStyleElement(): HTMLStyleElement {
   }
 
   const styleEl = document.createElement("style");
-  styleEl.id = THEME_COLOR_STYLE_ID;
+  styleEl.id = id;
   document.head.appendChild(styleEl);
   return styleEl;
+}
+
+function getOrCreateThemeColorStyleElement(): HTMLStyleElement {
+  return getOrCreateStyleElement(THEME_COLOR_STYLE_ID);
+}
+
+function getOrCreateThemeFontStyleElement(): HTMLStyleElement {
+  return getOrCreateStyleElement(THEME_FONT_STYLE_ID);
 }
 
 function serializeCssVars(cssVars: Record<string, string>): string {
@@ -144,10 +153,19 @@ export function ThemeReceiver() {
           document.head.appendChild(link);
         }
 
-        // Update CSS variable (use override variable for Tailwind v4 compatibility)
-        root.style.setProperty("--font-sans-override", fontFamily);
-        // Also set --font-sans for external sites that don't use the override pattern
-        root.style.setProperty("--font-sans", fontFamily);
+        // Use multiple strategies to ensure font override works universally
+        // This covers various Tailwind v4 and next/font configurations
+        const styleEl = getOrCreateThemeFontStyleElement();
+        styleEl.textContent = `
+          :root {
+            --font-sans: ${fontFamily} !important;
+            --font-sans-override: ${fontFamily} !important;
+            --font-geist-sans: ${fontFamily} !important;
+          }
+          html, body, .font-sans {
+            font-family: ${fontFamily} !important;
+          }
+        `;
       }
     };
 
