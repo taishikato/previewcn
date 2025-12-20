@@ -38,12 +38,22 @@ export async function devCommand(options: DevOptions) {
   const spinner = ora("Starting editor server...").start();
 
   try {
+    // pnpm standalone builds place shared modules in node_modules/.pnpm/node_modules/
+    // We need to add this to NODE_PATH so Node.js can resolve them
+    const pnpmModulesPath = path.join(
+      editorPath,
+      "node_modules",
+      ".pnpm",
+      "node_modules"
+    );
+
     // Set environment variables for the standalone server
     const env = {
       ...process.env,
       PORT: port,
       HOSTNAME: "0.0.0.0",
       PREVIEWCN_TARGET_URL: target,
+      NODE_PATH: pnpmModulesPath,
     };
 
     spinner.succeed("Editor server started");

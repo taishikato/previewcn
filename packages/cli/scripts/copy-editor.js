@@ -33,16 +33,19 @@ async function copyDir(src, dest) {
   for (const entry of entries) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
-    const stats = await fs.lstat(srcPath);
 
-    if (stats.isDirectory()) {
-      await copyDir(srcPath, destPath);
+    // Use fs.stat (not lstat) to follow symlinks and get the target's stats
+    let stats;
+    try {
+      stats = await fs.stat(srcPath);
+    } catch (err) {
+      // Broken symlink or inaccessible - skip
+      console.warn(`Warning: Skipping inaccessible path: ${srcPath}`);
       continue;
     }
 
-    if (stats.isSymbolicLink()) {
-      const linkTarget = await fs.readlink(srcPath);
-      await fs.symlink(linkTarget, destPath);
+    if (stats.isDirectory()) {
+      await copyDir(srcPath, destPath);
       continue;
     }
 
@@ -50,6 +53,7 @@ async function copyDir(src, dest) {
       continue;
     }
 
+    // Copy file (this dereferences symlinks automatically)
     await fs.copyFile(srcPath, destPath);
   }
 }

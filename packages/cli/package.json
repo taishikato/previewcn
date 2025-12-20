@@ -1,6 +1,6 @@
 {
   "name": "previewcn",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.3",
   "engines": {
     "node": ">=18"
   },
@@ -17,7 +17,7 @@
   "author": "PreviewCN",
   "repository": {
     "type": "git",
-    "url": "https://github.com/previewcn/previewcn.git",
+    "url": "https://github.com/taishikato/previewcn.git",
     "directory": "packages/cli"
   },
   "type": "module",
