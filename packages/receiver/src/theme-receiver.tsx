@@ -53,7 +53,7 @@ function sendToParent(message: PreviewCNMessage) {
  * @example
  * ```tsx
  * // app/layout.tsx
- * import { ThemeReceiver } from "@previewcn/receiver";
+ * import { ThemeReceiver } from "@/components/previewcn-theme-receiver";
  *
  * export default function RootLayout({ children }) {
  *   return (
