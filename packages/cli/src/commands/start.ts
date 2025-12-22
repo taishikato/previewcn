@@ -1,17 +1,14 @@
 import chalk from "chalk";
-import { detect } from "detect-package-manager";
-import { execa, type ResultPromise } from "execa";
 import ora from "ora";
 import prompts from "prompts";
 
 import { EDITOR_DEFAULT_PORT } from "../utils/constants";
-import { findAppLayout } from "../utils/detect-project";
 import { logger } from "../utils/logger";
-import {
-  checkReceiverFileExists,
-  checkThemeReceiverInLayout,
-} from "../utils/modify-layout";
+import { detectPackageManager } from "../utils/package-manager";
 import { findAvailablePort, waitForServer } from "../utils/ports";
+import { isPreviewcnInitialized } from "../utils/previewcn-setup";
+import { registerShutdownHandlers } from "../utils/shutdown";
+import { startTargetDevServer } from "../utils/target-dev-server";
 import { devCommand } from "./dev";
 import { initCommand } from "./init";
 
@@ -19,6 +16,9 @@ type StartOptions = {
   yes?: boolean;
   port?: string;
 };
+
+const TARGET_PORT_START = 3000;
+const TARGET_READY_TIMEOUT_MS = 60_000;
 
 /**
  * Default command for `npx previewcn` (no subcommand).
@@ -30,36 +30,13 @@ type StartOptions = {
 export async function startCommand(options: StartOptions) {
   const cwd = process.cwd();
 
-  // Step 1: Check if initialized
-  const isInitialized = await checkIsInitialized(cwd);
-
-  if (!isInitialized) {
-    if (options.yes) {
-      logger.info("Project not initialized. Running init...\n");
-      await initCommand({ yes: true });
-    } else {
-      const response = await prompts({
-        type: "confirm",
-        name: "runInit",
-        message: "PreviewCN is not initialized in this project. Run init now?",
-        initial: true,
-      });
-
-      if (!response.runInit) {
-        logger.info("Aborted. Run `npx previewcn init` to set up PreviewCN.");
-        process.exit(0);
-      }
-
-      await initCommand({ yes: false });
-    }
-    console.log();
-  }
+  await ensureInitialized(cwd, options);
 
   // Step 2: Detect package manager
   const spinner = ora("Detecting package manager...").start();
-  let pm: Awaited<ReturnType<typeof detect>>;
+  let pm: string;
   try {
-    pm = await detect({ cwd });
+    pm = await detectPackageManager(cwd);
     spinner.succeed(`Detected package manager: ${chalk.cyan(pm)}`);
   } catch {
     spinner.fail("Could not detect package manager");
@@ -73,7 +50,7 @@ export async function startCommand(options: StartOptions) {
   ).start();
   let targetPort: number;
   try {
-    targetPort = await findAvailablePort(3000);
+    targetPort = await findAvailablePort(TARGET_PORT_START);
     targetPortSpinner.succeed(
       `Target app will run on port ${chalk.cyan(targetPort)}`
     );
@@ -84,70 +61,25 @@ export async function startCommand(options: StartOptions) {
   }
 
   // Step 4: Start target dev server
-  const targetUrl = `http://localhost:${targetPort}`;
+  const target = startTargetDevServer({
+    cwd,
+    packageManager: pm,
+    port: targetPort,
+  });
+  const targetUrl = target.url;
   logger.info(`Starting target dev server at ${chalk.cyan(targetUrl)}...`);
   console.log();
 
-  let targetProcess: ResultPromise | null = null;
-
-  const cleanup = () => {
-    if (targetProcess) {
-      targetProcess.kill("SIGTERM");
-    }
-  };
-
-  // Handle cleanup on exit
-  process.on("SIGINT", () => {
-    cleanup();
-    process.exit(0);
-  });
-  process.on("SIGTERM", () => {
-    cleanup();
-    process.exit(0);
-  });
-
-  try {
-    const devArgs = getDevArgs(pm, targetPort);
-    targetProcess = execa(pm, devArgs, {
-      cwd,
-      stdio: "pipe",
-      env: {
-        ...process.env,
-        FORCE_COLOR: "1",
-      },
-    });
-
-    // Stream target process output with prefix
-    targetProcess.stdout?.on("data", (data: Buffer) => {
-      const lines = data.toString().split("\n");
-      for (const line of lines) {
-        if (line.trim()) {
-          console.log(chalk.dim(`[target] ${line}`));
-        }
-      }
-    });
-
-    targetProcess.stderr?.on("data", (data: Buffer) => {
-      const lines = data.toString().split("\n");
-      for (const line of lines) {
-        if (line.trim()) {
-          console.log(chalk.dim(`[target] ${line}`));
-        }
-      }
-    });
-  } catch (error) {
-    logger.error("Failed to start target dev server");
-    logger.error(error instanceof Error ? error.message : String(error));
-    process.exit(1);
-  }
+  const unregisterShutdown = registerShutdownHandlers(() => target.stop());
 
   // Step 5: Wait for target server to be ready
   const waitSpinner = ora("Waiting for target server to be ready...").start();
-  const serverReady = await waitForServer(targetUrl, 60000);
+  const serverReady = await waitForServer(targetUrl, TARGET_READY_TIMEOUT_MS);
 
   if (!serverReady) {
     waitSpinner.fail("Target server did not start in time");
-    cleanup();
+    unregisterShutdown();
+    target.stop();
     logger.error("The target dev server did not respond within 60 seconds.");
     logger.hint(
       "Make sure your project has a valid `dev` script in package.json."
@@ -167,42 +99,33 @@ export async function startCommand(options: StartOptions) {
       port: editorPort,
     });
   } finally {
-    cleanup();
+    unregisterShutdown();
+    target.stop();
   }
 }
 
-/**
- * Check if the project is initialized with PreviewCN.
- */
-async function checkIsInitialized(cwd: string): Promise<boolean> {
-  const receiverExists = await checkReceiverFileExists(cwd);
-  if (!receiverExists) {
-    return false;
+async function ensureInitialized(cwd: string, options: StartOptions) {
+  const initialized = await isPreviewcnInitialized(cwd);
+  if (initialized) return;
+
+  if (options.yes) {
+    logger.info("Project not initialized. Running init...\n");
+    await initCommand({ yes: true });
+    return;
   }
 
-  const layoutPath = await findAppLayout(cwd);
-  if (!layoutPath) {
-    return false;
+  const response = await prompts({
+    type: "confirm",
+    name: "runInit",
+    message: "PreviewCN is not initialized in this project. Run init now?",
+    initial: true,
+  });
+
+  if (!response.runInit) {
+    logger.info("Aborted. Run `npx previewcn init` to set up PreviewCN.");
+    process.exit(0);
   }
 
-  const hasReceiver = await checkThemeReceiverInLayout(layoutPath);
-  return hasReceiver;
-}
-
-/**
- * Get the arguments to pass to the package manager to run `dev` with a specific port.
- */
-function getDevArgs(pm: string, port: number): string[] {
-  // All package managers support `run dev -- --port <port>`
-  // pnpm: pnpm dev -- --port 3001
-  // npm: npm run dev -- --port 3001
-  // yarn: yarn dev -- --port 3001
-  if (pm === "pnpm") {
-    return ["dev", "--", "--port", String(port)];
-  }
-  if (pm === "yarn") {
-    return ["dev", "--port", String(port)];
-  }
-  // npm and others
-  return ["run", "dev", "--", "--port", String(port)];
+  await initCommand({ yes: false });
+  console.log();
 }
