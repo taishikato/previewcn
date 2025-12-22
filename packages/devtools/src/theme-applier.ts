@@ -4,6 +4,7 @@ import { getColorPreset } from "./presets/colors";
 import { getFontPreset } from "./presets/fonts";
 
 const THEME_COLOR_STYLE_ID = "previewcn-devtools-theme-colors";
+const THEME_FONT_STYLE_ID = "previewcn-devtools-theme-font";
 
 export type ThemeConfig = {
   colorPreset: string | null;
@@ -68,6 +69,22 @@ export function applyColors(colorPresetName: string) {
   styleEl.textContent = `:root { ${lightCss} } .dark { ${darkCss} }`;
 }
 
+function getOrCreateFontStyleElement(): HTMLStyleElement {
+  const existing = document.getElementById(THEME_FONT_STYLE_ID);
+  if (existing instanceof HTMLStyleElement) {
+    return existing;
+  }
+
+  if (existing) {
+    existing.remove();
+  }
+
+  const styleEl = document.createElement("style");
+  styleEl.id = THEME_FONT_STYLE_ID;
+  document.head.appendChild(styleEl);
+  return styleEl;
+}
+
 // Apply font to document
 export function applyFont(fontId: string) {
   const fontPreset = getFontPreset(fontId);
@@ -91,10 +108,19 @@ export function applyFont(fontId: string) {
     document.head.appendChild(link);
   }
 
-  // Update CSS variables
-  const root = document.documentElement;
-  root.style.setProperty("--font-sans-override", fontFamily);
-  root.style.setProperty("--font-sans", fontFamily);
+  // Use multiple strategies to ensure font override works universally
+  // This covers various Tailwind v4 and next/font configurations
+  const styleEl = getOrCreateFontStyleElement();
+  styleEl.textContent = `
+    :root {
+      --font-sans: ${fontFamily} !important;
+      --font-sans-override: ${fontFamily} !important;
+      --font-geist-sans: ${fontFamily} !important;
+    }
+    html, body, .font-sans {
+      font-family: ${fontFamily} !important;
+    }
+  `;
 }
 
 // Apply full theme config
@@ -117,13 +143,14 @@ export function applyTheme(config: ThemeConfig) {
 }
 
 export function clearTheme() {
-  const styleEl = document.getElementById(THEME_COLOR_STYLE_ID);
-  if (styleEl) styleEl.remove();
+  const colorStyleEl = document.getElementById(THEME_COLOR_STYLE_ID);
+  if (colorStyleEl) colorStyleEl.remove();
+
+  const fontStyleEl = document.getElementById(THEME_FONT_STYLE_ID);
+  if (fontStyleEl) fontStyleEl.remove();
 
   const root = document.documentElement;
   root.style.removeProperty("--radius");
-  root.style.removeProperty("--font-sans-override");
-  root.style.removeProperty("--font-sans");
   root.style.removeProperty("color-scheme");
   root.classList.remove("light", "dark");
 }
