@@ -162,10 +162,9 @@ export async function initCommand(options: InitOptions) {
   console.log();
   logger.success("PreviewCN initialized successfully!");
   console.log();
-  logger.info("Next steps:");
-  console.log(`  1. Start your development server`);
+  logger.info("Next step:");
   console.log(
-    `  2. Run the PreviewCN editor: ${chalk.cyan("npx previewcn dev")}`
+    `  Run ${chalk.cyan("npx previewcn")} to start the dev server and editor together.`
   );
   console.log();
 }
