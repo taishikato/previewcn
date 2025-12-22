@@ -1,0 +1,298 @@
+/* PreviewCN Devtools Styles */
+/* Built with Tailwind CSS, scoped to .previewcn-* classes */
+
+@import "tailwindcss";
+
+/* ==========================================
+   Trigger Button
+   ========================================== */
+
+.previewcn-trigger {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  background: oklch(0.2 0.02 260);
+  color: oklch(0.95 0 0);
+  border: 1px solid oklch(0.4 0.02 260);
+  cursor: pointer;
+  box-shadow:
+    0 4px 12px oklch(0 0 0 / 40%),
+    0 0 0 1px oklch(1 0 0 / 5%);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.previewcn-trigger:hover {
+  background: oklch(0.3 0.02 260);
+  transform: scale(1.05);
+}
+
+.previewcn-trigger:active {
+  transform: scale(1);
+}
+
+.previewcn-trigger:focus-visible {
+  outline: 2px solid oklch(0.7 0.12 260);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   Backdrop & Panel Container
+   ========================================== */
+
+.previewcn-backdrop {
+  @apply fixed inset-0 z-[99998] flex items-end justify-end p-4;
+  background: oklch(0 0 0 / 30%);
+  backdrop-filter: blur(2px);
+  animation: previewcn-fade-in 0.15s ease-out;
+}
+
+.previewcn-panel {
+  @apply flex flex-col overflow-hidden rounded-xl shadow-2xl;
+  width: 320px;
+  max-height: calc(100vh - 32px);
+  background: oklch(0.18 0.015 260);
+  border: 1px solid oklch(0.3 0.02 260);
+  color: oklch(0.95 0 0);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 14px;
+  animation: previewcn-slide-up 0.2s ease-out;
+}
+
+/* ==========================================
+   Header
+   ========================================== */
+
+.previewcn-header {
+  @apply flex items-center justify-between px-4 py-3;
+  border-bottom: 1px solid oklch(0.3 0.02 260);
+}
+
+.previewcn-title {
+  @apply flex items-center gap-2;
+}
+
+.previewcn-logo {
+  @apply font-semibold tracking-tight;
+  font-size: 15px;
+}
+
+.previewcn-badge {
+  @apply rounded px-1.5 py-0.5 text-xs font-medium;
+  background: oklch(0.55 0.2 280);
+  color: oklch(1 0 0);
+}
+
+.previewcn-close-btn {
+  @apply flex items-center justify-center rounded-md p-1.5 transition-colors;
+  color: oklch(0.7 0 0);
+}
+
+.previewcn-close-btn:hover {
+  background: oklch(0.25 0.02 260);
+  color: oklch(0.95 0 0);
+}
+
+/* ==========================================
+   Content Area
+   ========================================== */
+
+.previewcn-content {
+  @apply flex-1 overflow-y-auto px-4 py-4;
+}
+
+.previewcn-section {
+  @apply mb-5;
+}
+
+.previewcn-section:last-child {
+  @apply mb-0;
+}
+
+.previewcn-label {
+  @apply mb-2 block text-xs font-medium tracking-wider uppercase;
+  color: oklch(0.65 0 0);
+}
+
+/* ==========================================
+   Color Picker
+   ========================================== */
+
+.previewcn-color-grid {
+  @apply grid gap-2;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.previewcn-color-swatch {
+  @apply aspect-square cursor-pointer rounded-md transition-all;
+  border: 2px solid transparent;
+}
+
+.previewcn-color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.previewcn-color-swatch--selected {
+  border-color: oklch(1 0 0);
+  box-shadow:
+    0 0 0 2px oklch(0.18 0.015 260),
+    0 0 0 4px oklch(1 0 0 / 50%);
+}
+
+/* ==========================================
+   Radius Selector
+   ========================================== */
+
+.previewcn-radius-grid {
+  @apply grid gap-2;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.previewcn-radius-btn {
+  @apply flex flex-col items-center gap-1.5 rounded-md px-2 py-2 transition-colors;
+  background: oklch(0.22 0.015 260);
+  border: 1px solid oklch(0.3 0.02 260);
+}
+
+.previewcn-radius-btn:hover {
+  background: oklch(0.28 0.02 260);
+}
+
+.previewcn-radius-btn--selected {
+  background: oklch(0.32 0.03 260);
+  border-color: oklch(0.5 0.1 260);
+}
+
+.previewcn-radius-preview {
+  @apply block;
+  width: 24px;
+  height: 16px;
+  background: oklch(0.5 0.15 260);
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.previewcn-radius-label {
+  @apply text-xs;
+  color: oklch(0.75 0 0);
+}
+
+/* ==========================================
+   Mode Toggle
+   ========================================== */
+
+.previewcn-mode-toggle {
+  @apply grid grid-cols-2 gap-2;
+}
+
+.previewcn-mode-btn {
+  @apply flex items-center justify-center gap-2 rounded-md px-3 py-2 transition-colors;
+  background: oklch(0.22 0.015 260);
+  border: 1px solid oklch(0.3 0.02 260);
+  font-size: 13px;
+}
+
+.previewcn-mode-btn:hover {
+  background: oklch(0.28 0.02 260);
+}
+
+.previewcn-mode-btn--selected {
+  background: oklch(0.32 0.03 260);
+  border-color: oklch(0.5 0.1 260);
+}
+
+/* ==========================================
+   Font Selector (Dropdown)
+   ========================================== */
+
+.previewcn-select-wrapper {
+  @apply relative;
+}
+
+.previewcn-select-trigger {
+  @apply flex w-full items-center justify-between rounded-md px-3 py-2 text-left transition-colors;
+  background: oklch(0.22 0.015 260);
+  border: 1px solid oklch(0.3 0.02 260);
+  font-size: 13px;
+}
+
+.previewcn-select-trigger:hover {
+  background: oklch(0.28 0.02 260);
+}
+
+.previewcn-select-dropdown {
+  @apply absolute top-full left-0 z-10 mt-1 w-full overflow-hidden rounded-md;
+  background: oklch(0.2 0.015 260);
+  border: 1px solid oklch(0.35 0.02 260);
+  box-shadow: 0 8px 24px oklch(0 0 0 / 40%);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.previewcn-select-option {
+  @apply w-full px-3 py-2 text-left transition-colors;
+  font-size: 13px;
+}
+
+.previewcn-select-option:hover {
+  background: oklch(0.28 0.02 260);
+}
+
+.previewcn-select-option--selected {
+  background: oklch(0.32 0.03 260);
+}
+
+/* ==========================================
+   Footer
+   ========================================== */
+
+.previewcn-footer {
+  @apply flex items-center justify-end px-4 py-3;
+  border-top: 1px solid oklch(0.3 0.02 260);
+}
+
+.previewcn-reset-btn {
+  @apply flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors;
+  color: oklch(0.7 0 0);
+}
+
+.previewcn-reset-btn:hover {
+  background: oklch(0.25 0.02 260);
+  color: oklch(0.95 0 0);
+}
+
+/* ==========================================
+   Animations
+   ========================================== */
+
+@keyframes previewcn-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes previewcn-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
