@@ -27,7 +27,7 @@ dist
 # misc
 .DS_Store
 *.pem
-PRD.md
+# PRD.md
 
 # debug
 npm-debug.log*
