@@ -25,6 +25,10 @@ program
   .description("Initialize PreviewCN in your Next.js project")
   .option("-y, --yes", "Skip confirmation prompts")
   .option("-f, --force", "Overwrite existing receiver file")
+  .option(
+    "-d, --devtools",
+    "Use embedded devtools mode (no iframe, single dev server)"
+  )
   .action(initCommand);
 
 program
