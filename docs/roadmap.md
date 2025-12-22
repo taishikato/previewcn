@@ -116,6 +116,11 @@ This is slow, error-prone, and discourages adoption.
 #### Goal
 Make setup a **single command** and reduce the “human editing surface area” to near-zero.
 
+Concretely, the recommended happy path should be:
+
+- `npx previewcn` (no subcommand) starts everything needed for local preview.
+- File edits are explicit and consented to (prompted), since `init` modifies user source files.
+
 #### Proposed packaging
 Single CLI package (shadcn/ui-style file generation, no external dependencies):
 
@@ -124,6 +129,11 @@ Single CLI package (shadcn/ui-style file generation, no external dependencies):
   - Starts the local editor UI.
 
 #### CLI commands (proposal)
+- `npx previewcn` (recommended default)
+  - If PreviewCN is already initialized → start the target dev server + start the editor.
+  - If PreviewCN is not initialized → prompt “Run init now?” (Yes: run `init` then continue, No: print next steps and exit).
+  - Start the target dev server on an available port (e.g. 3000, 3001, ...).
+  - Pass the resolved target URL to the editor via `--target` / `PREVIEWCN_TARGET_URL` so the editor loads it by default.
 - `npx previewcn init`
   - Detect `app/layout.tsx` (App Router).
   - Generate `components/previewcn-theme-receiver.tsx` (no npm package install).
@@ -137,11 +147,13 @@ Single CLI package (shadcn/ui-style file generation, no external dependencies):
 
 #### Definition of Done
 - A brand-new App Router app can be made "PreviewCN-ready" with `npx previewcn init`.
+- Running `npx previewcn` in a fresh App Router app prompts to initialize, then launches the editor with the correct target URL already loaded.
 - No receiver code copy/paste is required.
 - No theme is applied automatically (first apply remains user-triggered).
 
 #### Status
-- Implemented ✅
+- Implemented ✅ (init/dev/doctor)
+- Planned: default `npx previewcn` command (prompted init + start target dev + start editor)
 
 #### Implementation notes (current architecture)
 - **Monorepo structure**: Restructured to Turborepo + pnpm workspaces monorepo.
@@ -155,11 +167,14 @@ Single CLI package (shadcn/ui-style file generation, no external dependencies):
   - Users own their code and can customize if needed.
 - **previewcn CLI**:
   - Built with commander.js + chalk + ora + prompts.
-  - Commands: `init`, `dev`, `doctor`.
+  - Commands: `init`, `dev`, `doctor` (+ planned default `previewcn` entry).
   - `init`: Detects Next.js App Router, generates receiver file, modifies `app/layout.tsx`.
   - `init --force`: Regenerates receiver file (useful for updates).
   - `dev`: Starts bundled editor server from `editor/` directory.
   - `doctor`: Diagnoses setup issues (project type, receiver file, layout integration).
+- **Production safety**:
+  - `init` inserts the receiver behind a `process.env.NODE_ENV === "development"` guard in `app/layout.tsx`.
+  - The generated receiver component is also defensive and becomes a no-op in production even if accidentally rendered.
 - **Build pipeline**: Turborepo manages build order (`apps/web` → `packages/cli`).
 - **Single package to publish**: Only `previewcn` CLI needs to be published to npm.
 
