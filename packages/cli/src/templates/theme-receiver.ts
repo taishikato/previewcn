@@ -109,6 +109,12 @@ function sendToParent(message: PreviewCNMessage) {
  */
 export function PreviewCNThemeReceiver() {
   useEffect(() => {
+    // This component is intended for local development only.
+    // Even if it accidentally ships to production, it should be a no-op.
+    if (process.env.NODE_ENV !== "development") {
+      return;
+    }
+
     sendToParent({ type: "PREVIEWCN_READY" });
 
     const handler = (event: MessageEvent<PreviewCNMessage>) => {
