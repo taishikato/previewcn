@@ -9,6 +9,7 @@ import {
   THEME_RECEIVER_TEMPLATE,
 } from "../templates/theme-receiver";
 import { detectNextJsProject, findAppLayout } from "../utils/detect-project";
+import { findComponentsDir } from "../utils/find-components-dir";
 import { logger } from "../utils/logger";
 import { addThemeReceiverToLayout } from "../utils/modify-layout";
 
@@ -16,29 +17,6 @@ type InitOptions = {
   yes?: boolean;
   force?: boolean;
 };
-
-async function findComponentsDir(cwd: string): Promise<string> {
-  // Check common component directory locations
-  const candidates = [
-    path.join(cwd, "components"),
-    path.join(cwd, "src", "components"),
-    path.join(cwd, "app", "components"),
-  ];
-
-  for (const dir of candidates) {
-    try {
-      const stat = await fs.stat(dir);
-      if (stat.isDirectory()) {
-        return dir;
-      }
-    } catch {
-      // Directory doesn't exist, continue
-    }
-  }
-
-  // Default to components/ in project root
-  return path.join(cwd, "components");
-}
 
 export async function initCommand(options: InitOptions) {
   logger.info("Initializing PreviewCN...\n");
