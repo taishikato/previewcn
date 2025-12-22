@@ -1,5 +1,6 @@
 const STORAGE_KEY = "theme-editor-target-url";
-export const DEFAULT_URL = "http://localhost:3000/preview";
+// Default to /preview so the editor still works standalone (built-in preview page)
+export const DEFAULT_URL = "/preview";
 
 export function getStoredUrl(): string {
   if (typeof window === "undefined") return DEFAULT_URL;
