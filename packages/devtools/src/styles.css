@@ -15,8 +15,8 @@
   --pcn-muted-strong: oklch(0.62 0 0);
   --pcn-accent: oklch(0.72 0.15 265);
   --pcn-accent-soft: oklch(0.72 0.15 265 / 0.18);
-  --pcn-shadow: 0 24px 60px oklch(0 0 0 / 0.6),
-    0 1px 0 oklch(1 0 0 / 0.04) inset;
+  --pcn-shadow:
+    0 24px 60px oklch(0 0 0 / 0.6), 0 1px 0 oklch(1 0 0 / 0.04) inset;
   --pcn-shadow-sm: 0 10px 26px oklch(0 0 0 / 0.45);
   --pcn-inset: inset 0 1px 0 oklch(1 0 0 / 0.04);
   --pcn-radius: 12px;
@@ -49,10 +49,10 @@
   letter-spacing: 0.01em;
   background:
     radial-gradient(
-        120% 140% at 0% 0%,
-        oklch(0.25 0.05 265 / 0.25),
-        transparent 45%
-      ),
+      120% 140% at 0% 0%,
+      oklch(0.25 0.05 265 / 0.25),
+      transparent 45%
+    ),
     linear-gradient(180deg, var(--pcn-bg-elevated), var(--pcn-bg));
   border-left: 1px solid var(--pcn-border);
   box-shadow: var(--pcn-shadow);
@@ -86,7 +86,6 @@
   font-weight: 500;
   letter-spacing: 0.01em;
   transition:
-    transform 0.16s ease,
     border-color 0.16s ease,
     background-color 0.16s ease,
     box-shadow 0.16s ease;
@@ -97,7 +96,6 @@
 .previewcn-control:hover {
   background: var(--pcn-surface-strong);
   border-color: var(--pcn-border-strong);
-  transform: translateY(-1px);
 }
 
 .previewcn-control:focus-visible {
@@ -124,7 +122,6 @@
   background: var(--pcn-surface);
   border-color: var(--pcn-border);
   color: var(--pcn-text);
-  transform: translateY(0);
 }
 
 .previewcn-icon-btn {
@@ -146,7 +143,9 @@
   text-align: left;
   color: var(--pcn-text);
   background: transparent;
-  transition: background-color 0.14s ease, border-color 0.14s ease;
+  transition:
+    background-color 0.14s ease,
+    border-color 0.14s ease;
   cursor: pointer;
 }
 
@@ -181,32 +180,25 @@
   border-radius: 999px;
   border: 1px solid var(--pcn-border-strong);
   color: var(--pcn-text);
-  background:
-    linear-gradient(
-      180deg,
-      oklch(0.23 0.03 260) 0%,
-      oklch(0.16 0.02 260) 100%
-    );
+  background: linear-gradient(
+    180deg,
+    oklch(0.23 0.03 260) 0%,
+    oklch(0.16 0.02 260) 100%
+  );
   box-shadow:
     0 16px 32px oklch(0 0 0 / 0.45),
     0 0 0 1px oklch(1 0 0 / 0.04) inset;
   transition:
-    transform 0.18s ease,
     border-color 0.18s ease,
     background 0.18s ease,
     box-shadow 0.18s ease;
 }
 
 .previewcn-trigger:hover {
-  transform: translateY(-2px);
   border-color: oklch(1 0 0 / 0.28);
   box-shadow:
     0 20px 40px oklch(0 0 0 / 0.5),
     0 0 0 1px oklch(1 0 0 / 0.06) inset;
-}
-
-.previewcn-trigger:active {
-  transform: translateY(0);
 }
 
 .previewcn-trigger:focus-visible {
@@ -338,13 +330,11 @@
   box-shadow: var(--pcn-inset);
   cursor: pointer;
   transition:
-    transform 0.16s ease,
     border-color 0.16s ease,
     box-shadow 0.16s ease;
 }
 
 .previewcn-color-swatch:hover {
-  transform: translateY(-2px) scale(1.02);
   border-color: var(--pcn-border-strong);
 }
 
