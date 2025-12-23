@@ -74,8 +74,7 @@ export default function Panel({ onClose }: PanelProps) {
       {/* Header */}
       <div className="previewcn-header">
         <div className="previewcn-title">
-          <span className="previewcn-logo">PreviewCN</span>
-          <span className="previewcn-badge">DEV</span>
+          <span className="previewcn-logo">previewcn</span>
         </div>
         <button
           onClick={onClose}
