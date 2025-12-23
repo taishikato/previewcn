@@ -34,7 +34,9 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
   const displayLabel = selectedFont?.label ?? "Select font...";
 
   return (
-    <div className="previewcn-section previewcn-surface">
+    <div
+      className={`previewcn-section previewcn-surface ${isOpen ? "previewcn-section--overlay" : ""}`}
+    >
       <label className="previewcn-label">Font</label>
       <div className="previewcn-select-wrapper">
         <button

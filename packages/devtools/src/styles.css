@@ -289,6 +289,11 @@
   display: grid;
   gap: 10px;
   animation: previewcn-rise 0.32s ease both;
+  z-index: 0;
+}
+
+.previewcn-section--overlay {
+  z-index: 30;
 }
 
 .previewcn-section:nth-child(1) {
@@ -411,6 +416,7 @@
 
 .previewcn-select-wrapper {
   position: relative;
+  z-index: 1;
 }
 
 .previewcn-select-trigger {
@@ -422,7 +428,7 @@
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  z-index: 10;
+  z-index: 20;
   width: 100%;
   padding: 6px;
   border-radius: var(--pcn-radius);
