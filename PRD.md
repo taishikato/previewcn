@@ -15,11 +15,12 @@ When customizing shadcn/ui themes, developers face these challenges:
 
 ## Solution
 
-A web-based theme editor that:
-- Runs locally alongside the developer's Next.js app
-- Embeds the developer's app in an iframe
-- Sends theme changes in real-time via `postMessage`
+An embedded devtools panel that:
+- Installs as a dev dependency in the developer's Next.js app
+- Renders a floating theme editor panel directly in the app
+- Applies theme changes in real-time via direct DOM manipulation
 - Provides instant visual feedback on actual application components
+- Only renders in development mode (tree-shaken in production)
 
 ## Target Users
 
@@ -30,30 +31,37 @@ A web-based theme editor that:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Theme Editor (localhost:3000)                              │
-│  ┌──────────────────┐  ┌─────────────────────────────────┐ │
-│  │ Editor Panel     │  │ Preview Panel (iframe)          │ │
-│  │                  │  │                                 │ │
-│  │ • Color Presets  │  │  ┌─────────────────────────┐   │ │
-│  │ • Radius         │  │  │ User's App              │   │ │
-│  │ • Mode (L/D)     │──┼─▶│ (localhost:3001)        │   │ │
-│  │ • Export         │  │  │                         │   │ │
-│  │                  │  │  │ + ThemeReceiver         │   │ │
-│  └──────────────────┘  │  └─────────────────────────┘   │ │
-│                        └─────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              │ postMessage({ type: 'APPLY_THEME', cssVars })
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│  User's Next.js App (localhost:3001)                        │
+│  User's Next.js App (localhost:3000)                        │
+│                                                             │
 │  ┌─────────────────────────────────────────────────────┐   │
-│  │ <ThemeReceiver />                                    │   │
-│  │ - Listens for postMessage events                     │   │
-│  │ - Updates CSS variables on document.documentElement  │   │
+│  │ Application Content                                  │   │
+│  │                                                     │   │
+│  │  ┌─────────────────────────────────────────────┐   │   │
+│  │  │ User's Components                           │   │   │
+│  │  │ (with shadcn/ui)                            │   │   │
+│  │  └─────────────────────────────────────────────┘   │   │
+│  │                                                     │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ PreviewcnDevtools (dev only)                        │   │
+│  │ ┌─────┐  ┌─────────────────────────────────────┐   │   │
+│  │ │ 🎨  │  │ Theme Editor Panel                  │   │   │
+│  │ │     │  │ • Color Presets                     │   │   │
+│  │ │ FAB │  │ • Radius                            │   │   │
+│  │ │     │  │ • Mode (Light/Dark)                 │   │   │
+│  │ └─────┘  │ • Font                              │   │   │
+│  │          │ • Export                            │   │   │
+│  │          └─────────────────────────────────────┘   │   │
 │  └─────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+### Key Components
+
+- **Trigger**: Floating action button (FAB) in the corner of the screen
+- **Panel**: Slide-out panel with theme editing controls
+- **Theme Applier**: Direct DOM manipulation to apply CSS variables
 
 ## Features
 
@@ -72,23 +80,23 @@ A web-based theme editor that:
 
 #### 1.3 Light/Dark Mode
 - Toggle between light and dark theme variants
-- Sends appropriate CSS variables based on mode
-- Independent of the target app's theme state
+- Applies appropriate CSS variables based on mode
+- Syncs with the app's existing theme state
 
 #### 1.4 Real-time Preview
-- iframe embedding of target application
-- postMessage communication for theme updates
-- Instant visual feedback (<50ms latency)
+- Direct DOM manipulation for instant updates
+- No iframe or postMessage overhead
+- Instant visual feedback (<16ms latency)
 
 #### 1.5 CSS Export
 - One-click copy of generated CSS variables
 - Output format compatible with shadcn/ui globals.css
 - Includes both `:root` and `.dark` selectors
 
-#### 1.6 ThemeReceiver Component
+#### 1.6 PreviewcnDevtools Component
 - Lightweight React component for target apps
 - Development-only inclusion (tree-shaken in production)
-- Simple installation: `npm install @shadcn-theme-editor/receiver`
+- Simple installation: `npx previewcn init`
 
 ### Phase 2: Enhanced Customization
 
@@ -114,25 +122,12 @@ A web-based theme editor that:
 
 ### Phase 3: Workflow Integration
 
-#### 3.1 URL Configuration
-- Dynamic target URL input
-- Support for different ports/paths
-- URL persistence in localStorage
-
-#### 3.2 Theme Presets Management
+#### 3.1 Theme Presets Management
 - Save custom themes locally
 - Import/export theme configurations
 - Share themes via URL parameters
 
-#### 3.3 CLI Tool
-```bash
-npx shadcn-theme-editor --target http://localhost:3001
-```
-- Auto-detect Next.js projects
-- Suggest ThemeReceiver installation
-- Open browser automatically
-
-#### 3.4 VS Code Extension
+#### 3.2 VS Code Extension
 - Integrated theme editing in IDE
 - Side-by-side preview
 - Direct file modification option
@@ -195,265 +190,52 @@ npx shadcn-theme-editor --target http://localhost:3001
 }
 ```
 
-### postMessage Protocol
+### Theme Applier
 
-**Note on initial load behavior**
-
-- The editor **does not automatically send the current ThemeConfig on iframe initial load**.
-- Theme updates are sent **only when the user changes a setting** (color preset, radius, mode, font, etc.).
-- This keeps the embedded app's initial render and existing styling as-is, and avoids forcing a theme onto pages that haven't opted into receiving updates yet.
-
-**Message Types**
-
-The protocol uses granular message types for efficient updates. Each message type targets a specific aspect of the theme, allowing for optimized updates without sending unnecessary data.
+The theme applier directly manipulates the DOM to apply theme changes:
 
 ```typescript
-type ApplyThemeMessage = {
-  type: "APPLY_THEME";
-  cssVars: Record<string, string>;
-  darkMode?: boolean;
-};
+function applyTheme(cssVars: Record<string, string>, darkMode: boolean) {
+  const root = document.documentElement;
 
-type ToggleDarkModeMessage = {
-  type: "TOGGLE_DARK_MODE";
-  darkMode: boolean;
-};
+  // Apply CSS variables
+  Object.entries(cssVars).forEach(([key, value]) => {
+    root.style.setProperty(`--${key}`, value);
+  });
 
-type UpdateRadiusMessage = {
-  type: "UPDATE_RADIUS";
-  radius: string;
-};
-
-type UpdateColorsMessage = {
-  type: "UPDATE_COLORS";
-  cssVars: { light: Record<string, string>; dark: Record<string, string> };
-};
-
-type UpdateFontMessage = {
-  type: "UPDATE_FONT";
-  fontId: string;
-  fontFamily: string;
-  googleFontsUrl: string;
-};
-
-type ThemeMessage =
-  | ApplyThemeMessage
-  | ToggleDarkModeMessage
-  | UpdateRadiusMessage
-  | UpdateColorsMessage
-  | UpdateFontMessage;
-```
-
-**Message Usage**
-
-- **`APPLY_THEME`**: Used for initial theme application or when multiple properties change simultaneously. Includes all CSS variables and optional dark mode flag.
-- **`TOGGLE_DARK_MODE`**: Sent when only the dark/light mode toggle changes. Updates the `.dark` class and `color-scheme` style property.
-- **`UPDATE_RADIUS`**: Sent when only the border radius changes. Updates the `--radius` CSS variable.
-- **`UPDATE_COLORS`**: Sent when only the color preset changes. Updates color variables for both light and dark modes using a dynamic `<style>` element.
-- **`UPDATE_FONT`**: Sent when only the font selection changes. Dynamically loads the Google Font and updates `--font-sans-override` and `--font-sans` CSS variables.
-
-**Example Payloads**
-
-```typescript
-// Full theme application
-{
-  type: "APPLY_THEME",
-  cssVars: {
-    "primary": "oklch(0.546 0.245 262.881)",
-    "primary-foreground": "oklch(0.985 0 0)",
-    "radius": "0.5rem",
-    // ... other variables
-  },
-  darkMode: false
-}
-
-// Dark mode toggle only
-{
-  type: "TOGGLE_DARK_MODE",
-  darkMode: true
-}
-
-// Radius update only
-{
-  type: "UPDATE_RADIUS",
-  radius: "0.625rem"
-}
-
-// Color preset change only
-{
-  type: "UPDATE_COLORS",
-  cssVars: {
-    light: {
-      "primary": "oklch(0.488 0.243 264.376)",
-      "primary-foreground": "oklch(0.97 0.014 254.604)",
-      // ... other color variables
-    },
-    dark: {
-      "primary": "oklch(0.42 0.18 266)",
-      "primary-foreground": "oklch(0.97 0.014 254.604)",
-      // ... other color variables
-    }
+  // Apply dark mode class
+  if (darkMode) {
+    root.classList.remove("light");
+    root.classList.add("dark");
+  } else {
+    root.classList.remove("dark");
+    root.classList.add("light");
   }
-}
 
-// Font change only
-{
-  type: "UPDATE_FONT",
-  fontId: "inter",
-  fontFamily: '"Inter", sans-serif',
-  googleFontsUrl: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+  root.style.colorScheme = darkMode ? "dark" : "light";
 }
 ```
 
-### ThemeReceiver Component
-
-The ThemeReceiver component handles all message types and applies updates efficiently:
+### PreviewcnDevtools Component
 
 ```tsx
 "use client";
 
-import { useEffect } from "react";
+import { lazy, Suspense } from "react";
 
-type ApplyThemeMessage = {
-  type: "APPLY_THEME";
-  cssVars: Record<string, string>;
-  darkMode?: boolean;
-};
+const DevtoolsPanel = lazy(() => import("./panel"));
 
-type ToggleDarkModeMessage = {
-  type: "TOGGLE_DARK_MODE";
-  darkMode: boolean;
-};
-
-type UpdateRadiusMessage = {
-  type: "UPDATE_RADIUS";
-  radius: string;
-};
-
-type UpdateColorsMessage = {
-  type: "UPDATE_COLORS";
-  cssVars: { light: Record<string, string>; dark: Record<string, string> };
-};
-
-type UpdateFontMessage = {
-  type: "UPDATE_FONT";
-  fontId: string;
-  fontFamily: string;
-  googleFontsUrl: string;
-};
-
-type ThemeMessage =
-  | ApplyThemeMessage
-  | ToggleDarkModeMessage
-  | UpdateRadiusMessage
-  | UpdateColorsMessage
-  | UpdateFontMessage;
-
-const THEME_COLOR_STYLE_ID = "previewcn-theme-colors";
-
-function getOrCreateThemeColorStyleElement(): HTMLStyleElement {
-  const existing = document.getElementById(THEME_COLOR_STYLE_ID);
-  if (existing instanceof HTMLStyleElement) {
-    return existing;
+export function PreviewcnDevtools() {
+  // Only render in development
+  if (process.env.NODE_ENV !== "development") {
+    return null;
   }
 
-  if (existing) {
-    existing.remove();
-  }
-
-  const styleEl = document.createElement("style");
-  styleEl.id = THEME_COLOR_STYLE_ID;
-  document.head.appendChild(styleEl);
-  return styleEl;
-}
-
-function serializeCssVars(cssVars: Record<string, string>): string {
-  return Object.entries(cssVars)
-    .map(([key, value]) => `--${key}: ${value};`)
-    .join(" ");
-}
-
-export function ThemeReceiver() {
-  useEffect(() => {
-    const handler = (event: MessageEvent<ThemeMessage>) => {
-      const root = document.documentElement;
-
-      if (event.data?.type === "APPLY_THEME") {
-        // Apply CSS variables
-        Object.entries(event.data.cssVars).forEach(([key, value]) => {
-          root.style.setProperty(`--${key}`, value);
-        });
-
-        // Apply dark mode class based on the message
-        if (event.data.darkMode !== undefined) {
-          if (event.data.darkMode) {
-            root.classList.add("dark");
-          } else {
-            root.classList.remove("dark");
-          }
-        }
-      }
-
-      if (event.data?.type === "TOGGLE_DARK_MODE") {
-        // Toggle class names
-        if (event.data.darkMode) {
-          root.classList.remove("light");
-          root.classList.add("dark");
-        } else {
-          root.classList.remove("dark");
-          root.classList.add("light");
-        }
-
-        // Set color-scheme style
-        root.style.colorScheme = event.data.darkMode ? "dark" : "light";
-      }
-
-      if (event.data?.type === "UPDATE_RADIUS") {
-        root.style.setProperty("--radius", event.data.radius);
-      }
-
-      if (event.data?.type === "UPDATE_COLORS") {
-        const { light, dark } = event.data.cssVars;
-        const styleEl = getOrCreateThemeColorStyleElement();
-
-        // Generate CSS for both modes
-        const lightCss = serializeCssVars(light);
-        const darkCss = serializeCssVars(dark);
-
-        styleEl.textContent = `:root { ${lightCss} } .dark { ${darkCss} }`;
-      }
-
-      if (event.data?.type === "UPDATE_FONT") {
-        const { fontId, fontFamily, googleFontsUrl } = event.data;
-
-        // Validate Google Fonts URL to prevent XSS attacks
-        if (!googleFontsUrl.startsWith("https://fonts.googleapis.com/")) {
-          console.warn("Invalid font URL");
-          return;
-        }
-
-        // Inject Google Fonts link if not already present
-        const linkId = `previewcn-font-${fontId}`;
-        if (!document.getElementById(linkId)) {
-          const link = document.createElement("link");
-          link.id = linkId;
-          link.rel = "stylesheet";
-          link.href = googleFontsUrl;
-          document.head.appendChild(link);
-        }
-
-        // Update CSS variable (use override variable for Tailwind v4 compatibility)
-        root.style.setProperty("--font-sans-override", fontFamily);
-        // Also set --font-sans for external sites that don't use the override pattern
-        root.style.setProperty("--font-sans", fontFamily);
-      }
-    };
-
-    window.addEventListener("message", handler);
-    return () => window.removeEventListener("message", handler);
-  }, []);
-
-  return null;
+  return (
+    <Suspense fallback={null}>
+      <DevtoolsPanel />
+    </Suspense>
+  );
 }
 ```
 
@@ -461,41 +243,67 @@ export function ThemeReceiver() {
 
 ### Installation Flow
 
-1. User installs theme editor: `npm install -D shadcn-theme-editor`
-2. Add ThemeReceiver to app layout (dev only)
-3. Run theme editor: `npx shadcn-theme-editor`
-4. Editor opens at localhost:4000, shows user's app in iframe
-5. User customizes theme, sees changes in real-time
-6. User exports CSS and updates globals.css
+```bash
+# 1. Initialize PreviewCN in your Next.js project
+npx previewcn init
+
+# This will:
+# - Install @previewcn/devtools as a dev dependency
+# - Add PreviewcnDevtools to your app layout
+
+# 2. Start your dev server
+pnpm dev
+
+# 3. Click the theme palette icon in the bottom-right corner
+# 4. Customize theme, see changes in real-time
+# 5. Export CSS and update globals.css
+```
+
+### CLI Commands
+
+```bash
+# Initialize devtools (default command)
+npx previewcn
+
+# Or explicitly
+npx previewcn init
+
+# Check setup status
+npx previewcn doctor
+```
 
 ### Editor Interface
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│ shadcn Theme Editor                                    [localhost]  │
-├──────────────────────┬──────────────────────────────────────────────┤
-│                      │ ┌──────────────────────────────────────────┐ │
-│  Color               │ │ ● ● ●                      Preview       │ │
-│  ┌──┐ ┌──┐ ┌──┐     │ ├──────────────────────────────────────────┤ │
-│  │  │ │  │ │  │ ... │ │                                          │ │
-│  └──┘ └──┘ └──┘     │ │                                          │ │
-│                      │ │         [ User's Application ]           │ │
-│  Radius              │ │                                          │ │
-│  ┌────┐ ┌────┐ ...  │ │                                          │ │
-│  │None│ │ SM │      │ │                                          │ │
-│  └────┘ └────┘      │ │                                          │ │
-│                      │ │                                          │ │
-│  Mode                │ │                                          │ │
-│  ┌─────┐ ┌─────┐    │ │                                          │ │
-│  │Light│ │Dark │    │ │                                          │ │
-│  └─────┘ └─────┘    │ │                                          │ │
-│                      │ │                                          │ │
-│  Export              │ └──────────────────────────────────────────┘ │
-│  ┌─────────────────┐ │                                              │
-│  │ Copy CSS Vars   │ │                                              │
-│  └─────────────────┘ │                                              │
-│                      │                                              │
-└──────────────────────┴──────────────────────────────────────────────┘
+│ Your Application                                                     │
+│                                                                      │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │                                                                │ │
+│  │                    [ Application Content ]                     │ │
+│  │                                                                │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│                                              ┌────────────────────┐ │
+│                                              │  Color             │ │
+│                                              │  ┌──┐ ┌──┐ ┌──┐   │ │
+│                                              │  │  │ │  │ │  │   │ │
+│                                              │  └──┘ └──┘ └──┘   │ │
+│                                              │                    │ │
+│                                              │  Radius            │ │
+│                                              │  ○ None  ○ SM     │ │
+│                                              │  ○ MD    ○ LG     │ │
+│                                              │                    │ │
+│                                              │  Mode              │ │
+│                                              │  ☀️ Light  🌙 Dark │ │
+│                                              │                    │ │
+│                                              │  Font              │ │
+│                                              │  [Inter      ▼]   │ │
+│                                              │                    │ │
+│                                       ┌──┐   │  [Copy CSS]        │ │
+│                                       │🎨│   └────────────────────┘ │
+│                                       └──┘                          │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ## Success Metrics
@@ -508,10 +316,9 @@ export function ThemeReceiver() {
 ## Constraints & Considerations
 
 ### Security
-- postMessage origin validation in production receiver
-- No sensitive data transmitted
-- iframe sandbox attributes where appropriate
-- Font URL validation: Google Fonts URLs are validated to ensure they originate from `https://fonts.googleapis.com/` before being injected into the page, preventing XSS attacks from malicious font URLs
+- Development-only component (not included in production builds)
+- No external network requests for core functionality
+- Font URL validation: Google Fonts URLs are validated to ensure they originate from `https://fonts.googleapis.com/` before being injected
 
 ### Browser Compatibility
 - Modern browsers only (Chrome, Firefox, Safari, Edge)
@@ -519,18 +326,38 @@ export function ThemeReceiver() {
 - CSS OKLCH color space support (fallback for older browsers)
 
 ### Performance
-- Theme updates should be <50ms
-- Minimal bundle size for ThemeReceiver (<2KB)
-- No runtime dependencies in receiver component
+- Theme updates should be <16ms (single frame)
+- Minimal bundle size for devtools (<20KB gzipped)
+- Lazy-loaded panel component
+- No runtime overhead in production
 
-## Timeline
+## Package Structure
 
-| Phase | Features | Duration |
-|-------|----------|----------|
-| Phase 1 | Core Theme Editing (MVP) | 2-3 weeks |
-| Phase 2 | Enhanced Customization | 3-4 weeks |
-| Phase 3 | Workflow Integration | 4-5 weeks |
-| Phase 4 | Advanced Features | 6+ weeks |
+```
+packages/
+├── cli/                    # CLI tool (previewcn)
+│   └── src/
+│       ├── commands/
+│       │   ├── init.ts     # Initialize devtools
+│       │   └── doctor.ts   # Check setup status
+│       └── utils/
+│
+└── devtools/               # Devtools component (@previewcn/devtools)
+    └── src/
+        ├── devtools.tsx    # Main component
+        ├── trigger.tsx     # FAB trigger button
+        ├── panel/          # Editor panel
+        │   ├── index.tsx
+        │   ├── color-picker.tsx
+        │   ├── radius-selector.tsx
+        │   ├── font-selector.tsx
+        │   └── mode-toggle.tsx
+        ├── theme-applier.ts
+        └── presets/
+            ├── colors.ts
+            ├── fonts.ts
+            └── radius.ts
+```
 
 ## References
 
@@ -543,5 +370,4 @@ export function ThemeReceiver() {
 
 1. Should we support frameworks other than Next.js (Remix, Astro, etc.)?
 2. How to handle apps with existing theme provider wrappers?
-3. Should the receiver component auto-detect editor presence?
-4. Cloud-hosted version vs local-only?
+3. Cloud-hosted version for sharing themes?
