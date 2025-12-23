@@ -46,26 +46,28 @@
 }
 
 /* ==========================================
-   Backdrop & Panel Container
+   Backdrop & Sidebar Container
    ========================================== */
 
 .previewcn-backdrop {
-  @apply fixed inset-0 z-[99998] flex items-end justify-end p-4;
+  @apply fixed inset-0 z-[99998];
+  /* Transparent backdrop for click-outside detection */
 }
 
 .previewcn-panel {
-  @apply flex flex-col overflow-hidden rounded-xl shadow-2xl;
+  @apply fixed top-0 right-0 flex flex-col overflow-hidden shadow-2xl;
   width: 320px;
-  max-height: calc(100vh - 32px);
+  height: 100vh;
+  height: 100dvh;
   background: oklch(0.18 0.015 260);
-  border: 1px solid oklch(0.3 0.02 260);
+  border-left: 1px solid oklch(0.3 0.02 260);
   color: oklch(0.95 0 0);
   font-family:
     system-ui,
     -apple-system,
     sans-serif;
   font-size: 14px;
-  animation: previewcn-slide-up 0.2s ease-out;
+  animation: previewcn-slide-in-right 0.25s ease-out;
 }
 
 /* ==========================================
@@ -291,5 +293,14 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes previewcn-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
   }
 }

@@ -282,6 +282,4 @@ Offer an optional “embedded” workflow where the PreviewCN editor UI is avail
 - State: Persisted in localStorage; applied only after user interaction (opening the panel / changing settings)
 
 #### Status
-- ✅ Implemented
-
-
+- ✅ In review

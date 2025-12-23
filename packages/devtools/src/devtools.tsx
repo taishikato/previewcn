@@ -15,7 +15,7 @@ function DevtoolsInner() {
 
   return (
     <>
-      <Trigger onClick={() => setOpen(true)} />
+      {!open && <Trigger onClick={() => setOpen(true)} />}
       {open && (
         <Suspense fallback={null}>
           <Panel onClose={() => setOpen(false)} />
