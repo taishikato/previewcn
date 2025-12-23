@@ -201,5 +201,3 @@ export function applyTheme(config: ThemeConfig) {
 | File | Action ||------|--------|| `packages/devtools/` | **Create** - 新規パッケージ || `packages/cli/src/commands/init.ts` | **Modify** - `--devtools` オプション追加 || `packages/cli/src/utils/modify-layout.ts` | **Modify** - devtools追加ロジック || `pnpm-workspace.yaml` | Already includes `packages/*` || `turbo.json` | **Modify** - devtools build追加 |
 
 ## Migration Path
-
-1. **Phase 1**: `@previewcn/devtools` パッケージ作成、基本UI実装
