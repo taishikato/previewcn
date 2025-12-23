@@ -1,19 +1,10 @@
-import fs from "fs/promises";
 import path from "path";
 import ora from "ora";
 
-import {
-  THEME_RECEIVER_FILENAME,
-  THEME_RECEIVER_TEMPLATE,
-} from "../templates/theme-receiver";
 import { confirm, cyan } from "../utils/cli-ui";
 import { detectNextJsProject, findAppLayout } from "../utils/detect-project";
-import { findComponentsDir } from "../utils/find-components-dir";
 import { logger } from "../utils/logger";
-import {
-  addDevtoolsToLayout,
-  addThemeReceiverToLayout,
-} from "../utils/modify-layout";
+import { addDevtoolsToLayout } from "../utils/modify-layout";
 import {
   detectPackageManager,
   installDevDependency,
@@ -21,8 +12,6 @@ import {
 
 type InitOptions = {
   yes?: boolean;
-  force?: boolean;
-  devtools?: boolean;
 };
 
 export async function initCommand(options: InitOptions) {
@@ -61,120 +50,8 @@ export async function initCommand(options: InitOptions) {
     `Found layout at: ${cyan(path.relative(process.cwd(), layoutPath))}`
   );
 
-  // Devtools mode: install devtools package and patch layout only.
-  if (options.devtools) {
-    await initDevtoolsMode({ layoutPath, yes: options.yes });
-    return;
-  }
-
-  await initReceiverMode({
-    layoutPath,
-    yes: options.yes,
-    force: options.force,
-  });
-}
-
-type InitReceiverModeArgs = {
-  layoutPath: string;
-  yes?: boolean;
-  force?: boolean;
-};
-
-async function initReceiverMode({
-  layoutPath,
-  yes,
-  force,
-}: InitReceiverModeArgs) {
-  // Step 3: Find components directory
-  const componentsDir = await findComponentsDir(process.cwd());
-  const receiverPath = path.join(componentsDir, THEME_RECEIVER_FILENAME);
-  const relativeReceiverPath = path.relative(process.cwd(), receiverPath);
-
-  // Check if receiver already exists
-  let receiverExists = false;
-  try {
-    await fs.access(receiverPath);
-    receiverExists = true;
-  } catch {
-    // File doesn't exist
-  }
-
-  if (receiverExists && !force) {
-    logger.info(`Receiver already exists at: ${cyan(relativeReceiverPath)}`);
-    const overwrite = await confirm("Overwrite existing receiver file?", false);
-    if (!overwrite) {
-      logger.info("Skipping receiver file generation.");
-    } else {
-      receiverExists = false; // Mark for regeneration
-    }
-  }
-
-  // Step 4: Confirmation
-  if (!yes && !receiverExists) {
-    const proceed = await confirm(
-      `This will create ${cyan(relativeReceiverPath)} and modify your layout. Continue?`,
-      true
-    );
-    if (!proceed) {
-      logger.info("Aborted.");
-      process.exit(0);
-    }
-  }
-
-  // Step 5: Generate receiver file
-  if (!receiverExists || force) {
-    const generateSpinner = ora(`Creating ${relativeReceiverPath}...`).start();
-
-    try {
-      // Ensure components directory exists
-      await fs.mkdir(componentsDir, { recursive: true });
-
-      // Write the receiver file
-      await fs.writeFile(receiverPath, THEME_RECEIVER_TEMPLATE, "utf-8");
-      generateSpinner.succeed(`Created ${relativeReceiverPath}`);
-    } catch (error) {
-      generateSpinner.fail(`Failed to create ${relativeReceiverPath}`);
-      logger.error(error instanceof Error ? error.message : String(error));
-      process.exit(1);
-    }
-  }
-
-  // Step 6: Modify layout
-  const layoutSpinner = ora(
-    "Adding PreviewCNThemeReceiver to layout..."
-  ).start();
-
-  try {
-    await addThemeReceiverToLayout(layoutPath, componentsDir);
-    layoutSpinner.succeed("Added PreviewCNThemeReceiver to layout");
-  } catch (error) {
-    layoutSpinner.fail("Failed to modify layout");
-    logger.error(error instanceof Error ? error.message : String(error));
-    logger.hint(
-      "You may need to add PreviewCNThemeReceiver manually. See documentation."
-    );
-    process.exit(1);
-  }
-
-  // Success message
-  console.log();
-  logger.success("PreviewCN initialized successfully!");
-  console.log();
-
-  logger.info("Next step:");
-  console.log(
-    `  Run ${cyan("npx previewcn")} to start the dev server and editor together.`
-  );
-  console.log();
-}
-
-type InitDevtoolsModeArgs = {
-  layoutPath: string;
-  yes?: boolean;
-};
-
-async function initDevtoolsMode({ layoutPath, yes }: InitDevtoolsModeArgs) {
-  if (!yes) {
+  // Step 3: Confirm and setup devtools
+  if (!options.yes) {
     const proceed = await confirm(
       "This will install @previewcn/devtools and modify your app layout. Continue?",
       true
@@ -187,6 +64,7 @@ async function initDevtoolsMode({ layoutPath, yes }: InitDevtoolsModeArgs) {
 
   await setupDevtools(layoutPath);
 
+  // Success message
   console.log();
   logger.success("PreviewCN devtools initialized successfully!");
   console.log();

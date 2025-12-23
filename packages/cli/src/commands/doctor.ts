@@ -1,12 +1,9 @@
 import chalk from "chalk";
 
-import { TARGET_DEFAULT_URL } from "../utils/constants";
 import { detectNextJsProject, findAppLayout } from "../utils/detect-project";
+import { hasDevtoolsPackage as hasDevtoolsPackageInstalled } from "../utils/devtools-package";
 import { logger } from "../utils/logger";
-import {
-  checkReceiverFileExists,
-  checkThemeReceiverInLayout,
-} from "../utils/modify-layout";
+import { checkDevtoolsInLayout } from "../utils/modify-layout";
 
 export async function doctorCommand() {
   logger.info("Running PreviewCN diagnostics...\n");
@@ -25,41 +22,28 @@ export async function doctorCommand() {
       : "Not a Next.js project",
   });
 
-  // Check 2: Receiver file exists
-  const receiverExists = await checkReceiverFileExists(process.cwd());
+  // Check 2: @previewcn/devtools package installed
+  const hasDevtoolsPackage = await hasDevtoolsPackageInstalled(process.cwd());
   checks.push({
-    name: "PreviewCN receiver file",
-    pass: receiverExists,
-    message: receiverExists ? "Found" : "Not found (run `npx previewcn init`)",
+    name: "@previewcn/devtools package",
+    pass: hasDevtoolsPackage,
+    message: hasDevtoolsPackage
+      ? "Installed"
+      : "Not found (run `npx previewcn init`)",
   });
 
-  // Check 3: ThemeReceiver in layout
-  let hasThemeReceiver = false;
+  // Check 3: PreviewcnDevtools in layout
+  let hasDevtoolsInLayout = false;
   const layoutPath = await findAppLayout(process.cwd());
   if (layoutPath) {
-    hasThemeReceiver = await checkThemeReceiverInLayout(layoutPath);
+    hasDevtoolsInLayout = await checkDevtoolsInLayout(layoutPath);
   }
   checks.push({
-    name: "ThemeReceiver in layout",
-    pass: hasThemeReceiver,
-    message: hasThemeReceiver ? "Found" : "Not found in layout",
-  });
-
-  // Check 4: Target app running
-  let targetRunning = false;
-  try {
-    const response = await fetch(TARGET_DEFAULT_URL, {
-      method: "HEAD",
-      signal: AbortSignal.timeout(3000),
-    });
-    targetRunning = response.ok;
-  } catch {
-    // Target not running
-  }
-  checks.push({
-    name: `Target app (${TARGET_DEFAULT_URL})`,
-    pass: targetRunning,
-    message: targetRunning ? "Running" : "Not running",
+    name: "PreviewcnDevtools in layout",
+    pass: hasDevtoolsInLayout,
+    message: hasDevtoolsInLayout
+      ? "Found"
+      : "Not found in layout (run `npx previewcn init`)",
   });
 
   // Print results
@@ -75,7 +59,10 @@ export async function doctorCommand() {
 
   const allPassed = checks.every((c) => c.pass);
   if (allPassed) {
-    logger.success("All checks passed! PreviewCN is ready to use.");
+    logger.success("All checks passed! PreviewCN devtools is ready to use.");
+    logger.info(
+      "Run your dev server and click the theme icon to open the editor."
+    );
   } else {
     logger.warn("Some checks failed. Run `npx previewcn init` to set up.");
   }
