@@ -1,6 +1,6 @@
 {
   "name": "@previewcn/devtools",
-  "version": "0.1.0-alpha.8",
+  "version": "0.1.3",
   "description": "Embedded devtools for PreviewCN - real-time shadcn/ui theme preview inside your app",
   "keywords": ["shadcn", "shadcn-ui", "theme", "preview", "devtools", "react", "tailwind"],
   "license": "MIT",
