@@ -46,13 +46,8 @@
 }
 
 /* ==========================================
-   Backdrop & Sidebar Container
+   Sidebar Container
    ========================================== */
-
-.previewcn-backdrop {
-  @apply fixed inset-0 z-[99998];
-  /* Transparent backdrop for click-outside detection */
-}
 
 .previewcn-panel {
   @apply fixed top-0 right-0 flex flex-col overflow-hidden shadow-2xl;

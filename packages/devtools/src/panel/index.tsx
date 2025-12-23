@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { useThemeState } from "../hooks/use-theme-state";
 import { applyTheme } from "../theme-applier";
@@ -69,61 +69,37 @@ export default function Panel({ onClose }: PanelProps) {
     applyTheme(config);
   }, [config]);
 
-  // Close on Escape key
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
-    },
-    [onClose]
-  );
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleKeyDown]);
-
-  // Close when clicking outside the panel
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   return (
-    <div className="previewcn-backdrop" onClick={handleBackdropClick}>
-      <div className="previewcn-panel">
-        {/* Header */}
-        <div className="previewcn-header">
-          <div className="previewcn-title">
-            <span className="previewcn-logo">PreviewCN</span>
-            <span className="previewcn-badge">DEV</span>
-          </div>
-          <button
-            onClick={onClose}
-            className="previewcn-close-btn"
-            aria-label="Close"
-          >
-            <CloseIcon />
-          </button>
+    <div className="previewcn-panel">
+      {/* Header */}
+      <div className="previewcn-header">
+        <div className="previewcn-title">
+          <span className="previewcn-logo">PreviewCN</span>
+          <span className="previewcn-badge">DEV</span>
         </div>
+        <button
+          onClick={onClose}
+          className="previewcn-close-btn"
+          aria-label="Close"
+        >
+          <CloseIcon />
+        </button>
+      </div>
 
-        {/* Content */}
-        <div className="previewcn-content">
-          <ColorPicker value={config.colorPreset} onChange={setColorPreset} />
-          <RadiusSelector value={config.radius} onChange={setRadius} />
-          <FontSelector value={config.font} onChange={setFont} />
-          <ModeToggle value={config.darkMode} onChange={setDarkMode} />
-        </div>
+      {/* Content */}
+      <div className="previewcn-content">
+        <ColorPicker value={config.colorPreset} onChange={setColorPreset} />
+        <RadiusSelector value={config.radius} onChange={setRadius} />
+        <FontSelector value={config.font} onChange={setFont} />
+        <ModeToggle value={config.darkMode} onChange={setDarkMode} />
+      </div>
 
-        {/* Footer */}
-        <div className="previewcn-footer">
-          <button onClick={resetTheme} className="previewcn-reset-btn">
-            <RotateCcwIcon />
-            <span>Reset</span>
-          </button>
-        </div>
+      {/* Footer */}
+      <div className="previewcn-footer">
+        <button onClick={resetTheme} className="previewcn-reset-btn">
+          <RotateCcwIcon />
+          <span>Reset</span>
+        </button>
       </div>
     </div>
   );
