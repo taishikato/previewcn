@@ -51,9 +51,6 @@
 
 .previewcn-backdrop {
   @apply fixed inset-0 z-[99998] flex items-end justify-end p-4;
-  background: oklch(0 0 0 / 30%);
-  backdrop-filter: blur(2px);
-  animation: previewcn-fade-in 0.15s ease-out;
 }
 
 .previewcn-panel {
