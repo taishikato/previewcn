@@ -53,12 +53,12 @@ export function ModeToggle({ value, onChange }: ModeToggleProps) {
   const isDark = value ?? false;
 
   return (
-    <div className="previewcn-section">
+    <div className="previewcn-section previewcn-surface">
       <label className="previewcn-label">Mode</label>
       <div className="previewcn-mode-toggle">
         <button
           onClick={() => onChange(false)}
-          className={`previewcn-mode-btn ${!isDark ? "previewcn-mode-btn--selected" : ""}`}
+          className={`previewcn-mode-btn previewcn-control ${!isDark ? "previewcn-control--selected" : ""}`}
           aria-label="Light mode"
         >
           <SunIcon />
@@ -66,7 +66,7 @@ export function ModeToggle({ value, onChange }: ModeToggleProps) {
         </button>
         <button
           onClick={() => onChange(true)}
-          className={`previewcn-mode-btn ${isDark ? "previewcn-mode-btn--selected" : ""}`}
+          className={`previewcn-mode-btn previewcn-control ${isDark ? "previewcn-control--selected" : ""}`}
           aria-label="Dark mode"
         >
           <MoonIcon />

@@ -79,7 +79,7 @@ export default function Panel({ onClose }: PanelProps) {
         </div>
         <button
           onClick={onClose}
-          className="previewcn-close-btn"
+          className="previewcn-control previewcn-control--ghost previewcn-icon-btn previewcn-close-btn"
           aria-label="Close"
         >
           <CloseIcon />
@@ -96,7 +96,10 @@ export default function Panel({ onClose }: PanelProps) {
 
       {/* Footer */}
       <div className="previewcn-footer">
-        <button onClick={resetTheme} className="previewcn-reset-btn">
+        <button
+          onClick={resetTheme}
+          className="previewcn-control previewcn-control--ghost previewcn-reset-btn"
+        >
           <RotateCcwIcon />
           <span>Reset</span>
         </button>

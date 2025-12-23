@@ -34,12 +34,12 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
   const displayLabel = selectedFont?.label ?? "Select font...";
 
   return (
-    <div className="previewcn-section">
+    <div className="previewcn-section previewcn-surface">
       <label className="previewcn-label">Font</label>
       <div className="previewcn-select-wrapper">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="previewcn-select-trigger"
+          className="previewcn-select-trigger previewcn-control"
           aria-expanded={isOpen}
         >
           <span>{displayLabel}</span>
@@ -55,7 +55,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
                   onChange(font.value);
                   setIsOpen(false);
                 }}
-                className={`previewcn-select-option ${value === font.value ? "previewcn-select-option--selected" : ""}`}
+                className={`previewcn-select-option previewcn-option ${value === font.value ? "previewcn-option--selected" : ""}`}
               >
                 {font.label}
               </button>
