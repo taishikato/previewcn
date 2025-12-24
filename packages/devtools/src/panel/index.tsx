@@ -7,6 +7,7 @@ import { applyTheme } from "../theme-applier";
 import { ColorPicker } from "./color-picker";
 import { FontSelector } from "./font-selector";
 import { ModeToggle } from "./mode-toggle";
+import { PresetSelector } from "./preset-selector";
 import { RadiusSelector } from "./radius-selector";
 
 type PanelProps = {
@@ -58,6 +59,7 @@ export default function Panel({ onClose }: PanelProps) {
     setRadius,
     setDarkMode,
     setFont,
+    setPresetTheme,
     resetTheme,
   } = useThemeState();
 
@@ -87,6 +89,7 @@ export default function Panel({ onClose }: PanelProps) {
 
       {/* Content */}
       <div className="previewcn-content">
+        <PresetSelector value={config.preset} onChange={setPresetTheme} />
         <ColorPicker value={config.colorPreset} onChange={setColorPreset} />
         <RadiusSelector value={config.radius} onChange={setRadius} />
         <FontSelector value={config.font} onChange={setFont} />

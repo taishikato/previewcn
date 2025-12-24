@@ -2,6 +2,11 @@
 
 import { getColorPreset } from "./presets/colors";
 import { getFontPreset } from "./presets/fonts";
+import {
+  getThemePreset,
+  type ThemePreset,
+  type ThemePresetFont,
+} from "./presets/theme-presets";
 
 const THEME_COLOR_STYLE_ID = "previewcn-devtools-theme-colors";
 const THEME_FONT_STYLE_ID = "previewcn-devtools-theme-font";
@@ -11,6 +16,12 @@ export type ThemeConfig = {
   radius: string | null;
   darkMode: boolean | null;
   font: string | null;
+  preset: string | null;
+};
+
+type ThemeColors = {
+  light: Record<string, string>;
+  dark: Record<string, string>;
 };
 
 function getOrCreateThemeColorStyleElement(): HTMLStyleElement {
@@ -33,6 +44,15 @@ function serializeCssVars(cssVars: Record<string, string>): string {
   return Object.entries(cssVars)
     .map(([key, value]) => `--${key}: ${value};`)
     .join(" ");
+}
+
+function applyThemeColors(colors: ThemeColors) {
+  const styleEl = getOrCreateThemeColorStyleElement();
+
+  const lightCss = serializeCssVars(colors.light);
+  const darkCss = serializeCssVars(colors.dark);
+
+  styleEl.textContent = `:root { ${lightCss} } .dark { ${darkCss} }`;
 }
 
 // Apply dark mode class to document
@@ -61,12 +81,12 @@ export function applyColors(colorPresetName: string) {
   const preset = getColorPreset(colorPresetName);
   if (!preset) return;
 
-  const styleEl = getOrCreateThemeColorStyleElement();
+  applyThemeColors(preset.colors);
+}
 
-  const lightCss = serializeCssVars(preset.colors.light);
-  const darkCss = serializeCssVars(preset.colors.dark);
-
-  styleEl.textContent = `:root { ${lightCss} } .dark { ${darkCss} }`;
+// Apply theme preset colors directly (bypasses colorPreset lookup)
+export function applyPresetColors(preset: ThemePreset) {
+  applyThemeColors(preset.colors);
 }
 
 function getOrCreateFontStyleElement(): HTMLStyleElement {
@@ -85,12 +105,8 @@ function getOrCreateFontStyleElement(): HTMLStyleElement {
   return styleEl;
 }
 
-// Apply font to document
-export function applyFont(fontId: string) {
-  const fontPreset = getFontPreset(fontId);
-  if (!fontPreset) return;
-
-  const { fontFamily, googleFontsUrl } = fontPreset;
+function applyFontConfig(font: ThemePresetFont) {
+  const { fontFamily, googleFontsUrl, value: fontId } = font;
 
   // Validate Google Fonts URL to prevent XSS attacks
   if (!googleFontsUrl.startsWith("https://fonts.googleapis.com/")) {
@@ -123,14 +139,45 @@ export function applyFont(fontId: string) {
   `;
 }
 
+// Apply font to document
+export function applyFont(fontId: string) {
+  const fontPreset = getFontPreset(fontId);
+  if (!fontPreset) return;
+
+  applyFontConfig(fontPreset);
+}
+
+// Apply font from theme preset (using preset's font config directly)
+export function applyPresetFont(font: ThemePresetFont) {
+  applyFontConfig(font);
+}
+
+// Apply a complete theme preset (colors, radius, and optionally font)
+export function applyPreset(presetName: string) {
+  const preset = getThemePreset(presetName);
+  if (!preset) return;
+
+  applyPresetColors(preset);
+  applyRadius(preset.radius);
+
+  if (preset.font) {
+    applyFontConfig(preset.font);
+  }
+}
+
 // Apply full theme config
 export function applyTheme(config: ThemeConfig) {
+  const preset = config.preset ? getThemePreset(config.preset) : null;
+
   if (config.colorPreset !== null) {
     applyColors(config.colorPreset);
+  } else if (preset) {
+    applyPresetColors(preset);
   }
 
-  if (config.radius !== null) {
-    applyRadius(config.radius);
+  const radius = config.radius ?? preset?.radius;
+  if (radius !== null && radius !== undefined) {
+    applyRadius(radius);
   }
 
   if (config.darkMode !== null) {
@@ -139,6 +186,8 @@ export function applyTheme(config: ThemeConfig) {
 
   if (config.font !== null) {
     applyFont(config.font);
+  } else if (preset?.font) {
+    applyFontConfig(preset.font);
   }
 }
 

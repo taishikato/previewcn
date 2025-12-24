@@ -2,11 +2,13 @@
 
 import { useCallback, useState } from "react";
 
+import { getThemePreset } from "../presets/theme-presets";
 import type { ThemeConfig } from "../theme-applier";
 import {
   applyColors,
   applyDarkMode,
   applyFont,
+  applyPreset,
   applyRadius,
   clearTheme,
 } from "../theme-applier";
@@ -43,6 +45,7 @@ const defaultConfig: ThemeConfig = {
   radius: null,
   darkMode: null,
   font: null,
+  preset: null,
 };
 
 export function useThemeState() {
@@ -51,41 +54,67 @@ export function useThemeState() {
     ...loadFromStorage(),
   }));
 
-  const setColorPreset = useCallback((colorPreset: string) => {
-    setConfigState((prev) => {
-      const next = { ...prev, colorPreset };
-      saveToStorage(next);
-      return next;
-    });
-    applyColors(colorPreset);
-  }, []);
+  const updateConfig = useCallback(
+    (updater: (prev: ThemeConfig) => ThemeConfig) => {
+      setConfigState((prev) => {
+        const next = updater(prev);
+        saveToStorage(next);
+        return next;
+      });
+    },
+    []
+  );
 
-  const setRadius = useCallback((radius: string) => {
-    setConfigState((prev) => {
-      const next = { ...prev, radius };
-      saveToStorage(next);
-      return next;
-    });
-    applyRadius(radius);
-  }, []);
+  const setColorPreset = useCallback(
+    (colorPreset: string) => {
+      updateConfig((prev) => ({ ...prev, colorPreset }));
+      applyColors(colorPreset);
+    },
+    [updateConfig]
+  );
 
-  const setDarkMode = useCallback((darkMode: boolean) => {
-    setConfigState((prev) => {
-      const next = { ...prev, darkMode };
-      saveToStorage(next);
-      return next;
-    });
-    applyDarkMode(darkMode);
-  }, []);
+  const setRadius = useCallback(
+    (radius: string) => {
+      updateConfig((prev) => ({ ...prev, radius }));
+      applyRadius(radius);
+    },
+    [updateConfig]
+  );
 
-  const setFont = useCallback((font: string) => {
-    setConfigState((prev) => {
-      const next = { ...prev, font };
-      saveToStorage(next);
-      return next;
-    });
-    applyFont(font);
-  }, []);
+  const setDarkMode = useCallback(
+    (darkMode: boolean) => {
+      updateConfig((prev) => ({ ...prev, darkMode }));
+      applyDarkMode(darkMode);
+    },
+    [updateConfig]
+  );
+
+  const setFont = useCallback(
+    (font: string) => {
+      updateConfig((prev) => ({ ...prev, font }));
+      applyFont(font);
+    },
+    [updateConfig]
+  );
+
+  const setPresetTheme = useCallback(
+    (preset: string) => {
+      const themePreset = getThemePreset(preset);
+      if (!themePreset) return;
+
+      updateConfig((prev) => ({
+        ...prev,
+        preset,
+        // Update individual settings to match preset
+        radius: themePreset.radius,
+        font: themePreset.font?.value ?? prev.font,
+        // Clear colorPreset since we're using preset colors
+        colorPreset: null,
+      }));
+      applyPreset(preset);
+    },
+    [updateConfig]
+  );
 
   const resetTheme = useCallback(() => {
     // Remove stored config
@@ -103,6 +132,7 @@ export function useThemeState() {
     setRadius,
     setDarkMode,
     setFont,
+    setPresetTheme,
     resetTheme,
   };
 }
