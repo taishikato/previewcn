@@ -61,6 +61,11 @@ const defaultPrimaryForeground = {
   dark: "oklch(0.985 0 0)",
 };
 
+const defaultDestructiveForeground = {
+  light: "oklch(0.985 0 0)",
+  dark: "oklch(0.985 0 0)",
+};
+
 function createColorPreset(spec: PresetSpec): ColorPreset {
   return {
     name: spec.name,
@@ -72,6 +77,8 @@ function createColorPreset(spec: PresetSpec): ColorPreset {
         "primary-foreground":
           spec.primaryForeground?.light ?? defaultPrimaryForeground.light,
         destructive: spec.destructive?.light ?? defaultDestructive.light,
+        "destructive-foreground":
+          spec.destructiveForeground?.light ?? defaultDestructiveForeground.light,
       },
       dark: {
         ...neutralColors.dark,
@@ -79,6 +86,8 @@ function createColorPreset(spec: PresetSpec): ColorPreset {
         "primary-foreground":
           spec.primaryForeground?.dark ?? defaultPrimaryForeground.dark,
         destructive: spec.destructive?.dark ?? defaultDestructive.dark,
+        "destructive-foreground":
+          spec.destructiveForeground?.dark ?? defaultDestructiveForeground.dark,
       },
     },
   };

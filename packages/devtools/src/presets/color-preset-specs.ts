@@ -16,6 +16,10 @@ export type PresetSpec = {
     light?: string;
     dark?: string;
   };
+  destructiveForeground?: {
+    light?: string;
+    dark?: string;
+  };
 };
 
 export const colorPresetSpecs: PresetSpec[] = [
