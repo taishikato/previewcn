@@ -358,17 +358,21 @@ packages/
         │   ├── color-picker.tsx
         │   ├── radius-selector.tsx
         │   ├── font-selector.tsx
-        │   └── mode-toggle.tsx
+        │   ├── mode-toggle.tsx
+        │   └── css-export-button.tsx  # Copy CSS button
         ├── theme-applier.ts
         ├── hooks/
         │   └── use-theme-state.ts
+        ├── utils/
+        │   └── css-export.ts  # CSS generation & clipboard utilities
         └── presets/
             ├── theme-presets.ts  # Full theme presets (Vercel, Supabase, Claude)
             ├── colors.ts
             ├── fonts.ts
             └── radius.ts
     └── docs/
-        └── presets-implementation.md  # Documentation for adding presets
+        ├── presets-implementation.md  # Documentation for adding presets
+        └── css-export-implementation.md  # CSS export feature documentation
 ```
 
 ## References

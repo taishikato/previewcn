@@ -1,4 +1,5 @@
-// Color preset data used by the devtools color picker.
+export function generateColorPresetSpecsTemplate(): string {
+  return `// Color preset data used by the devtools color picker.
 // Kept in a separate file to keep logic files small.
 
 export type PresetSpec = {
@@ -214,3 +215,5 @@ export const colorPresetSpecs: PresetSpec[] = [
     },
   },
 ];
+`;
+}

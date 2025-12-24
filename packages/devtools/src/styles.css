@@ -528,6 +528,31 @@
 }
 
 /* ==========================================
+   CSS Export Button
+   ========================================== */
+
+.previewcn-copy-btn {
+  gap: 6px;
+  font-size: 12px;
+  margin-right: auto;
+}
+
+.previewcn-copy-btn--success {
+  border-color: oklch(0.72 0.17 142);
+  color: oklch(0.72 0.17 142);
+}
+
+.previewcn-copy-btn--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.previewcn-copy-btn--disabled:hover {
+  background: var(--pcn-surface);
+  border-color: var(--pcn-border);
+}
+
+/* ==========================================
    Animations
    ========================================== */
 
