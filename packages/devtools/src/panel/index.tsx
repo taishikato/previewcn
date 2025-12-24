@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { useThemeState } from "../hooks/use-theme-state";
 import { applyTheme } from "../theme-applier";
 import { ColorPicker } from "./color-picker";
+import { CssExportButton } from "./css-export-button";
 import { FontSelector } from "./font-selector";
 import { ModeToggle } from "./mode-toggle";
 import { PresetSelector } from "./preset-selector";
@@ -98,6 +99,7 @@ export default function Panel({ onClose }: PanelProps) {
 
       {/* Footer */}
       <div className="previewcn-footer">
+        <CssExportButton config={config} />
         <button
           onClick={resetTheme}
           className="previewcn-control previewcn-control--ghost previewcn-reset-btn"
