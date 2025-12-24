@@ -67,33 +67,39 @@ An embedded devtools panel that:
 
 ### Phase 1: Core Theme Editing (MVP)
 
-#### 1.1 Color Presets
+#### 1.1 Theme Presets
+- Pre-built complete theme configurations (colors + radius + font)
+- Built-in presets: Vercel, Supabase, Claude (adapted from [tweakcn](https://github.com/jnsahaj/tweakcn), Apache 2.0)
+- One-click application of full theme
+- Easy to add more presets (see `docs/presets-implementation.md`)
+
+#### 1.2 Color Presets
 - Pre-defined color palettes compatible with shadcn/ui
 - Colors: Neutral, Blue, Green, Orange, Rose, Violet (expandable)
 - Uses OKLCH color space for perceptual uniformity
 - Visual color swatches with selection indicator
 
-#### 1.2 Border Radius
+#### 1.3 Border Radius
 - Preset options: None, Small, Medium, Large, Extra Large, Full
 - Visual preview of each radius option
 - Applies to all shadcn components via `--radius` CSS variable
 
-#### 1.3 Light/Dark Mode
+#### 1.4 Light/Dark Mode
 - Toggle between light and dark theme variants
 - Applies appropriate CSS variables based on mode
 - Syncs with the app's existing theme state
 
-#### 1.4 Real-time Preview
+#### 1.5 Real-time Preview
 - Direct DOM manipulation for instant updates
 - No iframe or postMessage overhead
 - Instant visual feedback (<16ms latency)
 
-#### 1.5 CSS Export
+#### 1.6 CSS Export
 - One-click copy of generated CSS variables
 - Output format compatible with shadcn/ui globals.css
 - Includes both `:root` and `.dark` selectors
 
-#### 1.6 PreviewcnDevtools Component
+#### 1.7 PreviewcnDevtools Component
 - Lightweight React component for target apps
 - Development-only inclusion (tree-shaken in production)
 - Simple installation: `npx previewcn init`
@@ -348,21 +354,28 @@ packages/
         ├── trigger.tsx     # FAB trigger button
         ├── panel/          # Editor panel
         │   ├── index.tsx
+        │   ├── preset-selector.tsx  # Theme preset selector
         │   ├── color-picker.tsx
         │   ├── radius-selector.tsx
         │   ├── font-selector.tsx
         │   └── mode-toggle.tsx
         ├── theme-applier.ts
+        ├── hooks/
+        │   └── use-theme-state.ts
         └── presets/
+            ├── theme-presets.ts  # Full theme presets (Vercel, Supabase, Claude)
             ├── colors.ts
             ├── fonts.ts
             └── radius.ts
+    └── docs/
+        └── presets-implementation.md  # Documentation for adding presets
 ```
 
 ## References
 
 - [shadcn/ui Create](https://ui.shadcn.com/create) - Official theme creator
 - [shadcn/ui Create Source](https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(create)) - Source code
+- [tweakcn](https://github.com/jnsahaj/tweakcn) - Visual Theme Editor (source for theme presets, Apache 2.0)
 - [OKLCH Color Space](https://oklch.com/) - Color space documentation
 - [Tailwind CSS v4](https://tailwindcss.com/) - CSS framework
 
