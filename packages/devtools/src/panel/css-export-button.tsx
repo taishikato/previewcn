@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { ThemeConfig } from "../theme-applier";
 import { copyToClipboard, generateExportCss } from "../utils/css-export";
@@ -48,6 +48,15 @@ function CheckIcon() {
 
 export function CssExportButton({ config }: CssExportButtonProps) {
   const [copied, setCopied] = useState(false);
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current);
+      }
+    };
+  }, []);
 
   const exportCss = generateExportCss(config);
   const isDisabled = !exportCss;
@@ -60,7 +69,10 @@ export function CssExportButton({ config }: CssExportButtonProps) {
 
     if (success) {
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current);
+      }
+      resetTimerRef.current = setTimeout(() => setCopied(false), 2000);
     }
   };
 
