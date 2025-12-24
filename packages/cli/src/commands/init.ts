@@ -117,5 +117,6 @@ async function setupDevtools(
     logger.hint(
       "You may need to add PreviewcnDevtools manually. See documentation."
     );
+    process.exit(1);
   }
 }
