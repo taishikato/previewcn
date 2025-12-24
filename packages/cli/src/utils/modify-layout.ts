@@ -1,13 +1,30 @@
 import fs from "fs/promises";
 
 const IMPORT_STATEMENT_REGEX = /^import[\s\S]*?;\s*$/gm;
+const LEGACY_DEVTOOLS_IMPORT_REGEX =
+  /^import[\s\S]*?@previewcn\/devtools(?:\/styles\.css)?["'][\s\S]*?;\s*$/gm;
+const DEVTOOLS_IMPORT_REGEX =
+  /import\s+\{[^}]*\bPreviewcnDevtools\b[^}]*\}\s+from\s+["'][^"']+["'];?/;
 
-// Devtools import statements
-const DEVTOOLS_STYLE_IMPORT = 'import "@previewcn/devtools/styles.css";';
-const DEVTOOLS_COMPONENT_IMPORT =
-  'import { PreviewcnDevtools } from "@previewcn/devtools";';
+// Default import path for shadcn-style components
+const DEFAULT_IMPORT_PATH = "@/components/ui/previewcn";
+
+// Devtools component JSX
 const DEVTOOLS_COMPONENT =
   '{process.env.NODE_ENV === "development" && <PreviewcnDevtools />}';
+
+function getDevtoolsImport(importPath: string): string {
+  return `import { PreviewcnDevtools } from "${importPath}";`;
+}
+
+function stripLegacyDevtoolsImports(content: string): string {
+  const cleaned = content.replace(LEGACY_DEVTOOLS_IMPORT_REGEX, "");
+  return cleaned.replace(/\n{3,}/g, "\n\n");
+}
+
+function hasDevtoolsImport(content: string): boolean {
+  return DEVTOOLS_IMPORT_REGEX.test(content);
+}
 
 function insertAfterLastImport(content: string, lines: string[]): string {
   if (lines.length === 0) return content;
@@ -38,18 +55,19 @@ function insertAfterBodyOpen(content: string, jsx: string): string {
   );
 }
 
-export async function addDevtoolsToLayout(layoutPath: string): Promise<void> {
+export async function addDevtoolsToLayout(
+  layoutPath: string,
+  importPath: string = DEFAULT_IMPORT_PATH
+): Promise<void> {
   const content = await fs.readFile(layoutPath, "utf-8");
+  const cleanedContent = stripLegacyDevtoolsImports(content);
 
   const importsToAdd: string[] = [];
-  if (!content.includes("@previewcn/devtools/styles.css")) {
-    importsToAdd.push(DEVTOOLS_STYLE_IMPORT);
-  }
-  if (!content.includes("PreviewcnDevtools")) {
-    importsToAdd.push(DEVTOOLS_COMPONENT_IMPORT);
+  if (!hasDevtoolsImport(cleanedContent)) {
+    importsToAdd.push(getDevtoolsImport(importPath));
   }
 
-  let newContent = insertAfterLastImport(content, importsToAdd);
+  let newContent = insertAfterLastImport(cleanedContent, importsToAdd);
 
   // Add component inside <body> tag (only if not present)
   if (!newContent.includes("<PreviewcnDevtools")) {

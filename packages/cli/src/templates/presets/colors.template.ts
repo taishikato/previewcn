@@ -1,4 +1,5 @@
-// Color presets compatible with shadcn/ui
+export function generateColorsTemplate(): string {
+  return `// Color presets compatible with shadcn/ui
 // Uses OKLCH color space for better perceptual uniformity
 
 import { colorPresetSpecs, type PresetSpec } from "./color-preset-specs";
@@ -77,8 +78,7 @@ function createColorPreset(spec: PresetSpec): ColorPreset {
           spec.primaryForeground?.light ?? defaultPrimaryForeground.light,
         destructive: spec.destructive?.light ?? defaultDestructive.light,
         "destructive-foreground":
-          spec.destructiveForeground?.light ??
-          defaultDestructiveForeground.light,
+          spec.destructiveForeground?.light ?? defaultDestructiveForeground.light,
       },
       dark: {
         ...neutralColors.dark,
@@ -98,4 +98,6 @@ export const colorPresets: ColorPreset[] =
 
 export function getColorPreset(name: string): ColorPreset | undefined {
   return colorPresets.find((p) => p.name === name);
+}
+`;
 }
