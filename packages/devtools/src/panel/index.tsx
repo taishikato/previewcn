@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 import { useThemeState } from "../hooks/use-theme-state";
 import { applyTheme } from "../theme-applier";
@@ -64,13 +64,11 @@ export default function Panel({ onClose }: PanelProps) {
     resetTheme,
   } = useThemeState();
 
-  // Apply stored theme only when the panel is opened (user-initiated).
-  const didApplyOnOpenRef = useRef(false);
+  // Apply stored theme only when the panel opens
   useEffect(() => {
-    if (didApplyOnOpenRef.current) return;
-    didApplyOnOpenRef.current = true;
     applyTheme(config);
-  }, [config]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="previewcn-panel">
