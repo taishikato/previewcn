@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { cn } from "@/utils/cn";
 
 import { fontPresets } from "../presets/fonts";
 
@@ -35,7 +36,10 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
 
   return (
     <div
-      className={`previewcn-section previewcn-surface ${isOpen ? "previewcn-section--overlay" : ""}`}
+      className={cn(
+        "previewcn-section previewcn-surface",
+        isOpen && "previewcn-section--overlay"
+      )}
     >
       <label className="previewcn-label">Font</label>
       <div className="previewcn-select-wrapper">
@@ -57,7 +61,10 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
                   onChange(font.value);
                   setIsOpen(false);
                 }}
-                className={`previewcn-select-option previewcn-option ${value === font.value ? "previewcn-option--selected" : ""}`}
+                className={cn(
+                  "previewcn-select-option previewcn-option",
+                  value === font.value && "previewcn-option--selected"
+                )}
               >
                 {font.label}
               </button>
