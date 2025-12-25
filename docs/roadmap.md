@@ -116,20 +116,28 @@ This is slow, error-prone, and discourages adoption.
 #### Goal
 Make setup a **single command** and reduce the “human editing surface area” to near-zero.
 
-#### Proposed packaging
-Split into small, focused packages:
+Concretely, the recommended happy path should be:
 
-- `@previewcn/receiver`
-  - A small, framework-aware receiver for Next.js App Router apps.
-  - Dev-only integration recommended.
+- `npx previewcn` (no subcommand) starts everything needed for local preview.
+- File edits are explicit and consented to (prompted), since `init` modifies user source files.
+
+#### Proposed packaging
+Single CLI package (shadcn/ui-style file generation, no external dependencies):
+
 - `previewcn` (CLI)
-  - Bootstraps receiver installation and starts the local editor UI.
+  - Generates receiver component directly into the target project (no npm install required).
+  - Starts the local editor UI.
 
 #### CLI commands (proposal)
+- `npx previewcn` (recommended default)
+  - If PreviewCN is already initialized → start the target dev server + start the editor.
+  - If PreviewCN is not initialized → prompt “Run init now?” (Yes: run `init` then continue, No: print next steps and exit).
+  - Start the target dev server on an available port (e.g. 3000, 3001, ...).
+  - Pass the resolved target URL to the editor via `--target` / `PREVIEWCN_TARGET_URL` so the editor loads it by default.
 - `npx previewcn init`
   - Detect `app/layout.tsx` (App Router).
-  - Add receiver file (or install `@previewcn/receiver`).
-  - Add dev-only `<ThemeReceiver />` to `app/layout.tsx`.
+  - Generate `components/previewcn-theme-receiver.tsx` (no npm package install).
+  - Add dev-only `<PreviewCNThemeReceiver />` to `app/layout.tsx`.
   - Optionally provide instructions for iframe embedding requirements (if iframe mode is used).
 - `npx previewcn dev --target http://localhost:3000`
   - Start PreviewCN editor UI locally.
@@ -138,9 +146,100 @@ Split into small, focused packages:
   - Validate common requirements and explain failures in plain English.
 
 #### Definition of Done
-- A brand-new App Router app can be made “PreviewCN-ready” with `npx previewcn init`.
+- A brand-new App Router app can be made "PreviewCN-ready" with `npx previewcn init`.
+- Running `npx previewcn` in a fresh App Router app prompts to initialize, then launches the editor with the correct target URL already loaded.
 - No receiver code copy/paste is required.
 - No theme is applied automatically (first apply remains user-triggered).
+
+#### Status
+- Implemented ✅ (init/dev/doctor)
+- Planned: default `npx previewcn` command (prompted init + start target dev + start editor)
+
+#### Implementation notes (current architecture)
+- **Monorepo structure**: Restructured to Turborepo + pnpm workspaces monorepo.
+  - `apps/web` - Editor UI (`@previewcn/web`, private)
+  - `packages/receiver` - ThemeReceiver source (used as template, not published)
+  - `packages/cli` - CLI tool (`previewcn`, npm publish)
+- **shadcn/ui-style approach**:
+  - No `@previewcn/receiver` npm package to install.
+  - CLI generates `components/previewcn-theme-receiver.tsx` directly in the target project.
+  - Types are inlined in the generated file for zero external dependencies.
+  - Users own their code and can customize if needed.
+- **previewcn CLI**:
+  - Built with commander.js + chalk + ora + prompts.
+  - Commands: `init`, `dev`, `doctor` (+ planned default `previewcn` entry).
+  - `init`: Detects Next.js App Router, generates receiver file, modifies `app/layout.tsx`.
+  - `init --force`: Regenerates receiver file (useful for updates).
+  - `dev`: Starts bundled editor server from `editor/` directory.
+  - `doctor`: Diagnoses setup issues (project type, receiver file, layout integration).
+- **Production safety**:
+  - `init` inserts the receiver behind a `process.env.NODE_ENV === "development"` guard in `app/layout.tsx`.
+  - The generated receiver component is also defensive and becomes a no-op in production even if accidentally rendered.
+- **Build pipeline**: Turborepo manages build order (`apps/web` → `packages/cli`).
+- **Single package to publish**: Only `previewcn` CLI needs to be published to npm.
+
+#### Directory structure
+```
+previewcn/
+├── apps/
+│   └── web/                    # Editor UI (@previewcn/web, private)
+│       ├── app/                # Next.js App Router pages
+│       ├── components/
+│       │   └── theme-editor/   # Editor sidebar & preview
+│       └── lib/                # Theme presets, fonts, utilities
+├── packages/
+│   ├── receiver/               # ThemeReceiver source (template, not published)
+│   │   └── src/
+│   │       ├── theme-receiver.tsx
+│   │       └── types.ts        # Message type definitions
+│   └── cli/                    # previewcn CLI (npm publish)
+│       └── src/
+│           ├── index.ts        # CLI entry (commander)
+│           ├── commands/       # init, dev, doctor
+│           └── templates/      # Generated file templates
+├── turbo.json
+├── pnpm-workspace.yaml
+└── tsconfig.base.json
+```
+
+#### Key files
+| File | Description |
+|------|-------------|
+| `packages/cli/src/templates/theme-receiver.ts` | Template for generating `previewcn-theme-receiver.tsx` |
+| `packages/cli/src/commands/init.ts` | `npx previewcn init` implementation |
+| `packages/cli/src/commands/dev.ts` | `npx previewcn dev` implementation |
+| `apps/web/components/theme-editor/use-theme-editor.ts` | Editor state management & iframe communication |
+| `apps/web/lib/theme-presets.ts` | Color presets and CSS variable generation |
+
+#### Development workflow
+```bash
+pnpm install        # Install all dependencies
+pnpm build          # Build all packages (receiver → web → cli)
+pnpm dev:web        # Start editor at localhost:4000
+pnpm lint           # Run ESLint across all packages
+```
+
+#### Communication flow
+```
+┌─────────────────────┐         postMessage          ┌─────────────────────┐
+│   Editor (web)      │ ────────────────────────────▶│   ThemeReceiver     │
+│   localhost:4000    │                              │   (target app)      │
+└─────────────────────┘                              └─────────────────────┘
+
+Messages (Editor → Receiver):
+  - APPLY_THEME        : Full theme update (colors, font, radius, mode)
+  - UPDATE_COLORS      : Color variables only
+  - UPDATE_FONT        : Font family + Google Fonts URL
+  - UPDATE_RADIUS      : Border radius value
+  - TOGGLE_DARK_MODE   : Light/dark mode switch
+  - PREVIEWCN_PING     : Connection health check
+
+Messages (Receiver → Editor):
+  - PREVIEWCN_READY    : Sent on mount (receiver is present)
+  - PREVIEWCN_PONG     : Response to PING (connection alive)
+```
+
+---
 
 ## Non-goals (for now)
 
@@ -148,4 +247,39 @@ Split into small, focused packages:
 - VS Code extension
 - Accessibility tooling (contrast checks, simulations)
 
+---
 
+### 4) Embedded Editor / DevTools mode (single dev server, no iframe)
+
+#### Problem
+The current architecture runs a separate editor server and previews the target app via iframe. This creates friction and failure modes:
+
+- Two dev servers (extra terminal/port).
+- Iframe embedding can be blocked by headers/CSP (`X-Frame-Options`, `Content-Security-Policy frame-ancestors`).
+- The experience feels like a separate app rather than “devtools inside your app”.
+
+#### Goal
+Offer an optional “embedded” workflow where the PreviewCN editor UI is available **inside the target app** during development:
+
+- A small icon on the edge of the page (DevTools-style).
+- Clicking toggles an overlay/sidebar editor UI.
+- No iframe is required (the target app renders normally).
+- Still respects the core principles: **no auto-apply on first load**, and **production-safe by default**.
+
+#### Proposed direction
+- `previewcn init --devtools` inserts a small `<PreviewcnDevtools />` component into `app/layout.tsx` (without wrapping `children`).
+- The devtools UI is **lazy-loaded** and only mounted when the icon is opened.
+- Production safety:
+  - Gated by `process.env.NODE_ENV === "development"`.
+  - Defensive no-op behavior even if accidentally committed.
+- Packaging note:
+  - The devtools UI is distributed as `@previewcn/devtools` npm package (devDependency).
+
+#### Implementation
+- `@previewcn/devtools` package: Standalone devtools with color, radius, font, and mode selectors
+- CLI flag: `npx previewcn init --devtools` for automatic setup
+- Styles: Built with Tailwind CSS, bundled as `dist/styles.css`
+- State: Persisted in localStorage; applied only after user interaction (opening the panel / changing settings)
+
+#### Status
+- ✅ In review
