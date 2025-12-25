@@ -1,10 +1,10 @@
-<img width="1200" alt="PreviewCN" src="https://github.com/user-attachments/assets/b2d7b49e-82ef-4b1b-8fe4-9cca5c30c226" />
+<img width="1200" alt="previewcn" src="https://github.com/user-attachments/assets/b2d7b49e-82ef-4b1b-8fe4-9cca5c30c226" />
 
-# PreviewCN
+# previewcn
 
 > A real-time shadcn/ui theme editor that lets you preview theme changes directly on your actual application.
 
-Unlike [shadcn/ui themes](https://ui.shadcn.com/themes) which only previews on pre-built demo components, PreviewCN embeds a floating theme editor directly in your app so you can see exactly how your buttons, cards, and forms will look with different themes.
+Unlike [shadcn/ui themes](https://ui.shadcn.com/themes) which only previews on pre-built demo components, previewcn embeds a floating theme editor directly in your app so you can see exactly how your buttons, cards, and forms will look with different themes.
 
 ## Features
 
@@ -66,7 +66,7 @@ That's it! A floating palette icon will appear in the bottom-right corner of you
 
 ## How It Works
 
-PreviewCN follows the [shadcn/ui](https://ui.shadcn.com) philosophy - instead of installing an npm package, it generates component files directly into your project:
+previewcn follows the [shadcn/ui](https://ui.shadcn.com) philosophy - instead of installing an npm package, it generates component files directly into your project:
 
 ```
 components/ui/previewcn/
@@ -114,7 +114,7 @@ The component only renders in development mode and is completely removed from pr
 ## CLI Commands
 
 ```bash
-# Initialize PreviewCN (default command)
+# Initialize previewcn (default command)
 npx previewcn
 
 # Or explicitly
@@ -146,7 +146,7 @@ npx previewcn doctor
 
 This checks:
 - Next.js App Router detection
-- PreviewCN component files exist
+- previewcn component files exist
 - `layout.tsx` references `PreviewcnDevtools` (import and/or JSX)
 
 ### Theme changes not applying?
