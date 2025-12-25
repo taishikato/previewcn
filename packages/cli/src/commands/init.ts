@@ -1,30 +1,27 @@
-import fs from "fs/promises";
 import path from "path";
-import chalk from "chalk";
 import ora from "ora";
-import prompts from "prompts";
 
-import {
-  THEME_RECEIVER_FILENAME,
-  THEME_RECEIVER_TEMPLATE,
-} from "../templates/theme-receiver";
+import { generateComponentFiles } from "../templates/index.template";
+import { confirm, cyan } from "../utils/cli-ui";
 import { detectNextJsProject, findAppLayout } from "../utils/detect-project";
-import { findComponentsDir } from "../utils/find-components-dir";
+import { writeComponentFiles } from "../utils/file-generator";
 import { logger } from "../utils/logger";
-import { addThemeReceiverToLayout } from "../utils/modify-layout";
+import { addDevtoolsToLayout } from "../utils/modify-layout";
+import { resolvePreviewcnPaths } from "../utils/path-resolver";
 
 type InitOptions = {
   yes?: boolean;
-  force?: boolean;
 };
 
 export async function initCommand(options: InitOptions) {
   logger.info("Initializing PreviewCN...\n");
 
+  const cwd = process.cwd();
+
   // Step 1: Detect Next.js App Router project
   const spinner = ora("Detecting project type...").start();
 
-  const projectInfo = await detectNextJsProject(process.cwd());
+  const projectInfo = await detectNextJsProject(cwd);
 
   if (!projectInfo.isNextJs) {
     spinner.fail("Not a Next.js project");
@@ -43,106 +40,83 @@ export async function initCommand(options: InitOptions) {
   spinner.succeed("Next.js App Router project detected");
 
   // Step 2: Find layout file
-  const layoutPath = await findAppLayout(process.cwd());
+  const layoutPath = await findAppLayout(cwd);
 
   if (!layoutPath) {
     logger.error("Could not find app/layout.tsx");
     process.exit(1);
   }
 
+  logger.info(`Found layout at: ${cyan(path.relative(cwd, layoutPath))}`);
+
+  // Step 3: Resolve target directory
+  const { targetDir, importPath } = await resolvePreviewcnPaths(cwd);
+
   logger.info(
-    `Found layout at: ${chalk.cyan(path.relative(process.cwd(), layoutPath))}`
+    `Components will be generated at: ${cyan(path.relative(cwd, targetDir))}`
   );
 
-  // Step 3: Find components directory
-  const componentsDir = await findComponentsDir(process.cwd());
-  const receiverPath = path.join(componentsDir, THEME_RECEIVER_FILENAME);
-  const relativeReceiverPath = path.relative(process.cwd(), receiverPath);
-
-  // Check if receiver already exists
-  let receiverExists = false;
-  try {
-    await fs.access(receiverPath);
-    receiverExists = true;
-  } catch {
-    // File doesn't exist
-  }
-
-  if (receiverExists && !options.force) {
-    logger.info(
-      `Receiver already exists at: ${chalk.cyan(relativeReceiverPath)}`
+  // Step 4: Confirm and setup devtools
+  if (!options.yes) {
+    const proceed = await confirm(
+      "This will generate PreviewCN components and modify your app layout. Continue?",
+      true
     );
-    const response = await prompts({
-      type: "confirm",
-      name: "overwrite",
-      message: "Overwrite existing receiver file?",
-      initial: false,
-    });
-
-    if (!response.overwrite) {
-      logger.info("Skipping receiver file generation.");
-    } else {
-      receiverExists = false; // Mark for regeneration
-    }
-  }
-
-  // Step 4: Confirmation
-  if (!options.yes && !receiverExists) {
-    const response = await prompts({
-      type: "confirm",
-      name: "proceed",
-      message: `This will create ${chalk.cyan(relativeReceiverPath)} and modify your layout. Continue?`,
-      initial: true,
-    });
-
-    if (!response.proceed) {
+    if (!proceed) {
       logger.info("Aborted.");
       process.exit(0);
     }
   }
 
-  // Step 5: Generate receiver file
-  if (!receiverExists || options.force) {
-    const generateSpinner = ora(`Creating ${relativeReceiverPath}...`).start();
-
-    try {
-      // Ensure components directory exists
-      await fs.mkdir(componentsDir, { recursive: true });
-
-      // Write the receiver file
-      await fs.writeFile(receiverPath, THEME_RECEIVER_TEMPLATE, "utf-8");
-      generateSpinner.succeed(`Created ${relativeReceiverPath}`);
-    } catch (error) {
-      generateSpinner.fail(`Failed to create ${relativeReceiverPath}`);
-      logger.error(error instanceof Error ? error.message : String(error));
-      process.exit(1);
-    }
-  }
-
-  // Step 6: Modify layout
-  const layoutSpinner = ora(
-    "Adding PreviewCNThemeReceiver to layout..."
-  ).start();
-
-  try {
-    await addThemeReceiverToLayout(layoutPath, componentsDir);
-    layoutSpinner.succeed("Added PreviewCNThemeReceiver to layout");
-  } catch (error) {
-    layoutSpinner.fail("Failed to modify layout");
-    logger.error(error instanceof Error ? error.message : String(error));
-    logger.hint(
-      "You may need to add PreviewCNThemeReceiver manually. See documentation."
-    );
-    process.exit(1);
-  }
+  await setupDevtools(targetDir, layoutPath, importPath);
 
   // Success message
   console.log();
-  logger.success("PreviewCN initialized successfully!");
+  logger.success("PreviewCN devtools initialized successfully!");
   console.log();
   logger.info("Next step:");
   console.log(
-    `  Run ${chalk.cyan("npx previewcn")} to start the dev server and editor together.`
+    `  Run ${cyan("pnpm dev")} (or your dev command) to start the dev server.`
+  );
+  console.log(
+    `  Click the ${cyan("theme palette icon")} in the bottom-right corner to open the editor.`
   );
   console.log();
+}
+
+async function setupDevtools(
+  targetDir: string,
+  layoutPath: string,
+  importPath: string
+) {
+  // Generate component files
+  const generateSpinner = ora("Generating PreviewCN components...").start();
+
+  try {
+    const files = generateComponentFiles();
+    await writeComponentFiles(targetDir, files);
+    const relativeTargetDir = path.relative(process.cwd(), targetDir);
+    generateSpinner.succeed(
+      `Generated ${files.length} files in ${relativeTargetDir}`
+    );
+  } catch (error) {
+    generateSpinner.fail("Failed to generate PreviewCN components");
+    logger.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
+
+  // Add devtools to layout
+  const layoutSpinner = ora("Adding PreviewcnDevtools to layout...").start();
+
+  try {
+    await addDevtoolsToLayout(layoutPath, importPath);
+    layoutSpinner.succeed("Added PreviewcnDevtools to layout");
+  } catch (error) {
+    layoutSpinner.fail("Failed to modify layout for devtools");
+    logger.error(error instanceof Error ? error.message : String(error));
+    logger.hint(
+      "You may need to add PreviewcnDevtools manually. See documentation."
+    );
+    process.exit(1);
+  }
 }

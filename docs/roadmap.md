@@ -247,4 +247,39 @@ Messages (Receiver → Editor):
 - VS Code extension
 - Accessibility tooling (contrast checks, simulations)
 
+---
 
+### 4) Embedded Editor / DevTools mode (single dev server, no iframe)
+
+#### Problem
+The current architecture runs a separate editor server and previews the target app via iframe. This creates friction and failure modes:
+
+- Two dev servers (extra terminal/port).
+- Iframe embedding can be blocked by headers/CSP (`X-Frame-Options`, `Content-Security-Policy frame-ancestors`).
+- The experience feels like a separate app rather than “devtools inside your app”.
+
+#### Goal
+Offer an optional “embedded” workflow where the PreviewCN editor UI is available **inside the target app** during development:
+
+- A small icon on the edge of the page (DevTools-style).
+- Clicking toggles an overlay/sidebar editor UI.
+- No iframe is required (the target app renders normally).
+- Still respects the core principles: **no auto-apply on first load**, and **production-safe by default**.
+
+#### Proposed direction
+- `previewcn init --devtools` inserts a small `<PreviewcnDevtools />` component into `app/layout.tsx` (without wrapping `children`).
+- The devtools UI is **lazy-loaded** and only mounted when the icon is opened.
+- Production safety:
+  - Gated by `process.env.NODE_ENV === "development"`.
+  - Defensive no-op behavior even if accidentally committed.
+- Packaging note:
+  - The devtools UI is distributed as `@previewcn/devtools` npm package (devDependency).
+
+#### Implementation
+- `@previewcn/devtools` package: Standalone devtools with color, radius, font, and mode selectors
+- CLI flag: `npx previewcn init --devtools` for automatic setup
+- Styles: Built with Tailwind CSS, bundled as `dist/styles.css`
+- State: Persisted in localStorage; applied only after user interaction (opening the panel / changing settings)
+
+#### Status
+- ✅ In review

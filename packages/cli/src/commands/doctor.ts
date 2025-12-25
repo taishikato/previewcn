@@ -1,20 +1,30 @@
+import fs from "fs/promises";
+import path from "path";
 import chalk from "chalk";
 
-import { TARGET_DEFAULT_URL } from "../utils/constants";
 import { detectNextJsProject, findAppLayout } from "../utils/detect-project";
 import { logger } from "../utils/logger";
-import {
-  checkReceiverFileExists,
-  checkThemeReceiverInLayout,
-} from "../utils/modify-layout";
+import { checkDevtoolsInLayout } from "../utils/modify-layout";
+import { resolvePreviewcnPaths } from "../utils/path-resolver";
+
+async function hasPreviewcnComponents(targetDir: string): Promise<boolean> {
+  try {
+    const indexPath = path.join(targetDir, "index.ts");
+    await fs.access(indexPath);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export async function doctorCommand() {
   logger.info("Running PreviewCN diagnostics...\n");
 
+  const cwd = process.cwd();
   const checks: Array<{ name: string; pass: boolean; message: string }> = [];
 
   // Check 1: Next.js App Router
-  const projectInfo = await detectNextJsProject(process.cwd());
+  const projectInfo = await detectNextJsProject(cwd);
   checks.push({
     name: "Next.js App Router",
     pass: projectInfo.isNextJs && projectInfo.isAppRouter,
@@ -25,41 +35,30 @@ export async function doctorCommand() {
       : "Not a Next.js project",
   });
 
-  // Check 2: Receiver file exists
-  const receiverExists = await checkReceiverFileExists(process.cwd());
+  // Check 2: PreviewCN components generated
+  const { targetDir } = await resolvePreviewcnPaths(cwd);
+  const hasComponents = await hasPreviewcnComponents(targetDir);
+  const relativePath = path.relative(cwd, targetDir);
   checks.push({
-    name: "PreviewCN receiver file",
-    pass: receiverExists,
-    message: receiverExists ? "Found" : "Not found (run `npx previewcn init`)",
+    name: "PreviewCN components",
+    pass: hasComponents,
+    message: hasComponents
+      ? `Found in ${relativePath}`
+      : `Not found (run \`npx previewcn init\`)`,
   });
 
-  // Check 3: ThemeReceiver in layout
-  let hasThemeReceiver = false;
-  const layoutPath = await findAppLayout(process.cwd());
+  // Check 3: PreviewcnDevtools in layout
+  let hasDevtoolsInLayout = false;
+  const layoutPath = await findAppLayout(cwd);
   if (layoutPath) {
-    hasThemeReceiver = await checkThemeReceiverInLayout(layoutPath);
+    hasDevtoolsInLayout = await checkDevtoolsInLayout(layoutPath);
   }
   checks.push({
-    name: "ThemeReceiver in layout",
-    pass: hasThemeReceiver,
-    message: hasThemeReceiver ? "Found" : "Not found in layout",
-  });
-
-  // Check 4: Target app running
-  let targetRunning = false;
-  try {
-    const response = await fetch(TARGET_DEFAULT_URL, {
-      method: "HEAD",
-      signal: AbortSignal.timeout(3000),
-    });
-    targetRunning = response.ok;
-  } catch {
-    // Target not running
-  }
-  checks.push({
-    name: `Target app (${TARGET_DEFAULT_URL})`,
-    pass: targetRunning,
-    message: targetRunning ? "Running" : "Not running",
+    name: "PreviewcnDevtools in layout",
+    pass: hasDevtoolsInLayout,
+    message: hasDevtoolsInLayout
+      ? "Found"
+      : "Not found in layout (run `npx previewcn init`)",
   });
 
   // Print results
@@ -75,7 +74,10 @@ export async function doctorCommand() {
 
   const allPassed = checks.every((c) => c.pass);
   if (allPassed) {
-    logger.success("All checks passed! PreviewCN is ready to use.");
+    logger.success("All checks passed! PreviewCN devtools is ready to use.");
+    logger.info(
+      "Run your dev server and click the theme icon to open the editor."
+    );
   } else {
     logger.warn("Some checks failed. Run `npx previewcn init` to set up.");
   }
