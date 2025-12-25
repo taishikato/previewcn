@@ -6,6 +6,8 @@
 
 Unlike [shadcn/ui themes](https://ui.shadcn.com/themes) which only previews on pre-built demo components, previewcn embeds a floating theme editor directly in your app so you can see exactly how your buttons, cards, and forms will look with different themes.
 
+https://github.com/user-attachments/assets/e7da81b9-bfbb-4fce-b249-faf45e9f870a
+
 ## Features
 
 - **Theme Presets** - One-click application of complete themes (Vercel, Supabase, Claude)
