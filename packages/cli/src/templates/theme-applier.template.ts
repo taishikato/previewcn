@@ -1,4 +1,5 @@
-// Direct DOM theme application (no postMessage needed)
+export function generateThemeApplierTemplate(): string {
+  return `// Direct DOM theme application (no postMessage needed)
 
 import { getColorPreset } from "./presets/colors";
 import { getFontPreset } from "./presets/fonts";
@@ -24,8 +25,8 @@ type ThemeColors = {
   dark: Record<string, string>;
 };
 
-function getOrCreateThemeColorStyleElement(): HTMLStyleElement {
-  const existing = document.getElementById(THEME_COLOR_STYLE_ID);
+function getOrCreateStyleElement(id: string): HTMLStyleElement {
+  const existing = document.getElementById(id);
   if (existing instanceof HTMLStyleElement) {
     return existing;
   }
@@ -35,24 +36,24 @@ function getOrCreateThemeColorStyleElement(): HTMLStyleElement {
   }
 
   const styleEl = document.createElement("style");
-  styleEl.id = THEME_COLOR_STYLE_ID;
+  styleEl.id = id;
   document.head.appendChild(styleEl);
   return styleEl;
 }
 
 function serializeCssVars(cssVars: Record<string, string>): string {
   return Object.entries(cssVars)
-    .map(([key, value]) => `--${key}: ${value};`)
+    .map(([key, value]) => \`--\${key}: \${value};\`)
     .join(" ");
 }
 
 function applyThemeColors(colors: ThemeColors) {
-  const styleEl = getOrCreateThemeColorStyleElement();
+  const styleEl = getOrCreateStyleElement(THEME_COLOR_STYLE_ID);
 
   const lightCss = serializeCssVars(colors.light);
   const darkCss = serializeCssVars(colors.dark);
 
-  styleEl.textContent = `:root { ${lightCss} } .dark { ${darkCss} }`;
+  styleEl.textContent = \`:root { \${lightCss} } .dark { \${darkCss} }\`;
 }
 
 // Apply dark mode class to document
@@ -89,22 +90,6 @@ export function applyPresetColors(preset: ThemePreset) {
   applyThemeColors(preset.colors);
 }
 
-function getOrCreateFontStyleElement(): HTMLStyleElement {
-  const existing = document.getElementById(THEME_FONT_STYLE_ID);
-  if (existing instanceof HTMLStyleElement) {
-    return existing;
-  }
-
-  if (existing) {
-    existing.remove();
-  }
-
-  const styleEl = document.createElement("style");
-  styleEl.id = THEME_FONT_STYLE_ID;
-  document.head.appendChild(styleEl);
-  return styleEl;
-}
-
 function applyFontConfig(font: ThemePresetFont) {
   const { fontFamily, googleFontsUrl, value: fontId } = font;
 
@@ -115,7 +100,7 @@ function applyFontConfig(font: ThemePresetFont) {
   }
 
   // Inject Google Fonts link if not already present
-  const linkId = `previewcn-font-${fontId}`;
+  const linkId = \`previewcn-font-\${fontId}\`;
   if (!document.getElementById(linkId)) {
     const link = document.createElement("link");
     link.id = linkId;
@@ -126,17 +111,17 @@ function applyFontConfig(font: ThemePresetFont) {
 
   // Use multiple strategies to ensure font override works universally
   // This covers various Tailwind v4 and next/font configurations
-  const styleEl = getOrCreateFontStyleElement();
-  styleEl.textContent = `
+  const styleEl = getOrCreateStyleElement(THEME_FONT_STYLE_ID);
+  styleEl.textContent = \`
     :root {
-      --font-sans: ${fontFamily} !important;
-      --font-sans-override: ${fontFamily} !important;
-      --font-geist-sans: ${fontFamily} !important;
+      --font-sans: \${fontFamily} !important;
+      --font-sans-override: \${fontFamily} !important;
+      --font-geist-sans: \${fontFamily} !important;
     }
     html, body, .font-sans {
-      font-family: ${fontFamily} !important;
+      font-family: \${fontFamily} !important;
     }
-  `;
+  \`;
 }
 
 // Apply font to document
@@ -202,4 +187,6 @@ export function clearTheme() {
   root.style.removeProperty("--radius");
   root.style.removeProperty("color-scheme");
   root.classList.remove("light", "dark");
+}
+`;
 }

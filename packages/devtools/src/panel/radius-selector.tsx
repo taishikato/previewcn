@@ -9,7 +9,7 @@ type RadiusSelectorProps = {
 
 export function RadiusSelector({ value, onChange }: RadiusSelectorProps) {
   return (
-    <div className="previewcn-section">
+    <div className="previewcn-section previewcn-surface">
       <label className="previewcn-label">Radius</label>
       <div className="previewcn-radius-grid">
         {radiusPresets.map((preset) => {
@@ -19,7 +19,7 @@ export function RadiusSelector({ value, onChange }: RadiusSelectorProps) {
             <button
               key={preset.name}
               onClick={() => onChange(preset.value)}
-              className={`previewcn-radius-btn ${isSelected ? "previewcn-radius-btn--selected" : ""}`}
+              className={`previewcn-radius-btn previewcn-control ${isSelected ? "previewcn-control--selected" : ""}`}
               title={preset.label}
             >
               <span

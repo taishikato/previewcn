@@ -9,8 +9,8 @@ type ColorPickerProps = {
 
 export function ColorPicker({ value, onChange }: ColorPickerProps) {
   return (
-    <div className="previewcn-section">
-      <label className="previewcn-label">Color</label>
+    <div className="previewcn-section previewcn-surface">
+      <label className="previewcn-label">Theme</label>
       <div className="previewcn-color-grid">
         {colorPresets.map((preset) => {
           const isSelected = value === preset.name;

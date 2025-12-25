@@ -1,4 +1,5 @@
-"use client";
+export function generateModeToggleTemplate(): string {
+  return `"use client";
 
 type ModeToggleProps = {
   value: boolean | null;
@@ -49,16 +50,31 @@ function MoonIcon() {
   );
 }
 
+const baseButtonClass =
+  "inline-flex items-center justify-center gap-1.5 w-full min-h-[30px] px-2.5 py-1.5 rounded-[10px] border text-xs font-medium tracking-[0.01em] cursor-pointer transition-all duration-[160ms]";
+
+const defaultButtonClass =
+  "border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] text-[oklch(0.96_0_0)] hover:bg-[oklch(0.24_0.02_260/0.95)] hover:border-[oklch(1_0_0/0.18)]";
+
+const selectedButtonClass =
+  "bg-[oklch(0.24_0.02_260/0.95)] border-[oklch(0.72_0.15_265)] shadow-[0_0_0_1px_oklch(0.72_0.15_265),0_10px_24px_oklch(0_0_0/0.35)]";
+
 export function ModeToggle({ value, onChange }: ModeToggleProps) {
   const isDark = value ?? false;
 
   return (
-    <div className="previewcn-section previewcn-surface">
-      <label className="previewcn-label">Mode</label>
-      <div className="previewcn-mode-toggle">
+    <div
+      className="relative grid gap-2.5 p-3 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)]"
+      style={{ boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }}
+    >
+      <label className="block text-[10.5px] font-semibold tracking-[0.16em] uppercase text-[oklch(0.72_0_0)]">
+        Mode
+      </label>
+      <div className="grid grid-cols-2 gap-2">
         <button
           onClick={() => onChange(false)}
-          className={`previewcn-mode-btn previewcn-control ${!isDark ? "previewcn-control--selected" : ""}`}
+          className={\`\${baseButtonClass} \${!isDark ? selectedButtonClass : defaultButtonClass}\`}
+          style={!isDark ? undefined : { boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }}
           aria-label="Light mode"
         >
           <SunIcon />
@@ -66,7 +82,8 @@ export function ModeToggle({ value, onChange }: ModeToggleProps) {
         </button>
         <button
           onClick={() => onChange(true)}
-          className={`previewcn-mode-btn previewcn-control ${isDark ? "previewcn-control--selected" : ""}`}
+          className={\`\${baseButtonClass} \${isDark ? selectedButtonClass : defaultButtonClass}\`}
+          style={isDark ? undefined : { boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }}
           aria-label="Dark mode"
         >
           <MoonIcon />
@@ -75,4 +92,6 @@ export function ModeToggle({ value, onChange }: ModeToggleProps) {
       </div>
     </div>
   );
+}
+`;
 }

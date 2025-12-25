@@ -1,17 +1,30 @@
+import fs from "fs/promises";
+import path from "path";
 import chalk from "chalk";
 
 import { detectNextJsProject, findAppLayout } from "../utils/detect-project";
-import { hasDevtoolsPackage as hasDevtoolsPackageInstalled } from "../utils/devtools-package";
 import { logger } from "../utils/logger";
 import { checkDevtoolsInLayout } from "../utils/modify-layout";
+import { resolvePreviewcnPaths } from "../utils/path-resolver";
+
+async function hasPreviewcnComponents(targetDir: string): Promise<boolean> {
+  try {
+    const indexPath = path.join(targetDir, "index.ts");
+    await fs.access(indexPath);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export async function doctorCommand() {
   logger.info("Running PreviewCN diagnostics...\n");
 
+  const cwd = process.cwd();
   const checks: Array<{ name: string; pass: boolean; message: string }> = [];
 
   // Check 1: Next.js App Router
-  const projectInfo = await detectNextJsProject(process.cwd());
+  const projectInfo = await detectNextJsProject(cwd);
   checks.push({
     name: "Next.js App Router",
     pass: projectInfo.isNextJs && projectInfo.isAppRouter,
@@ -22,19 +35,21 @@ export async function doctorCommand() {
       : "Not a Next.js project",
   });
 
-  // Check 2: @previewcn/devtools package installed
-  const hasDevtoolsPackage = await hasDevtoolsPackageInstalled(process.cwd());
+  // Check 2: PreviewCN components generated
+  const { targetDir } = await resolvePreviewcnPaths(cwd);
+  const hasComponents = await hasPreviewcnComponents(targetDir);
+  const relativePath = path.relative(cwd, targetDir);
   checks.push({
-    name: "@previewcn/devtools package",
-    pass: hasDevtoolsPackage,
-    message: hasDevtoolsPackage
-      ? "Installed"
-      : "Not found (run `npx previewcn init`)",
+    name: "PreviewCN components",
+    pass: hasComponents,
+    message: hasComponents
+      ? `Found in ${relativePath}`
+      : `Not found (run \`npx previewcn init\`)`,
   });
 
   // Check 3: PreviewcnDevtools in layout
   let hasDevtoolsInLayout = false;
-  const layoutPath = await findAppLayout(process.cwd());
+  const layoutPath = await findAppLayout(cwd);
   if (layoutPath) {
     hasDevtoolsInLayout = await checkDevtoolsInLayout(layoutPath);
   }

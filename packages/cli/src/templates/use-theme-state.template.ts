@@ -1,9 +1,10 @@
-"use client";
+export function generateUseThemeStateTemplate(): string {
+  return `"use client";
 
 import { useCallback, useState } from "react";
 
-import { getThemePreset } from "../presets/theme-presets";
-import type { ThemeConfig } from "../theme-applier";
+import { getThemePreset } from "./presets/theme-presets";
+import type { ThemeConfig } from "./theme-applier";
 import {
   applyColors,
   applyDarkMode,
@@ -11,7 +12,7 @@ import {
   applyPreset,
   applyRadius,
   clearTheme,
-} from "../theme-applier";
+} from "./theme-applier";
 
 // LocalStorage key for persisting theme state
 const STORAGE_KEY = "previewcn-devtools-theme";
@@ -135,4 +136,6 @@ export function useThemeState() {
     setPresetTheme,
     resetTheme,
   };
+}
+`;
 }

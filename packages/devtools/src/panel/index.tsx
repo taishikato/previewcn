@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 import { useThemeState } from "../hooks/use-theme-state";
 import { applyTheme } from "../theme-applier";
 import { ColorPicker } from "./color-picker";
+import { CssExportButton } from "./css-export-button";
 import { FontSelector } from "./font-selector";
 import { ModeToggle } from "./mode-toggle";
+import { PresetSelector } from "./preset-selector";
 import { RadiusSelector } from "./radius-selector";
 
 type PanelProps = {
@@ -58,28 +60,26 @@ export default function Panel({ onClose }: PanelProps) {
     setRadius,
     setDarkMode,
     setFont,
+    setPresetTheme,
     resetTheme,
   } = useThemeState();
 
-  // Apply stored theme only when the panel is opened (user-initiated).
-  const didApplyOnOpenRef = useRef(false);
+  // Apply stored theme only when the panel opens
   useEffect(() => {
-    if (didApplyOnOpenRef.current) return;
-    didApplyOnOpenRef.current = true;
     applyTheme(config);
-  }, [config]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="previewcn-panel">
       {/* Header */}
       <div className="previewcn-header">
         <div className="previewcn-title">
-          <span className="previewcn-logo">PreviewCN</span>
-          <span className="previewcn-badge">DEV</span>
+          <span className="previewcn-logo">previewcn</span>
         </div>
         <button
           onClick={onClose}
-          className="previewcn-close-btn"
+          className="previewcn-control previewcn-control--ghost previewcn-icon-btn previewcn-close-btn"
           aria-label="Close"
         >
           <CloseIcon />
@@ -88,6 +88,7 @@ export default function Panel({ onClose }: PanelProps) {
 
       {/* Content */}
       <div className="previewcn-content">
+        <PresetSelector value={config.preset} onChange={setPresetTheme} />
         <ColorPicker value={config.colorPreset} onChange={setColorPreset} />
         <RadiusSelector value={config.radius} onChange={setRadius} />
         <FontSelector value={config.font} onChange={setFont} />
@@ -96,7 +97,11 @@ export default function Panel({ onClose }: PanelProps) {
 
       {/* Footer */}
       <div className="previewcn-footer">
-        <button onClick={resetTheme} className="previewcn-reset-btn">
+        <CssExportButton config={config} />
+        <button
+          onClick={resetTheme}
+          className="previewcn-control previewcn-control--ghost previewcn-reset-btn"
+        >
           <RotateCcwIcon />
           <span>Reset</span>
         </button>

@@ -1,14 +1,13 @@
 import path from "path";
 import ora from "ora";
 
+import { generateComponentFiles } from "../templates/index.template";
 import { confirm, cyan } from "../utils/cli-ui";
 import { detectNextJsProject, findAppLayout } from "../utils/detect-project";
+import { writeComponentFiles } from "../utils/file-generator";
 import { logger } from "../utils/logger";
 import { addDevtoolsToLayout } from "../utils/modify-layout";
-import {
-  detectPackageManager,
-  installDevDependency,
-} from "../utils/package-manager";
+import { resolvePreviewcnPaths } from "../utils/path-resolver";
 
 type InitOptions = {
   yes?: boolean;
@@ -17,10 +16,12 @@ type InitOptions = {
 export async function initCommand(options: InitOptions) {
   logger.info("Initializing PreviewCN...\n");
 
+  const cwd = process.cwd();
+
   // Step 1: Detect Next.js App Router project
   const spinner = ora("Detecting project type...").start();
 
-  const projectInfo = await detectNextJsProject(process.cwd());
+  const projectInfo = await detectNextJsProject(cwd);
 
   if (!projectInfo.isNextJs) {
     spinner.fail("Not a Next.js project");
@@ -39,21 +40,26 @@ export async function initCommand(options: InitOptions) {
   spinner.succeed("Next.js App Router project detected");
 
   // Step 2: Find layout file
-  const layoutPath = await findAppLayout(process.cwd());
+  const layoutPath = await findAppLayout(cwd);
 
   if (!layoutPath) {
     logger.error("Could not find app/layout.tsx");
     process.exit(1);
   }
 
+  logger.info(`Found layout at: ${cyan(path.relative(cwd, layoutPath))}`);
+
+  // Step 3: Resolve target directory
+  const { targetDir, importPath } = await resolvePreviewcnPaths(cwd);
+
   logger.info(
-    `Found layout at: ${cyan(path.relative(process.cwd(), layoutPath))}`
+    `Components will be generated at: ${cyan(path.relative(cwd, targetDir))}`
   );
 
-  // Step 3: Confirm and setup devtools
+  // Step 4: Confirm and setup devtools
   if (!options.yes) {
     const proceed = await confirm(
-      "This will install @previewcn/devtools and modify your app layout. Continue?",
+      "This will generate PreviewCN components and modify your app layout. Continue?",
       true
     );
     if (!proceed) {
@@ -62,7 +68,7 @@ export async function initCommand(options: InitOptions) {
     }
   }
 
-  await setupDevtools(layoutPath);
+  await setupDevtools(targetDir, layoutPath, importPath);
 
   // Success message
   console.log();
@@ -78,28 +84,32 @@ export async function initCommand(options: InitOptions) {
   console.log();
 }
 
-async function setupDevtools(layoutPath: string) {
-  const cwd = process.cwd();
-
-  // Install @previewcn/devtools as devDependency
-  const installSpinner = ora("Installing @previewcn/devtools...").start();
+async function setupDevtools(
+  targetDir: string,
+  layoutPath: string,
+  importPath: string
+) {
+  // Generate component files
+  const generateSpinner = ora("Generating PreviewCN components...").start();
 
   try {
-    const pm = await detectPackageManager(cwd);
-    await installDevDependency(pm, "@previewcn/devtools", cwd);
-    installSpinner.succeed("Installed @previewcn/devtools");
+    const files = generateComponentFiles();
+    await writeComponentFiles(targetDir, files);
+    const relativeTargetDir = path.relative(process.cwd(), targetDir);
+    generateSpinner.succeed(
+      `Generated ${files.length} files in ${relativeTargetDir}`
+    );
   } catch (error) {
-    installSpinner.fail("Failed to install @previewcn/devtools");
+    generateSpinner.fail("Failed to generate PreviewCN components");
     logger.error(error instanceof Error ? error.message : String(error));
-    logger.hint("You can install it manually: pnpm add -D @previewcn/devtools");
-    // Continue anyway - user can install manually
+    process.exit(1);
   }
 
   // Add devtools to layout
   const layoutSpinner = ora("Adding PreviewcnDevtools to layout...").start();
 
   try {
-    await addDevtoolsToLayout(layoutPath);
+    await addDevtoolsToLayout(layoutPath, importPath);
     layoutSpinner.succeed("Added PreviewcnDevtools to layout");
   } catch (error) {
     layoutSpinner.fail("Failed to modify layout for devtools");
@@ -107,5 +117,6 @@ async function setupDevtools(layoutPath: string) {
     logger.hint(
       "You may need to add PreviewcnDevtools manually. See documentation."
     );
+    process.exit(1);
   }
 }

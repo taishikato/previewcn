@@ -15,12 +15,14 @@ When customizing shadcn/ui themes, developers face these challenges:
 
 ## Solution
 
-An embedded devtools panel that:
-- Installs as a dev dependency in the developer's Next.js app
+A shadcn-style CLI that generates an embedded devtools panel:
+- Generates component files directly into the user's project (`components/ui/previewcn/`)
+- Uses inline Tailwind classes only (no external CSS file required)
 - Renders a floating theme editor panel directly in the app
 - Applies theme changes in real-time via direct DOM manipulation
 - Provides instant visual feedback on actual application components
 - Only renders in development mode (tree-shaken in production)
+- Full source access for customization (users own the code)
 
 ## Target Users
 
@@ -67,36 +69,43 @@ An embedded devtools panel that:
 
 ### Phase 1: Core Theme Editing (MVP)
 
-#### 1.1 Color Presets
+#### 1.1 Theme Presets
+- Pre-built complete theme configurations (colors + radius + font)
+- Built-in presets: Vercel, Supabase, Claude (adapted from [tweakcn](https://github.com/jnsahaj/tweakcn), Apache 2.0)
+- One-click application of full theme
+- Easy to add more presets (see `docs/presets-implementation.md`)
+
+#### 1.2 Color Presets
 - Pre-defined color palettes compatible with shadcn/ui
 - Colors: Neutral, Blue, Green, Orange, Rose, Violet (expandable)
 - Uses OKLCH color space for perceptual uniformity
 - Visual color swatches with selection indicator
 
-#### 1.2 Border Radius
+#### 1.3 Border Radius
 - Preset options: None, Small, Medium, Large, Extra Large, Full
 - Visual preview of each radius option
 - Applies to all shadcn components via `--radius` CSS variable
 
-#### 1.3 Light/Dark Mode
+#### 1.4 Light/Dark Mode
 - Toggle between light and dark theme variants
 - Applies appropriate CSS variables based on mode
 - Syncs with the app's existing theme state
 
-#### 1.4 Real-time Preview
+#### 1.5 Real-time Preview
 - Direct DOM manipulation for instant updates
 - No iframe or postMessage overhead
 - Instant visual feedback (<16ms latency)
 
-#### 1.5 CSS Export
+#### 1.6 CSS Export
 - One-click copy of generated CSS variables
 - Output format compatible with shadcn/ui globals.css
 - Includes both `:root` and `.dark` selectors
 
-#### 1.6 PreviewcnDevtools Component
-- Lightweight React component for target apps
+#### 1.7 PreviewcnDevtools Component
+- Lightweight React component generated into user's project
 - Development-only inclusion (tree-shaken in production)
 - Simple installation: `npx previewcn init`
+- Full source access for customization
 
 ### Phase 2: Enhanced Customization
 
@@ -218,6 +227,8 @@ function applyTheme(cssVars: Record<string, string>, darkMode: boolean) {
 
 ### PreviewcnDevtools Component
 
+Generated into `components/ui/previewcn/devtools.tsx`:
+
 ```tsx
 "use client";
 
@@ -239,6 +250,24 @@ export function PreviewcnDevtools() {
 }
 ```
 
+Usage in layout (auto-added by CLI):
+
+```tsx
+// app/layout.tsx
+import { PreviewcnDevtools } from "@/components/ui/previewcn";
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <PreviewcnDevtools />
+      </body>
+    </html>
+  );
+}
+```
+
 ## User Experience
 
 ### Installation Flow
@@ -248,8 +277,9 @@ export function PreviewcnDevtools() {
 npx previewcn init
 
 # This will:
-# - Install @previewcn/devtools as a dev dependency
-# - Add PreviewcnDevtools to your app layout
+# - Generate component files into components/ui/previewcn/
+# - Add PreviewcnDevtools import to your app layout
+# - No npm package installation required
 
 # 2. Start your dev server
 pnpm dev
@@ -271,6 +301,16 @@ npx previewcn init
 # Check setup status
 npx previewcn doctor
 ```
+
+### Alias Resolution
+
+The CLI resolves the import alias and target directory:
+
+1. Read `components.json` and use `aliases.ui` if present (e.g. `@/components/ui`)
+2. If `aliases.ui` is missing but `aliases.components` exists, use `${aliases.components}/ui`
+3. Fallback to `@/components/ui`
+
+The final target directory is `${uiAlias}/previewcn`.
 
 ### Editor Interface
 
@@ -327,42 +367,92 @@ npx previewcn doctor
 
 ### Performance
 - Theme updates should be <16ms (single frame)
-- Minimal bundle size for devtools (<20KB gzipped)
 - Lazy-loaded panel component
 - No runtime overhead in production
+- Inline Tailwind classes (no external CSS to load)
 
 ## Package Structure
 
+### CLI Package
+
 ```
-packages/
-├── cli/                    # CLI tool (previewcn)
-│   └── src/
-│       ├── commands/
-│       │   ├── init.ts     # Initialize devtools
-│       │   └── doctor.ts   # Check setup status
-│       └── utils/
-│
-└── devtools/               # Devtools component (@previewcn/devtools)
-    └── src/
-        ├── devtools.tsx    # Main component
-        ├── trigger.tsx     # FAB trigger button
-        ├── panel/          # Editor panel
-        │   ├── index.tsx
-        │   ├── color-picker.tsx
-        │   ├── radius-selector.tsx
-        │   ├── font-selector.tsx
-        │   └── mode-toggle.tsx
-        ├── theme-applier.ts
-        └── presets/
-            ├── colors.ts
-            ├── fonts.ts
-            └── radius.ts
+packages/cli/                    # CLI tool (previewcn)
+├── src/
+│   ├── commands/
+│   │   ├── init.ts              # Initialize devtools (generates files)
+│   │   └── doctor.ts            # Check setup status
+│   ├── utils/
+│   │   ├── file-generator.ts    # Core file generation logic
+│   │   ├── path-resolver.ts     # Import path resolution (alias-based)
+│   │   └── modify-layout.ts     # Layout modification utility
+│   └── templates/               # Component templates
+│       ├── index.ts
+│       ├── devtools.template.ts
+│       ├── trigger.template.ts
+│       ├── panel.template.ts
+│       ├── color-picker.template.ts
+│       ├── preset-selector.template.ts
+│       ├── radius-selector.template.ts
+│       ├── font-selector.template.ts
+│       ├── mode-toggle.template.ts
+│       ├── css-export-button.template.ts
+│       ├── theme-applier.template.ts
+│       ├── use-theme-state.template.ts
+│       ├── css-export.template.ts
+│       └── presets/
+│           ├── index.template.ts
+│           ├── colors.template.ts
+│           ├── color-preset-specs.template.ts
+│           ├── radius.template.ts
+│           ├── fonts.template.ts
+│           └── theme-presets.template.ts
+└── docs/
+    ├── presets-implementation.md
+    └── css-export-implementation.md
 ```
+
+### Generated Files (in user's project)
+
+```
+components/ui/previewcn/         # Generated by `npx previewcn init`
+├── index.ts                     # Main export (PreviewcnDevtools)
+├── devtools.tsx                 # Main component (dev-only guard)
+├── trigger.tsx                  # Trigger button (FAB)
+├── panel.tsx                    # Panel main layout
+├── color-picker.tsx             # Color picker
+├── preset-selector.tsx          # Preset selector
+├── radius-selector.tsx          # Border radius selector
+├── font-selector.tsx            # Font selector dropdown
+├── mode-toggle.tsx              # Light/Dark mode toggle
+├── css-export-button.tsx        # CSS export button
+├── theme-applier.ts             # Theme application logic
+├── use-theme-state.ts           # State management hook
+├── css-export.ts                # CSS generation utility
+└── presets/
+    ├── index.ts
+    ├── colors.ts
+    ├── color-preset-specs.ts
+    ├── radius.ts
+    ├── fonts.ts
+    └── theme-presets.ts
+```
+
+## Trade-offs (shadcn-style vs npm package)
+
+| Aspect | npm Package | shadcn-style (current) |
+|--------|-------------|------------------------|
+| Updates | Automatic via npm | Manual re-generation |
+| Customization | Limited | Full source access |
+| Setup friction | Lower (one command) | Same (one command, more files) |
+| Debugging | Harder (node_modules) | Easier (source in project) |
+| Style isolation | External CSS file | Inline Tailwind only |
+| Bundle size | Separate chunk | Part of app bundle |
 
 ## References
 
 - [shadcn/ui Create](https://ui.shadcn.com/create) - Official theme creator
 - [shadcn/ui Create Source](https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(create)) - Source code
+- [tweakcn](https://github.com/jnsahaj/tweakcn) - Visual Theme Editor (source for theme presets, Apache 2.0)
 - [OKLCH Color Space](https://oklch.com/) - Color space documentation
 - [Tailwind CSS v4](https://tailwindcss.com/) - CSS framework
 
