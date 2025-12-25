@@ -26,7 +26,7 @@ yarn add -D @previewcn/devtools
 Or use the CLI:
 
 ```bash
-npx previewcn init --devtools
+npx previewcn init
 ```
 
 ## Usage
