@@ -360,4 +360,4 @@ export async function writeComponentFiles(
   - [x] Modify init.ts
   - [x] Modify modify-layout.ts
   - [x] Update doctor.ts
-  - [ ] Test on fresh project
+  - [x] Test on fresh project

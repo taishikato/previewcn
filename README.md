@@ -1,357 +1,175 @@
-<img width="1200" alt="Image" src="https://github.com/user-attachments/assets/b2d7b49e-82ef-4b1b-8fe4-9cca5c30c226" />
+<img width="1200" alt="PreviewCN" src="https://github.com/user-attachments/assets/b2d7b49e-82ef-4b1b-8fe4-9cca5c30c226" />
 
-# PreviewCN 🎨
+# PreviewCN
 
-> A real-time shadcn/ui theme editor that lets you preview theme changes on your actual application, not just demo components.
+> A real-time shadcn/ui theme editor that lets you preview theme changes directly on your actual application.
 
-> 🧪 Note: PreviewCN is early-stage and moving fast. Expect rough edges, breaking changes, and rapid improvements. Buckle up!
+Unlike [shadcn/ui themes](https://ui.shadcn.com/themes) which only previews on pre-built demo components, PreviewCN embeds a floating theme editor directly in your app so you can see exactly how your buttons, cards, and forms will look with different themes.
 
-## ✨ What's this?
+## Features
 
-Tired of tweaking CSS variables, refreshing your browser, and hoping your app looks right? PreviewCN embeds your app in an iframe and applies theme changes **instantly** as you edit. See exactly how your buttons, cards, and forms will look before you commit to a theme.
+- **Theme Presets** - One-click application of complete themes (Vercel, Supabase, Claude)
+- **Color Presets** - 18 beautiful color palettes using OKLCH color space
+- **Border Radius** - From sharp corners to fully rounded
+- **Font Selection** - 10 Google Fonts presets
+- **Light/Dark Mode** - Toggle and preview both modes
+- **CSS Export** - Copy generated CSS variables for your `globals.css`
+- **Development Only** - Automatically tree-shaken in production builds
 
-## 🛠 Tech Stack
+## Quick Start
 
-- **Next.js 16** with App Router
-- **React 19**
-- **Tailwind CSS v4**
-- **shadcn/ui** components
-- **OKLCH** color space for beautiful, perceptually uniform colors
+```bash
+# Run in your Next.js project
+npx previewcn init
 
----
-
-## 🚀 Getting Started
-
-### ⚠️ Important: You need TWO apps running!
-
-PreviewCN works by embedding **your app** inside it. This means you need to run both:
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Terminal 1: Your App                                       │
-│  $ cd your-nextjs-app                                       │
-│  $ pnpm dev                                                 │
-│  → Running at http://localhost:3000                         │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│  Terminal 2: PreviewCN (this project)                       │
-│  $ cd previewcn                                             │
-│  $ pnpm dev --port 3001                                     │
-│  → Running at http://localhost:3001                         │
-└─────────────────────────────────────────────────────────────┘
+# Start your dev server
+pnpm dev
 ```
 
-### Step-by-Step Setup
+That's it! A floating palette icon will appear in the bottom-right corner of your app.
 
-#### 1️⃣ Add ThemeReceiver to YOUR app first
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ Your Application                                                     │
+│                                                                      │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │                                                                │ │
+│  │                    [ Your App Content ]                        │ │
+│  │                                                                │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│                                              ┌────────────────────┐ │
+│                                              │  Preset            │ │
+│                                              │  [Vercel][Supabase]│ │
+│                                              │                    │ │
+│                                              │  Color             │ │
+│                                              │  [■][■][■][■][■]   │ │
+│                                              │                    │ │
+│                                              │  Radius            │ │
+│                                              │  ○ None  ○ SM      │ │
+│                                              │  ○ MD    ○ LG      │ │
+│                                              │                    │ │
+│                                              │  Mode              │ │
+│                                              │  ☀ Light  ● Dark   │ │
+│                                              │                    │ │
+│                                       ┌──┐   │  [Copy CSS]        │ │
+│                                       │🎨│   └────────────────────┘ │
+│                                       └──┘                          │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
-Before anything else, add this component to your app so it can receive theme updates:
+## Requirements
+
+- Next.js with App Router
+- shadcn/ui configured in your project
+- Tailwind CSS v4
+
+## How It Works
+
+PreviewCN follows the [shadcn/ui](https://ui.shadcn.com) philosophy - instead of installing an npm package, it generates component files directly into your project:
+
+```
+components/ui/previewcn/
+├── index.ts              # Main export
+├── devtools.tsx          # Dev-only wrapper
+├── trigger.tsx           # Floating action button
+├── panel.tsx             # Theme editor panel
+├── color-picker.tsx      # Color preset selector
+├── preset-selector.tsx   # Theme preset selector
+├── radius-selector.tsx   # Border radius selector
+├── font-selector.tsx     # Font selector
+├── mode-toggle.tsx       # Light/Dark toggle
+├── css-export-button.tsx # CSS export button
+├── theme-applier.ts      # DOM manipulation logic
+├── use-theme-state.ts    # State management hook
+├── css-export.ts         # CSS generation utility
+└── presets/              # Theme data
+    ├── index.ts
+    ├── colors.ts
+    ├── color-preset-specs.ts
+    ├── theme-presets.ts
+    ├── fonts.ts
+    └── radius.ts
+```
+
+The CLI also adds the devtools component to your `layout.tsx`:
 
 ```tsx
-// your-app/components/theme-receiver.tsx
-"use client";
-
-import { useEffect } from "react";
-
-const THEME_COLOR_STYLE_ID = "previewcn-theme-colors";
-const THEME_FONT_STYLE_ID = "previewcn-theme-font";
-
-function getOrCreateStyleElement(id: string): HTMLStyleElement {
-  const existing = document.getElementById(id);
-  if (existing instanceof HTMLStyleElement) {
-    return existing;
-  }
-
-  if (existing) {
-    existing.remove();
-  }
-
-  const styleEl = document.createElement("style");
-  styleEl.id = id;
-  document.head.appendChild(styleEl);
-  return styleEl;
-}
-
-function getOrCreateThemeColorStyleElement(): HTMLStyleElement {
-  return getOrCreateStyleElement(THEME_COLOR_STYLE_ID);
-}
-
-function getOrCreateThemeFontStyleElement(): HTMLStyleElement {
-  return getOrCreateStyleElement(THEME_FONT_STYLE_ID);
-}
-
-function serializeCssVars(cssVars: Record<string, string>): string {
-  return Object.entries(cssVars)
-    .map(([key, value]) => `--${key}: ${value};`)
-    .join(" ");
-}
-
-// Shared postMessage payload types (kept local here for copy/paste).
-type ApplyThemeMessage = {
-  type: "APPLY_THEME";
-  cssVars: Record<string, string>;
-  darkMode?: boolean;
-};
-
-type ToggleDarkModeMessage = {
-  type: "TOGGLE_DARK_MODE";
-  darkMode: boolean;
-};
-
-type UpdateRadiusMessage = {
-  type: "UPDATE_RADIUS";
-  radius: string;
-};
-
-type UpdateColorsMessage = {
-  type: "UPDATE_COLORS";
-  cssVars: { light: Record<string, string>; dark: Record<string, string> };
-};
-
-type UpdateFontMessage = {
-  type: "UPDATE_FONT";
-  fontId: string;
-  fontFamily: string;
-  googleFontsUrl: string;
-};
-
-// Handshake messages for connection status visibility (does not trigger theme application).
-type ReadyMessage = { type: "PREVIEWCN_READY" };
-type PingMessage = { type: "PREVIEWCN_PING" };
-type PongMessage = { type: "PREVIEWCN_PONG" };
-
-type PreviewCNMessage =
-  | ApplyThemeMessage
-  | ToggleDarkModeMessage
-  | UpdateRadiusMessage
-  | UpdateColorsMessage
-  | UpdateFontMessage
-  | ReadyMessage
-  | PingMessage
-  | PongMessage;
-
-function sendToParent(message: ReadyMessage | PongMessage) {
-  // Send to parent window (iframe scenario)
-  if (window.parent !== window) {
-    window.parent.postMessage(message, "*");
-  }
-}
-
-export function ThemeReceiver() {
-  useEffect(() => {
-    // Send READY message on mount to signal the receiver is active
-    // This enables connection status detection in PreviewCN
-    sendToParent({ type: "PREVIEWCN_READY" });
-
-    const handler = (event: MessageEvent<PreviewCNMessage>) => {
-      // Allow messages from any origin in development
-      const root = document.documentElement;
-
-      // Handle handshake ping - respond with pong (does not trigger theme application)
-      if (event.data?.type === "PREVIEWCN_PING") {
-        sendToParent({ type: "PREVIEWCN_PONG" });
-        return;
-      }
-
-      if (event.data?.type === "APPLY_THEME") {
-        // Apply CSS variables
-        Object.entries(event.data.cssVars).forEach(([key, value]) => {
-          root.style.setProperty(`--${key}`, value);
-        });
-
-        // Apply dark mode class based on the message
-        // This keeps preview's dark mode independent from parent app's dark mode
-        if (event.data.darkMode !== undefined) {
-          if (event.data.darkMode) {
-            root.classList.add("dark");
-          } else {
-            root.classList.remove("dark");
-          }
-        }
-      }
-
-      // Handle dark mode toggle only (no CSS variables)
-      // This is used when the target site already has its own dark/light CSS variables
-      if (event.data?.type === "TOGGLE_DARK_MODE") {
-        // Toggle class names
-        if (event.data.darkMode) {
-          root.classList.remove("light");
-          root.classList.add("dark");
-        } else {
-          root.classList.remove("dark");
-          root.classList.add("light");
-        }
-
-        // Set color-scheme style
-        root.style.colorScheme = event.data.darkMode ? "dark" : "light";
-      }
-
-      // Handle radius update only (no color variables)
-      if (event.data?.type === "UPDATE_RADIUS") {
-        root.style.setProperty("--radius", event.data.radius);
-      }
-
-      // Handle color update only (no radius variable)
-      // Uses dynamic <style> element to properly apply :root and .dark selectors
-      if (event.data?.type === "UPDATE_COLORS") {
-        const { light, dark } = event.data.cssVars;
-
-        const styleEl = getOrCreateThemeColorStyleElement();
-
-        // Generate CSS for both modes
-        const lightCss = serializeCssVars(light);
-        const darkCss = serializeCssVars(dark);
-
-        styleEl.textContent = `:root { ${lightCss} } .dark { ${darkCss} }`;
-      }
-
-      // Handle font update
-      // Dynamically loads Google Font and injects CSS to override fonts universally
-      if (event.data?.type === "UPDATE_FONT") {
-        const { fontId, fontFamily, googleFontsUrl } = event.data;
-
-        // Validate Google Fonts URL to prevent XSS attacks
-        if (!googleFontsUrl.startsWith("https://fonts.googleapis.com/")) {
-          console.warn("Invalid font URL");
-          return;
-        }
-
-        // Inject Google Fonts link if not already present
-        const linkId = `previewcn-font-${fontId}`;
-        if (!document.getElementById(linkId)) {
-          const link = document.createElement("link");
-          link.id = linkId;
-          link.rel = "stylesheet";
-          link.href = googleFontsUrl;
-          document.head.appendChild(link);
-        }
-
-        // Use multiple strategies to ensure font override works universally
-        // This covers various Tailwind v4 and next/font configurations
-        const styleEl = getOrCreateThemeFontStyleElement();
-        styleEl.textContent = `
-          :root {
-            --font-sans: ${fontFamily} !important;
-            --font-sans-override: ${fontFamily} !important;
-            --font-geist-sans: ${fontFamily} !important;
-          }
-          html, body, .font-sans {
-            font-family: ${fontFamily} !important;
-          }
-        `;
-      }
-    };
-
-    window.addEventListener("message", handler);
-    return () => window.removeEventListener("message", handler);
-  }, []);
-
-  return null;
-}
-```
-
-Then include it in your root layout (dev only):
-
-```tsx
-// your-app/app/layout.tsx
-import { ThemeReceiver } from "@/components/theme-receiver";
+import { PreviewcnDevtools } from "@/components/ui/previewcn";
 
 export default function RootLayout({ children }) {
   return (
-    <html>
+    <html lang="en">
       <body>
         {children}
-        {process.env.NODE_ENV === "development" && <ThemeReceiver />}
+        {process.env.NODE_ENV === "development" && <PreviewcnDevtools />}
       </body>
     </html>
   );
 }
 ```
 
-#### 2️⃣ Start YOUR app
+The component only renders in development mode and is completely removed from production builds.
+
+## CLI Commands
 
 ```bash
-cd your-nextjs-app
-pnpm dev
+# Initialize PreviewCN (default command)
+npx previewcn
+
+# Or explicitly
+npx previewcn init
+
+# Skip confirmation prompt
+npx previewcn init -y
+
+# Check setup status
+npx previewcn doctor
 ```
 
-#### 3️⃣ Start PreviewCN
+## Usage
 
-Open a **new terminal** and run:
+1. **Pick a preset** - Apply a complete theme (colors + radius + font) with one click
+2. **Customize colors** - Choose from 18 color presets
+3. **Adjust radius** - From none to full rounded corners
+4. **Select font** - Pick from 10 Google Fonts
+5. **Toggle mode** - Preview light and dark themes
+6. **Export CSS** - Copy the generated CSS and paste into your `globals.css`
+
+## Troubleshooting
+
+### Theme editor not appearing?
 
 ```bash
-cd previewcn
-pnpm install
-pnpm dev --port 3001
+npx previewcn doctor
 ```
 
-#### 4️⃣ Open PreviewCN and enter your app's URL
-
-1. Open [http://localhost:3001](http://localhost:3001) in your browser
-2. **Enter your app's URL** (e.g., `http://localhost:3000`) in the URL input field
-3. Your app will appear in the preview panel!
-
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│  PreviewCN (localhost:3001)                                          │
-├─────────────────────┬────────────────────────────────────────────────┤
-│                     │                                                │
-│  📍 URL Input       │   ┌────────────────────────────────────────┐  │
-│  ┌───────────────┐  │   │                                        │  │
-│  │localhost:3000 │  │   │   👀 YOUR APP APPEARS HERE!            │  │
-│  └───────────────┘  │   │                                        │  │
-│                     │   │   (embedded via iframe)                │  │
-│  🎨 Color Presets   │   │                                        │  │
-│  🔘 Radius          │   │   Theme changes apply instantly!       │  │
-│  🌙 Dark Mode       │   │                                        │  │
-│  📋 Export CSS      │   └────────────────────────────────────────┘  │
-│                     │                                                │
-└─────────────────────┴────────────────────────────────────────────────┘
-```
-
-<img width="600" alt="Image" src="https://github.com/user-attachments/assets/9caa7542-35ac-46c9-bbfd-292cc42668fd" />
-
----
-
-## 💡 How to Use
-
-1. **Pick a color**: Choose from 18 beautiful color presets (Neutral, Blue, Rose, Violet, and more!)
-2. **Adjust the radius**: From sharp corners to fully rounded, find your vibe
-3. **Toggle dark mode**: See how your theme looks in both light and dark
-4. **Copy the CSS**: Export your theme and paste it into your app's `globals.css`
-
----
-
-## 📦 Available Scripts
-
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start the development server |
-| `pnpm build` | Create a production build |
-| `pnpm start` | Run the production server |
-| `pnpm lint` | Run ESLint |
-
-## 🔧 Troubleshooting
-
-### Connection status shows "Not Connected"?
-
-Make sure you've added the `ThemeReceiver` component to your app and it's rendering in development mode.
+This checks:
+- Next.js App Router detection
+- PreviewCN component files exist
+- `layout.tsx` references `PreviewcnDevtools` (import and/or JSX)
 
 ### Theme changes not applying?
 
-1. Check browser DevTools for console errors
-2. Verify the `ThemeReceiver` component is mounted (look for `PREVIEWCN_READY` in network/console)
-3. Check if `<style id="previewcn-theme-colors">` or `<style id="previewcn-theme-font">` elements are being created in `<head>`
+1. Check browser DevTools console for errors
+2. Verify you're in development mode (`pnpm dev`)
+3. Check if CSS variables are being set on `:root`
 
-For detailed implementation information, see [Font Override Setup](./docs/font-override-setup.md).
+## Contributing
 
----
+PRs are welcome! This is a monorepo using pnpm workspaces and Turborepo.
 
-## 🤝 Contributing
+```bash
+# Install dependencies
+pnpm install
 
-PRs are welcome! Please run `pnpm lint` before submitting.
+# Build the CLI
+pnpm build
 
-## 📄 License
+# Run linting
+pnpm lint
+```
 
-MIT
+## Credits
+
+- Theme presets adapted from [tweakcn](https://github.com/jnsahaj/tweakcn) (Apache 2.0)
