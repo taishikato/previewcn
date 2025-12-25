@@ -19,7 +19,10 @@ Unlike [shadcn/ui themes](https://ui.shadcn.com/themes) which only previews on p
 ## Quick Start
 
 ```bash
-# Run in your Next.js project
+# Run in your Next.js app directory:
+# - plain Next.js: project root
+# - Next.js with `src/`: run inside `src/`
+# - monorepo: `cd` into the Next.js app package first
 npx previewcn init
 
 # Start your dev server
