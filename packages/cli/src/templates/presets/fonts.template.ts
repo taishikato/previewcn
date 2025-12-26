@@ -79,6 +79,69 @@ export const fontPresets: FontPreset[] = [
     googleFontsUrl:
       "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap",
   },
+  {
+    label: "Plus Jakarta Sans",
+    value: "plus-jakarta-sans",
+    fontFamily: '"Plus Jakarta Sans", sans-serif',
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
+  },
+  {
+    label: "Poppins",
+    value: "poppins",
+    fontFamily: '"Poppins", sans-serif',
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap",
+  },
+  {
+    label: "Open Sans",
+    value: "open-sans",
+    fontFamily: '"Open Sans", sans-serif',
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap",
+  },
+  {
+    label: "Montserrat",
+    value: "montserrat",
+    fontFamily: '"Montserrat", sans-serif',
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap",
+  },
+  {
+    label: "Oxanium",
+    value: "oxanium",
+    fontFamily: '"Oxanium", sans-serif',
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&display=swap",
+  },
+  {
+    label: "Libre Baskerville",
+    value: "libre-baskerville",
+    fontFamily: '"Libre Baskerville", serif',
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap",
+  },
+  {
+    label: "Merriweather",
+    value: "merriweather",
+    fontFamily: '"Merriweather", serif',
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap",
+  },
+  {
+    label: "Architects Daughter",
+    value: "architects-daughter",
+    fontFamily: '"Architects Daughter", cursive',
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap",
+  },
+  {
+    label: "Antic",
+    value: "antic",
+    fontFamily: '"Antic", sans-serif',
+    googleFontsUrl:
+      "https://fonts.googleapis.com/css2?family=Antic&display=swap",
+  },
 ];
 
 export function getFontPreset(value: string): FontPreset | undefined {
