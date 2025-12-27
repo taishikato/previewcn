@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "devtools",
-  "type": "registry:component",
   "title": "PreviewCN Devtools",
   "description": "Real-time shadcn/ui theme editor for development",
   "files": [
@@ -119,5 +118,6 @@
       "type": "registry:lib",
       "target": "components/ui/previewcn/presets/theme-presets.ts"
     }
-  ]
+  ],
+  "type": "registry:component"
 }
