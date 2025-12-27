@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function ExampleWrapper({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -12,7 +12,7 @@ function ExampleWrapper({ className, ...props }: React.ComponentProps<"div">) {
         {...props}
       />
     </div>
-  )
+  );
 }
 
 function Example({
@@ -22,8 +22,8 @@ function Example({
   containerClassName,
   ...props
 }: React.ComponentProps<"div"> & {
-  title: string
-  containerClassName?: string
+  title: string;
+  containerClassName?: string;
 }) {
   return (
     <div
@@ -47,7 +47,7 @@ function Example({
         {children}
       </div>
     </div>
-  )
+  );
 }
 
-export { ExampleWrapper, Example }
+export { ExampleWrapper, Example };
