@@ -6,15 +6,7 @@ previewcn lets you preview different shadcn/ui themes **directly in your app** -
 
 https://github.com/user-attachments/assets/e7da81b9-bfbb-4fce-b249-faf45e9f870a
 
-## Features
 
-- **Theme Presets** - One-click application of complete themes (Vercel, Supabase, Claude)
-- **Color Presets** - 18 beautiful color palettes using OKLCH color space
-- **Border Radius** - From sharp corners to fully rounded
-- **Font Selection** - 10 Google Fonts presets
-- **Light/Dark Mode** - Toggle and preview both modes
-- **CSS Export** - Copy generated CSS variables for your `globals.css`
-- **Development Only** - Automatically tree-shaken in production builds
 
 ## Quick Start
 
@@ -31,45 +23,25 @@ pnpm dev
 
 That's it! A floating palette icon will appear in the bottom-right corner of your app.
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ Your Application                                                     │
-│                                                                      │
-│  ┌────────────────────────────────────────────────────────────────┐ │
-│  │                                                                │ │
-│  │                    [ Your App Content ]                        │ │
-│  │                                                                │ │
-│  └────────────────────────────────────────────────────────────────┘ │
-│                                                                      │
-│                                              ┌────────────────────┐ │
-│                                              │  Preset            │ │
-│                                              │  [Vercel][Supabase]│ │
-│                                              │                    │ │
-│                                              │  Color             │ │
-│                                              │  [■][■][■][■][■]   │ │
-│                                              │                    │ │
-│                                              │  Radius            │ │
-│                                              │  ○ None  ○ SM      │ │
-│                                              │  ○ MD    ○ LG      │ │
-│                                              │                    │ │
-│                                              │  Mode              │ │
-│                                              │  ☀ Light  ● Dark   │ │
-│                                              │                    │ │
-│                                       ┌──┐   │  [Copy CSS]        │ │
-│                                       │🎨│   └────────────────────┘ │
-│                                       └──┘                          │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
 ## Requirements
 
 - Next.js with App Router
 - shadcn/ui configured in your project
 - Tailwind CSS v4
 
+## Features
+
+- **Theme Presets** - One-click application of complete themes (Vercel, Supabase, Claude)
+- **Color Presets** - 18 beautiful color palettes using OKLCH color space
+- **Border Radius** - From sharp corners to fully rounded
+- **Font Selection** - 10 Google Fonts presets
+- **Light/Dark Mode** - Toggle and preview both modes
+- **CSS Export** - Copy generated CSS variables for your `globals.css`
+- **Development Only** - Automatically tree-shaken in production builds
+
 ## How It Works
 
-previewcn follows the [shadcn/ui](https://ui.shadcn.com) philosophy - instead of installing an npm package, it generates component files directly into your project:
+previewcn follows the [shadcn/ui](https://ui.shadcn.com) philosophy - instead of installing an npm package, it installs component files into your project via the shadcn registry:
 
 ```
 components/ui/previewcn/
@@ -114,6 +86,12 @@ export default function RootLayout({ children }) {
 
 The component only renders in development mode and is completely removed from production builds.
 
+Under the hood, init runs:
+
+```bash
+npx -y shadcn@latest add -y https://www.previewcn.com/r/devtools.json --overwrite
+```
+
 ## CLI Commands
 
 ```bash
@@ -122,9 +100,6 @@ npx previewcn
 
 # Or explicitly
 npx previewcn init
-
-# Skip confirmation prompt
-npx previewcn init -y
 
 # Check setup status
 npx previewcn doctor
