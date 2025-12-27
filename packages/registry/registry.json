@@ -1,12 +1,12 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "previewcn",
-  "homepage": "https://previewcn.com",
+  "homepage": "https://www.previewcn.com",
   "items": [
     {
       "name": "devtools",
       "type": "registry:component",
-      "title": "PreviewCN Devtools",
+      "title": "previewcn Devtools",
       "description": "Real-time shadcn/ui theme editor for development",
       "registryDependencies": ["utils"],
       "files": [
