@@ -77,7 +77,8 @@ function createColorPreset(spec: PresetSpec): ColorPreset {
           spec.primaryForeground?.light ?? defaultPrimaryForeground.light,
         destructive: spec.destructive?.light ?? defaultDestructive.light,
         "destructive-foreground":
-          spec.destructiveForeground?.light ?? defaultDestructiveForeground.light,
+          spec.destructiveForeground?.light ??
+          defaultDestructiveForeground.light,
       },
       dark: {
         ...neutralColors.dark,

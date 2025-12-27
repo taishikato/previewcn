@@ -35,7 +35,7 @@ function ChevronDownIcon() {
 function FontMenu({ value, onSelect }: FontMenuProps) {
   return (
     <div
-      className="absolute top-[calc(100%+6px)] left-0 z-20 w-full p-1.5 rounded-xl bg-[oklch(0.18_0.02_260)] border border-[oklch(1_0_0/0.08)] max-h-[220px] overflow-y-auto"
+      className="absolute top-[calc(100%+6px)] left-0 z-20 max-h-[220px] w-full overflow-y-auto rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.18_0.02_260)] p-1.5"
       style={{
         boxShadow: "0 10px 26px oklch(0 0 0 / 0.45)",
         animation: "previewcn-pop 0.14s ease",
@@ -47,7 +47,7 @@ function FontMenu({ value, onSelect }: FontMenuProps) {
           <button
             key={font.value}
             onClick={() => onSelect(font.value)}
-            className={`flex w-full items-center rounded-lg border border-transparent px-2 py-1.5 text-xs text-left text-[oklch(0.96_0_0)] cursor-pointer transition-all duration-[140ms] hover:bg-[oklch(0.24_0.02_260/0.95)] focus-visible:outline-2 focus-visible:outline-[oklch(0.72_0.15_265)] focus-visible:outline-offset-1 ${
+            className={`flex w-full cursor-pointer items-center rounded-lg border border-transparent px-2 py-1.5 text-left text-xs text-[oklch(0.96_0_0)] transition-all duration-[140ms] hover:bg-[oklch(0.24_0.02_260/0.95)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[oklch(0.72_0.15_265)] ${
               isSelected
                 ? "border-[oklch(0.72_0.15_265)] bg-[oklch(0.72_0.15_265/0.18)]"
                 : ""
@@ -78,16 +78,16 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
 
   return (
     <div
-      className={`relative grid gap-2.5 p-3 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] ${isOpen ? "z-30" : "z-0"}`}
+      className={`relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3 ${isOpen ? "z-30" : "z-0"}`}
       style={{ boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }}
     >
-      <label className="block text-[10.5px] font-semibold tracking-[0.16em] uppercase text-[oklch(0.72_0_0)]">
+      <label className="block text-[10.5px] font-semibold tracking-[0.16em] text-[oklch(0.72_0_0)] uppercase">
         Font
       </label>
       <div className="relative z-[1]">
         <button
           onClick={handleToggle}
-          className="inline-flex items-center justify-between gap-1.5 w-full min-h-[30px] px-2.5 py-1.5 rounded-[10px] border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] text-[oklch(0.96_0_0)] text-xs font-medium tracking-[0.01em] cursor-pointer transition-all duration-[160ms] hover:bg-[oklch(0.24_0.02_260/0.95)] hover:border-[oklch(1_0_0/0.18)] focus-visible:outline-2 focus-visible:outline-[oklch(0.72_0.15_265)] focus-visible:outline-offset-2"
+          className="inline-flex min-h-[30px] w-full cursor-pointer items-center justify-between gap-1.5 rounded-[10px] border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-[oklch(0.96_0_0)] transition-all duration-[160ms] hover:border-[oklch(1_0_0/0.18)] hover:bg-[oklch(0.24_0.02_260/0.95)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[oklch(0.72_0.15_265)]"
           style={{ boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }}
           aria-expanded={isOpen}
         >
@@ -95,9 +95,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
           <ChevronDownIcon />
         </button>
 
-        {isOpen && (
-          <FontMenu value={value} onSelect={handleSelect} />
-        )}
+        {isOpen && <FontMenu value={value} onSelect={handleSelect} />}
       </div>
     </div>
   );

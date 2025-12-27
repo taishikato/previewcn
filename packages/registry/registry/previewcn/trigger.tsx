@@ -31,7 +31,7 @@ export function Trigger({ onClick }: TriggerProps) {
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-4 right-4 z-[99999] inline-flex items-center justify-center size-12 rounded-full border border-[oklch(1_0_0/0.18)] text-[oklch(0.96_0_0)] transition-all duration-[180ms] hover:border-[oklch(1_0_0/0.28)] focus-visible:outline-2 focus-visible:outline-[oklch(0.72_0.15_265)] focus-visible:outline-offset-[3px]"
+      className="fixed right-4 bottom-4 z-[99999] inline-flex size-12 items-center justify-center rounded-full border border-[oklch(1_0_0/0.18)] text-[oklch(0.96_0_0)] transition-all duration-[180ms] hover:border-[oklch(1_0_0/0.28)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[oklch(0.72_0.15_265)]"
       style={{
         background:
           "linear-gradient(180deg, oklch(0.23 0.03 260) 0%, oklch(0.16 0.02 260) 100%)",

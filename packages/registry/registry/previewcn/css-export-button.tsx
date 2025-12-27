@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import type { ThemeConfig } from "./theme-applier";
 import { copyToClipboard, generateExportCss } from "./css-export";
+import type { ThemeConfig } from "./theme-applier";
 
 type CssExportButtonProps = {
   config: ThemeConfig;

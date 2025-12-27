@@ -2,14 +2,14 @@
 
 import { useEffect, type ReactNode } from "react";
 
-import { useThemeState } from "./use-theme-state";
-import { applyTheme } from "./theme-applier";
 import { ColorPicker } from "./color-picker";
 import { CssExportButton } from "./css-export-button";
 import { FontSelector } from "./font-selector";
 import { ModeToggle } from "./mode-toggle";
 import { PresetSelector } from "./preset-selector";
 import { RadiusSelector } from "./radius-selector";
+import { applyTheme } from "./theme-applier";
+import { useThemeState } from "./use-theme-state";
 
 type PanelProps = {
   onClose: () => void;
@@ -165,7 +165,7 @@ function PanelHeader({ onClose }: PanelHeaderProps) {
       </div>
       <button
         onClick={onClose}
-        className="inline-flex items-center justify-center size-7 rounded-[10px] border border-transparent bg-transparent text-[oklch(0.72_0_0)] cursor-pointer transition-all duration-[160ms] hover:bg-[oklch(0.2_0.02_260/0.9)] hover:border-[oklch(1_0_0/0.08)] hover:text-[oklch(0.96_0_0)] focus-visible:outline-2 focus-visible:outline-[oklch(0.72_0.15_265)] focus-visible:outline-offset-2"
+        className="inline-flex size-7 cursor-pointer items-center justify-center rounded-[10px] border border-transparent bg-transparent text-[oklch(0.72_0_0)] transition-all duration-[160ms] hover:border-[oklch(1_0_0/0.08)] hover:bg-[oklch(0.2_0.02_260/0.9)] hover:text-[oklch(0.96_0_0)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[oklch(0.72_0.15_265)]"
         aria-label="Close"
       >
         <CloseIcon />
@@ -186,12 +186,16 @@ function PanelContent({
     {
       key: "preset",
       delay: 0.02,
-      content: <PresetSelector value={config.preset} onChange={setPresetTheme} />,
+      content: (
+        <PresetSelector value={config.preset} onChange={setPresetTheme} />
+      ),
     },
     {
       key: "color",
       delay: 0.05,
-      content: <ColorPicker value={config.colorPreset} onChange={setColorPreset} />,
+      content: (
+        <ColorPicker value={config.colorPreset} onChange={setColorPreset} />
+      ),
     },
     {
       key: "radius",
@@ -227,7 +231,7 @@ function PanelFooter({ config, onReset }: PanelFooterProps) {
       <CssExportButton config={config} />
       <button
         onClick={onReset}
-        className="inline-flex items-center justify-center gap-1.5 min-h-[30px] px-2.5 py-1.5 rounded-[10px] border border-transparent bg-transparent text-[oklch(0.72_0_0)] text-xs font-medium tracking-[0.01em] cursor-pointer transition-all duration-[160ms] hover:bg-[oklch(0.2_0.02_260/0.9)] hover:border-[oklch(1_0_0/0.08)] hover:text-[oklch(0.96_0_0)]"
+        className="inline-flex min-h-[30px] cursor-pointer items-center justify-center gap-1.5 rounded-[10px] border border-transparent bg-transparent px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-[oklch(0.72_0_0)] transition-all duration-[160ms] hover:border-[oklch(1_0_0/0.08)] hover:bg-[oklch(0.2_0.02_260/0.9)] hover:text-[oklch(0.96_0_0)]"
       >
         <RotateCcwIcon />
         <span>Reset</span>

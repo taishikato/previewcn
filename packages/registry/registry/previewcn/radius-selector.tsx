@@ -19,10 +19,10 @@ const selectedButtonClass =
 export function RadiusSelector({ value, onChange }: RadiusSelectorProps) {
   return (
     <div
-      className="relative grid gap-2.5 p-3 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)]"
+      className="relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3"
       style={{ boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }}
     >
-      <label className="block text-[10.5px] font-semibold tracking-[0.16em] uppercase text-[oklch(0.72_0_0)]">
+      <label className="block text-[10.5px] font-semibold tracking-[0.16em] text-[oklch(0.72_0_0)] uppercase">
         Radius
       </label>
       <div className="grid grid-cols-3 gap-2">
@@ -34,11 +34,15 @@ export function RadiusSelector({ value, onChange }: RadiusSelectorProps) {
               key={preset.name}
               onClick={() => onChange(preset.value)}
               className={`${baseButtonClass} ${isSelected ? selectedButtonClass : defaultButtonClass}`}
-              style={isSelected ? undefined : { boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }}
+              style={
+                isSelected
+                  ? undefined
+                  : { boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }
+              }
               title={preset.label}
             >
               <span
-                className="w-7 h-[18px] border border-[oklch(1_0_0/0.12)]"
+                className="h-[18px] w-7 border border-[oklch(1_0_0/0.12)]"
                 style={{
                   borderRadius: preset.value,
                   background:

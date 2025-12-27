@@ -19,10 +19,10 @@ const selectedCardClass =
 export function PresetSelector({ value, onChange }: PresetSelectorProps) {
   return (
     <div
-      className="relative grid gap-2.5 p-3 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)]"
+      className="relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3"
       style={{ boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }}
     >
-      <span className="block text-[10.5px] font-semibold tracking-[0.16em] uppercase text-[oklch(0.72_0_0)]">
+      <span className="block text-[10.5px] font-semibold tracking-[0.16em] text-[oklch(0.72_0_0)] uppercase">
         Presets
       </span>
       <div className="grid grid-cols-3 gap-2">
@@ -37,16 +37,23 @@ export function PresetSelector({ value, onChange }: PresetSelectorProps) {
               key={preset.name}
               onClick={() => onChange(preset.name)}
               className={`${baseCardClass} ${isSelected ? selectedCardClass : defaultCardClass}`}
-              style={isSelected ? undefined : { boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }}
+              style={
+                isSelected
+                  ? undefined
+                  : { boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }
+              }
               aria-label={preset.label}
               aria-pressed={isSelected}
             >
-              <div className="flex w-full h-[18px] rounded overflow-hidden border border-[oklch(1_0_0/0.08)]">
+              <div className="flex h-[18px] w-full overflow-hidden rounded border border-[oklch(1_0_0/0.08)]">
                 <div
                   className="flex-1 border-r border-[oklch(0_0_0/0.1)]"
                   style={{ backgroundColor: bgColor }}
                 />
-                <div className="flex-1" style={{ backgroundColor: primaryColor }} />
+                <div
+                  className="flex-1"
+                  style={{ backgroundColor: primaryColor }}
+                />
               </div>
               <span className="text-[oklch(0.72_0_0)]">{preset.label}</span>
             </button>
