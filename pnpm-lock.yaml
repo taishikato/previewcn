@@ -121,9 +121,18 @@ importers:
 
   packages/registry:
     devDependencies:
+      '@types/react':
+        specifier: ^19
+        version: 19.2.7
+      react:
+        specifier: ^19
+        version: 19.2.3
       shadcn:
         specifier: ^2.3.0
         version: 2.10.0(@types/node@20.19.27)(hono@4.11.3)(typescript@5.9.3)
+      typescript:
+        specifier: ^5
+        version: 5.9.3
 
 packages:
 
