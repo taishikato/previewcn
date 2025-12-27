@@ -1,0 +1,12 @@
+{
+  "name": "@previewcn/registry",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "registry:build": "shadcn build"
+  },
+  "devDependencies": {
+    "shadcn": "^2.3.0"
+  }
+}

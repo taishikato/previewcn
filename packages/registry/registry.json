@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "previewcn",
+  "homepage": "https://previewcn.com",
+  "items": [
+    {
+      "name": "devtools",
+      "type": "registry:component",
+      "title": "PreviewCN Devtools",
+      "description": "Real-time shadcn/ui theme editor for development",
+      "files": [
+        { "path": "registry/previewcn/index.ts", "type": "registry:lib", "target": "components/ui/previewcn/index.ts" },
+        { "path": "registry/previewcn/devtools.tsx", "type": "registry:component", "target": "components/ui/previewcn/devtools.tsx" },
+        { "path": "registry/previewcn/panel.tsx", "type": "registry:component", "target": "components/ui/previewcn/panel.tsx" },
+        { "path": "registry/previewcn/trigger.tsx", "type": "registry:component", "target": "components/ui/previewcn/trigger.tsx" },
+        { "path": "registry/previewcn/color-picker.tsx", "type": "registry:component", "target": "components/ui/previewcn/color-picker.tsx" },
+        { "path": "registry/previewcn/preset-selector.tsx", "type": "registry:component", "target": "components/ui/previewcn/preset-selector.tsx" },
+        { "path": "registry/previewcn/radius-selector.tsx", "type": "registry:component", "target": "components/ui/previewcn/radius-selector.tsx" },
+        { "path": "registry/previewcn/font-selector.tsx", "type": "registry:component", "target": "components/ui/previewcn/font-selector.tsx" },
+        { "path": "registry/previewcn/mode-toggle.tsx", "type": "registry:component", "target": "components/ui/previewcn/mode-toggle.tsx" },
+        { "path": "registry/previewcn/css-export-button.tsx", "type": "registry:component", "target": "components/ui/previewcn/css-export-button.tsx" },
+        { "path": "registry/previewcn/theme-applier.ts", "type": "registry:lib", "target": "components/ui/previewcn/theme-applier.ts" },
+        { "path": "registry/previewcn/use-theme-state.ts", "type": "registry:lib", "target": "components/ui/previewcn/use-theme-state.ts" },
+        { "path": "registry/previewcn/css-export.ts", "type": "registry:lib", "target": "components/ui/previewcn/css-export.ts" },
+        { "path": "registry/previewcn/presets/index.ts", "type": "registry:lib", "target": "components/ui/previewcn/presets/index.ts" },
+        { "path": "registry/previewcn/presets/colors.ts", "type": "registry:lib", "target": "components/ui/previewcn/presets/colors.ts" },
+        { "path": "registry/previewcn/presets/color-preset-specs.ts", "type": "registry:lib", "target": "components/ui/previewcn/presets/color-preset-specs.ts" },
+        { "path": "registry/previewcn/presets/radius.ts", "type": "registry:lib", "target": "components/ui/previewcn/presets/radius.ts" },
+        { "path": "registry/previewcn/presets/fonts.ts", "type": "registry:lib", "target": "components/ui/previewcn/presets/fonts.ts" },
+        { "path": "registry/previewcn/presets/theme-presets.ts", "type": "registry:lib", "target": "components/ui/previewcn/presets/theme-presets.ts" }
+      ]
+    }
+  ]
+}
