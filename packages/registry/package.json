@@ -9,6 +9,7 @@
     "registry:build": "shadcn build"
   },
   "devDependencies": {
+    "@types/node": "^20.19.27",
     "@types/react": "^19",
     "shadcn": "^3.6.2"
   },
