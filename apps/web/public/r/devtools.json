@@ -1,7 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "devtools",
-  "type": "registry:component",
   "title": "PreviewCN Devtools",
   "description": "Real-time shadcn/ui theme editor for development",
   "files": [
@@ -31,7 +30,7 @@
     },
     {
       "path": "registry/previewcn/color-picker.tsx",
-      "content": "\"use client\";\n\nimport { colorPresets } from \"./presets/colors\";\n\ntype ColorPickerProps = {\n  value: string | null;\n  onChange: (colorPreset: string) => void;\n};\n\nexport function ColorPicker({ value, onChange }: ColorPickerProps) {\n  return (\n    <div\n      className=\"relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3\"\n      style={{ boxShadow: \"inset 0 1px 0 oklch(1 0 0 / 0.04)\" }}\n    >\n      <label className=\"block text-[10.5px] font-semibold tracking-[0.16em] text-[oklch(0.72_0_0)] uppercase\">\n        Theme\n      </label>\n      <div className=\"grid grid-cols-6 gap-2\">\n        {colorPresets.map((preset) => {\n          const isSelected = value === preset.name;\n          const primaryColor = preset.colors.light.primary;\n\n          return (\n            <button\n              key={preset.name}\n              onClick={() => onChange(preset.name)}\n              className={`aspect-square cursor-pointer rounded-lg border transition-all duration-[160ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[oklch(0.72_0.15_265)] ${\n                isSelected\n                  ? \"border-[oklch(0.72_0.15_265)] shadow-[0_0_0_1px_oklch(0.72_0.15_265),0_10px_20px_oklch(0_0_0/0.35)]\"\n                  : \"border-[oklch(1_0_0/0.08)] hover:border-[oklch(1_0_0/0.18)]\"\n              }`}\n              style={{\n                backgroundColor: primaryColor,\n                boxShadow: isSelected\n                  ? undefined\n                  : \"inset 0 1px 0 oklch(1 0 0 / 0.04)\",\n              }}\n              aria-label={preset.label}\n              title={preset.label}\n            />\n          );\n        })}\n      </div>\n    </div>\n  );\n}\n",
+      "content": "\"use client\";\n\nimport { colorPresets } from \"./presets/colors\";\n\ntype ColorPickerProps = {\n  value: string | null;\n  onChange: (colorPreset: string) => void;\n};\n\nexport function ColorPicker({ value, onChange }: ColorPickerProps) {\n  return (\n    <div\n      className=\"relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3\"\n      style={{ boxShadow: \"inset 0 1px 0 oklch(1 0 0 / 0.04)\" }}\n    >\n      <label className=\"block text-[10.5px] font-semibold tracking-[0.16em] text-[oklch(0.72_0_0)] uppercase\">\n        Theme\n      </label>\n      <div className=\"grid grid-cols-6 gap-2\">\n        {colorPresets.map((preset) => {\n          const isSelected = value === preset.name;\n          const primaryColor = preset.colors.light.primary;\n\n          return (\n            <button\n              key={preset.name}\n              onClick={() => onChange(preset.name)}\n              className={`aspect-square cursor-pointer rounded-lg border transition-all duration-160 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[oklch(0.72_0.15_265)] ${\n                isSelected\n                  ? \"border-[oklch(0.72_0.15_265)] shadow-[0_0_0_1px_oklch(0.72_0.15_265),0_10px_20px_oklch(0_0_0/0.35)]\"\n                  : \"border-[oklch(1_0_0/0.08)] hover:border-[oklch(1_0_0/0.18)]\"\n              }`}\n              style={{\n                backgroundColor: primaryColor,\n                boxShadow: isSelected\n                  ? undefined\n                  : \"inset 0 1px 0 oklch(1 0 0 / 0.04)\",\n              }}\n              aria-label={preset.label}\n              title={preset.label}\n            />\n          );\n        })}\n      </div>\n    </div>\n  );\n}\n",
       "type": "registry:component",
       "target": "components/ui/previewcn/color-picker.tsx"
     },
@@ -119,5 +118,6 @@
       "type": "registry:lib",
       "target": "components/ui/previewcn/presets/theme-presets.ts"
     }
-  ]
+  ],
+  "type": "registry:component"
 }
