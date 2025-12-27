@@ -16,7 +16,7 @@ type InitOptions = {
 };
 
 export async function initCommand(options: InitOptions) {
-  logger.info("Initializing PreviewCN...\n");
+  logger.info("Initializing previewcn...\n");
 
   const cwd = process.cwd();
 
@@ -27,14 +27,14 @@ export async function initCommand(options: InitOptions) {
 
   if (!projectInfo.isNextJs) {
     spinner.fail("Not a Next.js project");
-    logger.error("PreviewCN requires a Next.js project with App Router.");
+    logger.error("previewcn requires a Next.js project with App Router.");
     logger.hint("Make sure you're in the root of a Next.js project.");
     process.exit(1);
   }
 
   if (!projectInfo.isAppRouter) {
     spinner.fail("App Router not detected");
-    logger.error("PreviewCN requires Next.js App Router (app/ directory).");
+    logger.error("previewcn requires Next.js App Router (app/ directory).");
     logger.hint("Create an app/ directory or migrate from pages/ to app/.");
     process.exit(1);
   }
@@ -57,7 +57,7 @@ export async function initCommand(options: InitOptions) {
   // Step 4: Confirm installation
   if (!options.yes) {
     const proceed = await confirm(
-      "This will install PreviewCN components via shadcn and modify your app layout. Continue?",
+      "This will install previewcn components via shadcn and modify your app layout. Continue?",
       true
     );
     if (!proceed) {
@@ -70,7 +70,7 @@ export async function initCommand(options: InitOptions) {
 
   // Success message
   console.log();
-  logger.success("PreviewCN devtools initialized successfully!");
+  logger.success("previewcn devtools initialized successfully!");
   console.log();
   logger.info("Next step:");
   console.log(
@@ -88,7 +88,7 @@ async function setupDevtools(
   importPath: string
 ) {
   // Install components via shadcn registry
-  const installSpinner = ora("Installing PreviewCN components...").start();
+  const installSpinner = ora("Installing previewcn components...").start();
 
   try {
     await execa(
@@ -106,9 +106,9 @@ async function setupDevtools(
         stdio: "pipe",
       }
     );
-    installSpinner.succeed("Installed PreviewCN components");
+    installSpinner.succeed("Installed previewcn components");
   } catch (error) {
-    installSpinner.fail("Failed to install PreviewCN components");
+    installSpinner.fail("Failed to install previewcn components");
     logger.error(error instanceof Error ? error.message : String(error));
     process.exit(1);
   }

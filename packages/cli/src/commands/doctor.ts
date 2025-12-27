@@ -18,7 +18,7 @@ async function hasPreviewcnComponents(targetDir: string): Promise<boolean> {
 }
 
 export async function doctorCommand() {
-  logger.info("Running PreviewCN diagnostics...\n");
+  logger.info("Running previewcn diagnostics...\n");
 
   const cwd = process.cwd();
   const checks: Array<{ name: string; pass: boolean; message: string }> = [];
@@ -35,12 +35,12 @@ export async function doctorCommand() {
       : "Not a Next.js project",
   });
 
-  // Check 2: PreviewCN components generated
+  // Check 2: previewcn components generated
   const { targetDir } = await resolvePreviewcnPaths(cwd);
   const hasComponents = await hasPreviewcnComponents(targetDir);
   const relativePath = path.relative(cwd, targetDir);
   checks.push({
-    name: "PreviewCN components",
+    name: "previewcn components",
     pass: hasComponents,
     message: hasComponents
       ? `Found in ${relativePath}`
@@ -74,7 +74,7 @@ export async function doctorCommand() {
 
   const allPassed = checks.every((c) => c.pass);
   if (allPassed) {
-    logger.success("All checks passed! PreviewCN devtools is ready to use.");
+    logger.success("All checks passed! previewcn devtools is ready to use.");
     logger.info(
       "Run your dev server and click the theme icon to open the editor."
     );

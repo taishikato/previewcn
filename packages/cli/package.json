@@ -1,10 +1,10 @@
 {
   "name": "previewcn",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "engines": {
     "node": ">=18"
   },
-  "description": "CLI for PreviewCN - real-time shadcn/ui theme editor",
+  "description": "CLI for previewcn - real-time shadcn/ui theme editor",
   "keywords": [
     "shadcn",
     "shadcn-ui",
@@ -14,7 +14,7 @@
     "next.js"
   ],
   "license": "MIT",
-  "author": "PreviewCN",
+  "author": "previewcn",
   "repository": {
     "type": "git",
     "url": "https://github.com/taishikato/previewcn.git",
