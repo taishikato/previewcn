@@ -72,7 +72,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
     <div
       className={`relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3 shadow-[inset_0_1px_0_oklch(1_0_0/0.04)] ${isOpen ? "z-30" : "z-0"}`}
     >
-      <label className="block text-[10.5px] font-semibold tracking-[0.16em] text-[oklch(0.72_0_0)]">
+      <label className="block text-xs font-semibold text-neutral-300">
         Font
       </label>
       <div className="relative z-1">
