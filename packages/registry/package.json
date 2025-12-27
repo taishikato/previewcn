@@ -10,9 +10,7 @@
   },
   "devDependencies": {
     "@types/react": "^19",
-    "react": "^19",
-    "shadcn": "^2.3.0",
-    "typescript": "^5"
+    "shadcn": "^3.6.2"
   },
   "prettier": {
     "endOfLine": "lf",
