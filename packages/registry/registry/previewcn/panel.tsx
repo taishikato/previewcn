@@ -2,6 +2,8 @@
 
 import { useEffect, type ReactNode } from "react";
 
+import { cn } from "@/lib/utils";
+
 import { ColorPicker } from "./color-picker";
 import { CssExportButton } from "./css-export-button";
 import { FontSelector } from "./font-selector";
@@ -22,6 +24,7 @@ type PanelState = ReturnType<typeof useThemeState>;
 type PanelSectionProps = {
   delay: number;
   children: ReactNode;
+  className?: string;
 };
 
 type PanelContentProps = Omit<PanelState, "resetTheme">;
@@ -96,9 +99,10 @@ function usePanelKeyframes() {
   }, []);
 }
 
-function PanelSection({ delay, children }: PanelSectionProps) {
+function PanelSection({ delay, children, className }: PanelSectionProps) {
   return (
     <div
+      className={cn("relative", className)}
       style={{
         animation: "previewcn-rise 0.32s ease both",
         animationDelay: `${delay}s`,
@@ -159,6 +163,7 @@ function PanelContent({
     {
       key: "font",
       delay: 0.11,
+      className: "z-20",
       content: <FontSelector value={config.font} onChange={setFont} />,
     },
     {
@@ -171,7 +176,11 @@ function PanelContent({
   return (
     <div className="grid flex-1 gap-4 overflow-y-auto p-4 [scrollbar-color:oklch(1_0_0/0.2)_transparent] [scrollbar-width:thin]">
       {sections.map((section) => (
-        <PanelSection key={section.key} delay={section.delay}>
+        <PanelSection
+          key={section.key}
+          delay={section.delay}
+          className={section.className}
+        >
           {section.content}
         </PanelSection>
       ))}
