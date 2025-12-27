@@ -1,28 +1,17 @@
 {
-  "name": "previewcn-monorepo",
+  "name": "@previewcn/registry",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "dev:web": "turbo run dev --filter=@previewcn/web",
-    "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
-    "clean": "turbo run clean",
-    "format:write": "turbo run format:write",
-    "format:check": "turbo run format:check",
-    "registry:build": "turbo run registry:build --filter=@previewcn/registry"
+    "format:write": "prettier --write \"**/*.{ts,tsx}\" --cache",
+    "format:check": "prettier --check \"**/*.{ts,tsx}\" --cache",
+    "registry:build": "shadcn build"
   },
   "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
-    "prettier": "^3.7.4",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "turbo": "^2.7.2"
+    "@types/react": "^19",
+    "shadcn": "^3.6.2"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "prettier": {
     "endOfLine": "lf",
     "semi": true,
@@ -34,7 +23,7 @@
       "^(next/(.*)$)|^(next$)",
       "<THIRD_PARTY_MODULES>",
       "",
-      "^@previewcn/(.*)$",
+      "^@workspace/(.*)$",
       "",
       "^types$",
       "^@/types/(.*)$",
@@ -46,6 +35,7 @@
       "^@/registry/(.*)$",
       "^@/styles/(.*)$",
       "^@/app/(.*)$",
+      "^@/www/(.*)$",
       "",
       "^[./]"
     ],
@@ -58,6 +48,5 @@
       "@ianvs/prettier-plugin-sort-imports",
       "prettier-plugin-tailwindcss"
     ]
-  },
-  "packageManager": "pnpm@10.26.2"
+  }
 }

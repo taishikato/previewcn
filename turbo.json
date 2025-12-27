@@ -1,6 +1,13 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
+    "registry:build": {
+      "outputs": ["public/r/**"]
+    },
+    "copy:registry": {
+      "dependsOn": ["@previewcn/registry#registry:build"],
+      "outputs": ["public/r/**"]
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
