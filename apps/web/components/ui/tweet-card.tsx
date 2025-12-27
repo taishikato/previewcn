@@ -175,7 +175,7 @@ export const TweetMedia = ({ tweet }: { tweet: EnrichedTweet }) => {
     <div className="flex flex-1 items-center justify-center">
       {videoSource && (
         <video
-          poster={tweet.video.poster}
+          poster={tweet.video?.poster}
           autoPlay
           loop
           muted
