@@ -25,7 +25,7 @@ export function ColorPicker({ value, onChange }: ColorPickerProps) {
             <button
               key={preset.name}
               onClick={() => onChange(preset.name)}
-              className={`aspect-square cursor-pointer rounded-lg border transition-all duration-[160ms] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[oklch(0.72_0.15_265)] ${
+              className={`aspect-square cursor-pointer rounded-lg border transition-all duration-160 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[oklch(0.72_0.15_265)] ${
                 isSelected
                   ? "border-[oklch(0.72_0.15_265)] shadow-[0_0_0_1px_oklch(0.72_0.15_265),0_10px_20px_oklch(0_0_0/0.35)]"
                   : "border-[oklch(1_0_0/0.08)] hover:border-[oklch(1_0_0/0.18)]"
