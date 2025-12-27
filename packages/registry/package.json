@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "format:write": "prettier --write \"**/*.{ts,tsx}\" --cache",
+    "format:check": "prettier --check \"**/*.{ts,tsx}\" --cache",
     "registry:build": "shadcn build"
   },
   "devDependencies": {
