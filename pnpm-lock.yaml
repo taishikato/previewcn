@@ -130,9 +130,15 @@ importers:
       '@types/react':
         specifier: ^19
         version: 19.2.7
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       shadcn:
         specifier: ^3.6.2
         version: 3.6.2(@types/node@20.19.27)(hono@4.11.3)(typescript@5.9.3)
+      tailwind-merge:
+        specifier: ^3.4.0
+        version: 3.4.0
 
 packages:
 
