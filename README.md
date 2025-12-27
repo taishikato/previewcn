@@ -2,9 +2,7 @@
 
 # previewcn
 
-> A real-time shadcn/ui theme editor that lets you preview theme changes directly on your actual application.
-
-Unlike [shadcn/ui themes](https://ui.shadcn.com/themes) which only previews on pre-built demo components, previewcn embeds a floating theme editor directly in your app so you can see exactly how your buttons, cards, and forms will look with different themes.
+previewcn lets you preview different shadcn/ui themes **directly on your app**.
 
 https://github.com/user-attachments/assets/e7da81b9-bfbb-4fce-b249-faf45e9f870a
 
