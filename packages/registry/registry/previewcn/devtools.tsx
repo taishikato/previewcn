@@ -9,7 +9,6 @@ const Panel = lazy(() => import("./panel"));
 // Check if we're in development mode
 const IS_DEV = process.env.NODE_ENV === "development";
 
-// Inner component that uses hooks
 function DevtoolsInner() {
   const [open, setOpen] = useState(false);
 
@@ -26,7 +25,6 @@ function DevtoolsInner() {
 }
 
 export function PreviewcnDevtools() {
-  // Production guard - return null in production
   if (!IS_DEV) {
     return null;
   }

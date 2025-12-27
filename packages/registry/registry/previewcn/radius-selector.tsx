@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+
 import { radiusPresets } from "./presets/radius";
 
 type RadiusSelectorProps = {
@@ -7,22 +9,10 @@ type RadiusSelectorProps = {
   onChange: (radius: string) => void;
 };
 
-const baseButtonClass =
-  "inline-flex flex-col items-center justify-center gap-1.5 w-full min-h-[52px] px-2.5 py-1.5 rounded-[10px] border text-xs font-medium tracking-[0.01em] cursor-pointer transition-all duration-[160ms]";
-
-const defaultButtonClass =
-  "border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] text-[oklch(0.96_0_0)] hover:bg-[oklch(0.24_0.02_260/0.95)] hover:border-[oklch(1_0_0/0.18)]";
-
-const selectedButtonClass =
-  "bg-[oklch(0.24_0.02_260/0.95)] border-[oklch(0.72_0.15_265)] shadow-[0_0_0_1px_oklch(0.72_0.15_265),0_10px_24px_oklch(0_0_0/0.35)]";
-
 export function RadiusSelector({ value, onChange }: RadiusSelectorProps) {
   return (
-    <div
-      className="relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3"
-      style={{ boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }}
-    >
-      <label className="block text-[10.5px] font-semibold tracking-[0.16em] text-[oklch(0.72_0_0)] uppercase">
+    <div className="relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3 shadow-[inset_0_1px_0_oklch(1_0_0/0.04)]">
+      <label className="block text-[10.5px] font-semibold tracking-[0.16em] text-[oklch(0.72_0_0)]">
         Radius
       </label>
       <div className="grid grid-cols-3 gap-2">
@@ -33,21 +23,17 @@ export function RadiusSelector({ value, onChange }: RadiusSelectorProps) {
             <button
               key={preset.name}
               onClick={() => onChange(preset.value)}
-              className={`${baseButtonClass} ${isSelected ? selectedButtonClass : defaultButtonClass}`}
-              style={
+              className={cn(
+                "inline-flex min-h-[52px] w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-[10px] border px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] transition-all duration-160",
                 isSelected
-                  ? undefined
-                  : { boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }
-              }
+                  ? "border-[oklch(0.72_0.15_265)] bg-[oklch(0.24_0.02_260/0.95)] shadow-[0_0_0_1px_oklch(0.72_0.15_265),0_10px_24px_oklch(0_0_0/0.35)]"
+                  : "border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] text-[oklch(0.96_0_0)] shadow-[inset_0_1px_0_oklch(1_0_0/0.04)] hover:border-[oklch(1_0_0/0.18)] hover:bg-[oklch(0.24_0.02_260/0.95)]"
+              )}
               title={preset.label}
             >
               <span
-                className="h-[18px] w-7 border border-[oklch(1_0_0/0.12)]"
-                style={{
-                  borderRadius: preset.value,
-                  background:
-                    "linear-gradient(180deg, oklch(0.8 0 0 / 0.45), oklch(0.6 0 0 / 0.2))",
-                }}
+                className="h-[18px] w-7 border border-[oklch(1_0_0/0.12)] bg-linear-to-b from-[oklch(0.8_0_0/0.45)] to-[oklch(0.6_0_0/0.2)]"
+                style={{ borderRadius: preset.value }}
               />
               <span className="text-[11px] text-[oklch(0.72_0_0)]">
                 {preset.label}

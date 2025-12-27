@@ -8,6 +8,7 @@
       "type": "registry:component",
       "title": "PreviewCN Devtools",
       "description": "Real-time shadcn/ui theme editor for development",
+      "registryDependencies": ["utils"],
       "files": [
         { "path": "registry/previewcn/index.ts", "type": "registry:lib", "target": "components/ui/previewcn/index.ts" },
         { "path": "registry/previewcn/devtools.tsx", "type": "registry:component", "target": "components/ui/previewcn/devtools.tsx" },
