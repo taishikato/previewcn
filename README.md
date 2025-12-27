@@ -4,6 +4,13 @@
 
 previewcn lets you preview different shadcn/ui themes **directly in your app** - not on pre-built demo components.
 
+<div align="left">
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/taishikato/previewcn?style=for-the-badge&logo=github">
+  <a href="https://x.com/taishik_">
+    <img alt="X (formerly Twitter) URL" src="https://img.shields.io/twitter/url?url=https%3A%2F%2Fx.com%2Ftaishik_&style=for-the-badge&logo=x&label=%40taishik_&color=%2300000000" />
+  </a>
+</div>
+
 https://github.com/user-attachments/assets/e7da81b9-bfbb-4fce-b249-faf45e9f870a
 
 
