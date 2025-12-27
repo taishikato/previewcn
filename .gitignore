@@ -13,6 +13,8 @@ node_modules
 # testing
 coverage
 
+public/r/
+
 # next.js
 .next/
 out/
