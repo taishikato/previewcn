@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { cn } from "@/lib/utils";
+
 import { fontPresets } from "./presets/fonts";
 
 type FontSelectorProps = {
@@ -70,7 +72,10 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
 
   return (
     <div
-      className={`relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3 shadow-[inset_0_1px_0_oklch(1_0_0/0.04)] ${isOpen ? "z-30" : "z-0"}`}
+      className={cn(
+        "relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3 shadow-[inset_0_1px_0_oklch(1_0_0/0.04)]",
+        isOpen ? "z-50" : "z-0"
+      )}
     >
       <label className="block text-xs font-semibold text-neutral-300">
         Font
