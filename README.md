@@ -2,7 +2,7 @@
 
 # previewcn
 
-previewcn lets you preview different shadcn/ui themes **directly on your app**.
+previewcn lets you preview different shadcn/ui themes **directly in your app** - not on pre-built demo components.
 
 https://github.com/user-attachments/assets/e7da81b9-bfbb-4fce-b249-faf45e9f870a
 
