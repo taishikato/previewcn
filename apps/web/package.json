@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "copy:registry": "rm -rf public/r && mkdir -p public && cp -R ../../packages/registry/public/r public/r",
+    "copy:registry": "rimraf public/r && mkdir -p public && cp -R ../../packages/registry/public/r public/r",
     "format:write": "prettier --write \"**/*.{ts,tsx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx}\" --cache"
   },
@@ -32,6 +32,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
+    "rimraf": "^6.1.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
