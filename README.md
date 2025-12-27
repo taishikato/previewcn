@@ -11,9 +11,8 @@ previewcn lets you preview different shadcn/ui themes **directly in your app** -
   </a>
 </div>
 
+
 https://github.com/user-attachments/assets/e7da81b9-bfbb-4fce-b249-faf45e9f870a
-
-
 
 ## Quick Start
 
@@ -35,16 +34,6 @@ That's it! A floating palette icon will appear in the bottom-right corner of you
 - Next.js with App Router
 - shadcn/ui configured in your project
 - Tailwind CSS v4
-
-## Features
-
-- **Theme Presets** - One-click application of complete themes (Vercel, Supabase, Claude)
-- **Color Presets** - 18 beautiful color palettes using OKLCH color space
-- **Border Radius** - From sharp corners to fully rounded
-- **Font Selection** - 10 Google Fonts presets
-- **Light/Dark Mode** - Toggle and preview both modes
-- **CSS Export** - Copy generated CSS variables for your `globals.css`
-- **Development Only** - Automatically tree-shaken in production builds
 
 ## How It Works
 
@@ -128,17 +117,6 @@ npx previewcn doctor
 ```bash
 npx previewcn doctor
 ```
-
-This checks:
-- Next.js App Router detection
-- previewcn component files exist
-- `layout.tsx` references `PreviewcnDevtools` (import and/or JSX)
-
-### Theme changes not applying?
-
-1. Check browser DevTools console for errors
-2. Verify you're in development mode (`pnpm dev`)
-3. Check if CSS variables are being set on `:root`
 
 ## Contributing
 
