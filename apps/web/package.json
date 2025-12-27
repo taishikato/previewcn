@@ -1,12 +1,13 @@
 {
-  "name": "previewcn-marketing",
+  "name": "@previewcn/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "copy:registry": "rm -rf public/r && mkdir -p public && cp -R ../../packages/registry/public/r public/r"
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
