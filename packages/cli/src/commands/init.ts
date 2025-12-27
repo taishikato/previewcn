@@ -9,7 +9,7 @@ import { addDevtoolsToLayout } from "../utils/modify-layout";
 import { resolvePreviewcnPaths } from "../utils/path-resolver";
 
 const REGISTRY_URL =
-  process.env.PREVIEWCN_REGISTRY_URL || "https://previewcn.com/r";
+  process.env.PREVIEWCN_REGISTRY_URL || "https://www.previewcn.com/r";
 
 type InitOptions = {
   yes?: boolean;
