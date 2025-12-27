@@ -1,13 +1,15 @@
 import path from "path";
+import { execa } from "execa";
 import ora from "ora";
 
-import { generateComponentFiles } from "../templates/index.template";
 import { confirm, cyan } from "../utils/cli-ui";
 import { detectNextJsProject, findAppLayout } from "../utils/detect-project";
-import { writeComponentFiles } from "../utils/file-generator";
 import { logger } from "../utils/logger";
 import { addDevtoolsToLayout } from "../utils/modify-layout";
 import { resolvePreviewcnPaths } from "../utils/path-resolver";
+
+const REGISTRY_URL =
+  process.env.PREVIEWCN_REGISTRY_URL || "https://previewcn.com/r";
 
 type InitOptions = {
   yes?: boolean;
@@ -49,17 +51,13 @@ export async function initCommand(options: InitOptions) {
 
   logger.info(`Found layout at: ${cyan(path.relative(cwd, layoutPath))}`);
 
-  // Step 3: Resolve target directory
-  const { targetDir, importPath } = await resolvePreviewcnPaths(cwd);
+  // Step 3: Resolve import path for layout modification
+  const { importPath } = await resolvePreviewcnPaths(cwd);
 
-  logger.info(
-    `Components will be generated at: ${cyan(path.relative(cwd, targetDir))}`
-  );
-
-  // Step 4: Confirm and setup devtools
+  // Step 4: Confirm installation
   if (!options.yes) {
     const proceed = await confirm(
-      "This will generate PreviewCN components and modify your app layout. Continue?",
+      "This will install PreviewCN components via shadcn and modify your app layout. Continue?",
       true
     );
     if (!proceed) {
@@ -68,7 +66,7 @@ export async function initCommand(options: InitOptions) {
     }
   }
 
-  await setupDevtools(targetDir, layoutPath, importPath);
+  await setupDevtools(cwd, layoutPath, importPath);
 
   // Success message
   console.log();
@@ -85,22 +83,32 @@ export async function initCommand(options: InitOptions) {
 }
 
 async function setupDevtools(
-  targetDir: string,
+  cwd: string,
   layoutPath: string,
   importPath: string
 ) {
-  // Generate component files
-  const generateSpinner = ora("Generating PreviewCN components...").start();
+  // Install components via shadcn registry
+  const installSpinner = ora("Installing PreviewCN components...").start();
 
   try {
-    const files = generateComponentFiles();
-    await writeComponentFiles(targetDir, files);
-    const relativeTargetDir = path.relative(process.cwd(), targetDir);
-    generateSpinner.succeed(
-      `Generated ${files.length} files in ${relativeTargetDir}`
+    await execa(
+      "npx",
+      [
+        "-y",
+        "shadcn@latest",
+        "add",
+        "-y",
+        `${REGISTRY_URL}/devtools.json`,
+        "--overwrite",
+      ],
+      {
+        cwd,
+        stdio: "pipe",
+      }
     );
+    installSpinner.succeed("Installed PreviewCN components");
   } catch (error) {
-    generateSpinner.fail("Failed to generate PreviewCN components");
+    installSpinner.fail("Failed to install PreviewCN components");
     logger.error(error instanceof Error ? error.message : String(error));
     process.exit(1);
   }
