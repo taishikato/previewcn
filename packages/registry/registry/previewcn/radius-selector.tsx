@@ -11,7 +11,7 @@ type RadiusSelectorProps = {
 
 export function RadiusSelector({ value, onChange }: RadiusSelectorProps) {
   return (
-    <div className="relative grid gap-2.5 rounded-xl border border-neutral-50/10 bg-neutral-800/90 p-3">
+    <div className="relative grid gap-2.5 rounded-xl border border-neutral-50/10 bg-neutral-900 p-3">
       <label className="block text-xs font-semibold text-neutral-300">
         Radius
       </label>

@@ -72,7 +72,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
   return (
     <div
       className={cn(
-        "relative grid gap-2.5 rounded-xl border border-neutral-50/10 bg-neutral-800/90 p-3",
+        "relative grid gap-2.5 rounded-xl border border-neutral-50/10 bg-neutral-900 p-3",
         isOpen ? "z-50" : "z-0"
       )}
     >
@@ -82,7 +82,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
       <div className="relative z-50">
         <button
           onClick={handleToggle}
-          className="inline-flex min-h-[30px] w-full cursor-pointer items-center justify-between gap-1.5 rounded-[10px] border border-neutral-50/10 bg-neutral-800/90 px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-neutral-50 transition-all duration-160 hover:border-neutral-50/20 hover:bg-neutral-800/95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
+          className="inline-flex min-h-[30px] w-full cursor-pointer items-center justify-between gap-1.5 rounded-[10px] border border-neutral-50/10 bg-neutral-900 px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-neutral-50 transition-all duration-160 hover:border-neutral-50/20 hover:bg-neutral-800/95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
           aria-expanded={isOpen}
         >
           <span>{displayLabel}</span>

@@ -115,7 +115,7 @@ function PanelSection({ delay, children, className }: PanelSectionProps) {
 
 function PanelHeader({ onClose }: PanelHeaderProps) {
   return (
-    <div className="flex items-center justify-between border-b border-neutral-50/10 bg-linear-to-b from-neutral-900 to-transparent px-4 py-3">
+    <div className="flex items-center justify-between border-b border-neutral-50/10 px-4 py-3">
       <div className="flex items-center gap-2">
         <span className="text-[13px] font-semibold tracking-[0.02em]">
           previewcn
@@ -190,7 +190,7 @@ function PanelContent({
 
 function PanelFooter({ config, onReset }: PanelFooterProps) {
   return (
-    <div className="flex items-center justify-end border-t border-neutral-50/10 bg-linear-to-t from-neutral-900 to-transparent px-4 py-3">
+    <div className="flex items-center justify-end border-t border-neutral-50/10 px-4 py-3">
       <CssExportButton config={config} />
       <button
         onClick={onReset}
@@ -222,7 +222,7 @@ export default function Panel({ onClose }: PanelProps) {
   usePanelKeyframes();
 
   return (
-    <div className="fixed top-0 right-0 z-99998 flex h-dvh w-80 animate-[previewcn-slide-in-right_0.3s_ease-out] flex-col overflow-hidden border-l border-neutral-50/10 bg-neutral-900 font-sans text-[12.5px] leading-[1.55] tracking-[0.01em] text-neutral-50 shadow-2xl">
+    <div className="fixed top-0 right-0 z-99998 flex h-dvh w-80 animate-[previewcn-slide-in-right_0.3s_ease-out] flex-col overflow-hidden border-l border-neutral-50/10 bg-neutral-950 font-sans text-[12.5px] leading-[1.55] tracking-[0.01em] text-neutral-50 shadow-2xl">
       <PanelHeader onClose={onClose} />
       <PanelContent
         config={config}
