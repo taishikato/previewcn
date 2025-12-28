@@ -5,7 +5,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 
-const command = "npx previewcn";
+const command = "npx previewcn@latest";
 
 type GitHubIconProps = {
   className?: string;
