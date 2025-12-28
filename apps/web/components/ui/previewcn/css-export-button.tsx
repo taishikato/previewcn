@@ -77,19 +77,18 @@ export function CssExportButton({ config }: CssExportButtonProps) {
   };
 
   const baseClass =
-    "inline-flex items-center justify-center gap-1.5 min-h-[30px] px-2.5 py-1.5 mr-auto rounded-[10px] border text-xs font-medium tracking-[0.01em] cursor-pointer transition-all duration-[160ms]";
+    "inline-flex items-center justify-center gap-1.5 min-h-[30px] px-2.5 py-1.5 mr-auto rounded-[10px] border text-xs font-medium tracking-[0.01em] cursor-pointer transition-all duration-160";
 
   const stateClass = copied
-    ? "border-[oklch(0.72_0.17_142)] text-[oklch(0.72_0.17_142)]"
+    ? "border-emerald-500 text-emerald-500"
     : isDisabled
-      ? "opacity-50 cursor-not-allowed border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] text-[oklch(0.96_0_0)]"
-      : "border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] text-[oklch(0.96_0_0)] hover:bg-[oklch(0.24_0.02_260/0.95)] hover:border-[oklch(1_0_0/0.18)]";
+      ? "opacity-50 cursor-not-allowed border-neutral-50/10 bg-neutral-800/90 text-neutral-50"
+      : "border-neutral-50/10 bg-neutral-800/90 text-neutral-50 hover:bg-neutral-800/95 hover:border-neutral-50/20";
 
   return (
     <button
       onClick={handleCopy}
       className={`${baseClass} ${stateClass}`}
-      style={{ boxShadow: "inset 0 1px 0 oklch(1 0 0 / 0.04)" }}
       disabled={isDisabled}
       aria-label={label}
       title={isDisabled ? "Select a theme first" : "Copy CSS to clipboard"}

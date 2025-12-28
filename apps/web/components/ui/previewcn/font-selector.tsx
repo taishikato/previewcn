@@ -36,18 +36,17 @@ function ChevronDownIcon() {
 
 function FontMenu({ value, onSelect }: FontMenuProps) {
   return (
-    <div className="absolute top-[calc(100%+6px)] left-0 z-50 max-h-[220px] w-full animate-[previewcn-pop_0.14s_ease] overflow-y-auto rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.18_0.02_260)] p-1.5 shadow-[0_10px_26px_oklch(0_0_0/0.45)]">
+    <div className="absolute top-[calc(100%+6px)] left-0 z-50 max-h-[220px] w-full animate-[previewcn-pop_0.14s_ease] overflow-y-auto rounded-xl border border-neutral-50/10 bg-neutral-900 p-1.5 shadow-lg">
       {fontPresets.map((font) => {
         const isSelected = value === font.value;
         return (
           <button
             key={font.value}
             onClick={() => onSelect(font.value)}
-            className={`flex w-full cursor-pointer items-center rounded-lg border border-transparent px-2 py-1.5 text-left text-xs text-[oklch(0.96_0_0)] transition-all duration-140 hover:bg-[oklch(0.24_0.02_260/0.95)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[oklch(0.72_0.15_265)] ${
-              isSelected
-                ? "border-[oklch(0.72_0.15_265)] bg-[oklch(0.72_0.15_265/0.18)]"
-                : ""
-            }`}
+            className={cn(
+              "flex w-full cursor-pointer items-center rounded-lg border border-transparent px-2 py-1.5 text-left text-xs text-neutral-50 transition-all duration-140 hover:bg-neutral-800/95 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-violet-400",
+              isSelected && "border-violet-400 bg-violet-400/20"
+            )}
           >
             {font.label}
           </button>
@@ -73,7 +72,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
   return (
     <div
       className={cn(
-        "relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3 shadow-[inset_0_1px_0_oklch(1_0_0/0.04)]",
+        "relative grid gap-2.5 rounded-xl border border-neutral-50/10 bg-neutral-900 p-3",
         isOpen ? "z-50" : "z-0"
       )}
     >
@@ -83,7 +82,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
       <div className="relative z-50">
         <button
           onClick={handleToggle}
-          className="inline-flex min-h-[30px] w-full cursor-pointer items-center justify-between gap-1.5 rounded-[10px] border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-[oklch(0.96_0_0)] shadow-[inset_0_1px_0_oklch(1_0_0/0.04)] transition-all duration-160 hover:border-[oklch(1_0_0/0.18)] hover:bg-[oklch(0.24_0.02_260/0.95)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[oklch(0.72_0.15_265)]"
+          className="inline-flex min-h-[30px] w-full cursor-pointer items-center justify-between gap-1.5 rounded-[10px] border border-neutral-50/10 bg-neutral-900 px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-neutral-50 transition-all duration-160 hover:border-neutral-50/20 hover:bg-neutral-800/95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
           aria-expanded={isOpen}
         >
           <span>{displayLabel}</span>

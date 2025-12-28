@@ -115,7 +115,7 @@ function PanelSection({ delay, children, className }: PanelSectionProps) {
 
 function PanelHeader({ onClose }: PanelHeaderProps) {
   return (
-    <div className="flex items-center justify-between border-b border-[oklch(1_0_0/0.08)] bg-linear-to-b from-[oklch(0.18_0.02_260)] to-transparent px-4 py-3">
+    <div className="flex items-center justify-between border-b border-neutral-50/10 px-4 py-3">
       <div className="flex items-center gap-2">
         <span className="text-[13px] font-semibold tracking-[0.02em]">
           previewcn
@@ -123,7 +123,7 @@ function PanelHeader({ onClose }: PanelHeaderProps) {
       </div>
       <button
         onClick={onClose}
-        className="inline-flex size-7 cursor-pointer items-center justify-center rounded-[10px] border border-transparent bg-transparent text-[oklch(0.72_0_0)] transition-all duration-160 hover:border-[oklch(1_0_0/0.08)] hover:bg-[oklch(0.2_0.02_260/0.9)] hover:text-[oklch(0.96_0_0)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[oklch(0.72_0.15_265)]"
+        className="inline-flex size-7 cursor-pointer items-center justify-center rounded-[10px] border border-transparent bg-transparent text-neutral-400 transition-all duration-160 hover:border-neutral-50/10 hover:bg-neutral-800/90 hover:text-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
         aria-label="Close"
       >
         <CloseIcon />
@@ -174,7 +174,7 @@ function PanelContent({
   ];
 
   return (
-    <div className="grid flex-1 gap-4 overflow-y-auto p-4 [scrollbar-color:oklch(1_0_0/0.2)_transparent] [scrollbar-width:thin]">
+    <div className="grid flex-1 gap-4 overflow-y-auto p-4 [scrollbar-color:rgb(255_255_255/0.2)_transparent] [scrollbar-width:thin]">
       {sections.map((section) => (
         <PanelSection
           key={section.key}
@@ -190,11 +190,11 @@ function PanelContent({
 
 function PanelFooter({ config, onReset }: PanelFooterProps) {
   return (
-    <div className="flex items-center justify-end border-t border-[oklch(1_0_0/0.08)] bg-linear-to-t from-[oklch(0.18_0.02_260)] to-transparent px-4 py-3">
+    <div className="flex items-center justify-end border-t border-neutral-50/10 px-4 py-3">
       <CssExportButton config={config} />
       <button
         onClick={onReset}
-        className="inline-flex min-h-[30px] cursor-pointer items-center justify-center gap-1.5 rounded-[10px] border border-transparent bg-transparent px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-[oklch(0.72_0_0)] transition-all duration-160 hover:border-[oklch(1_0_0/0.08)] hover:bg-[oklch(0.2_0.02_260/0.9)] hover:text-[oklch(0.96_0_0)]"
+        className="inline-flex min-h-[30px] cursor-pointer items-center justify-center gap-1.5 rounded-[10px] border border-transparent bg-transparent px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-neutral-400 transition-all duration-160 hover:border-neutral-50/10 hover:bg-neutral-800/90 hover:text-neutral-50"
       >
         <RotateCcwIcon />
         <span>Reset</span>
@@ -222,7 +222,7 @@ export default function Panel({ onClose }: PanelProps) {
   usePanelKeyframes();
 
   return (
-    <div className="fixed top-0 right-0 z-99998 flex h-dvh w-80 animate-[previewcn-slide-in-right_0.3s_ease-out] flex-col overflow-hidden border-l border-[oklch(1_0_0/0.08)] bg-[radial-gradient(120%_140%_at_0%_0%,oklch(0.25_0.05_265/0.25),transparent_45%),linear-gradient(180deg,oklch(0.18_0.02_260),oklch(0.14_0.02_260))] font-sans text-[12.5px] leading-[1.55] tracking-[0.01em] text-[oklch(0.96_0_0)] shadow-[0_24px_60px_oklch(0_0_0/0.6),0_1px_0_oklch(1_0_0/0.04)_inset]">
+    <div className="fixed top-0 right-0 z-99998 flex h-dvh w-80 animate-[previewcn-slide-in-right_0.3s_ease-out] flex-col overflow-hidden border-l border-neutral-50/10 bg-neutral-950 font-sans text-[12.5px] leading-[1.55] tracking-[0.01em] text-neutral-50 shadow-2xl">
       <PanelHeader onClose={onClose} />
       <PanelContent
         config={config}
