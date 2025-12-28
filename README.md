@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/e7da81b9-bfbb-4fce-b249-faf45e9f870a
 # - plain Next.js: project root
 # - Next.js with `src/`: run inside `src/`
 # - monorepo: `cd` into the Next.js app package first
-npx previewcn init
+npx previewcn@latest
 
 # Start your dev server
 pnpm dev
