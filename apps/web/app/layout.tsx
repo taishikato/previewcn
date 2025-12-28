@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 import "./globals.css";
 
+import { PreviewcnDevtools } from "@/components/ui/previewcn";
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
@@ -40,6 +42,8 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+
+        {process.env.NODE_ENV === "development" && <PreviewcnDevtools />}
       </body>
     </html>
   );
