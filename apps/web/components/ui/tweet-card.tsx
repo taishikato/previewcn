@@ -112,10 +112,9 @@ export const TweetHeader = ({ tweet }: { tweet: EnrichedTweet }) => (
           className="text-foreground flex items-center font-medium whitespace-nowrap transition-opacity hover:opacity-80"
         >
           {truncate(tweet.user.name, 20)}
-          {tweet.user.verified ||
-            (tweet.user.is_blue_verified && (
-              <Verified className="ml-1 inline size-4 text-blue-500" />
-            ))}
+          {(tweet.user.verified || tweet.user.is_blue_verified) && (
+            <Verified className="ml-1 inline size-4 text-blue-500" />
+          )}
         </a>
         <div className="flex items-center space-x-1">
           <a
@@ -170,7 +169,10 @@ export const TweetBody = ({ tweet }: { tweet: EnrichedTweet }) => (
 
 export const TweetMedia = ({ tweet }: { tweet: EnrichedTweet }) => {
   const videoSource = tweet.video?.variants?.[0]?.src;
-  if (!videoSource && !tweet.photos) return null;
+  // @ts-expect-error package doesn't have type definitions for card
+  const cardThumbnailUrl =
+    tweet?.card?.binding_values?.thumbnail_image_large?.image_value?.url;
+  if (!videoSource && !tweet.photos && !cardThumbnailUrl) return null;
   return (
     <div className="flex flex-1 items-center justify-center">
       {videoSource && (
@@ -203,19 +205,13 @@ export const TweetMedia = ({ tweet }: { tweet: EnrichedTweet }) => {
           <div className="shrink-0 snap-center sm:w-2" />
         </div>
       )}
-      {!tweet.video &&
-        !tweet.photos &&
-        // @ts-expect-error package doesn't have type definitions
-        tweet?.card?.binding_values?.thumbnail_image_large?.image_value.url && (
-          <img
-            src={
-              // @ts-expect-error package doesn't have type definitions
-              tweet.card.binding_values.thumbnail_image_large.image_value.url
-            }
-            className="h-64 rounded-xl border object-cover shadow-sm"
-            alt={tweet.text}
-          />
-        )}
+      {!tweet.video && !tweet.photos && cardThumbnailUrl && (
+        <img
+          src={cardThumbnailUrl}
+          className="h-64 rounded-xl border object-cover shadow-sm"
+          alt={tweet.text}
+        />
+      )}
     </div>
   );
 };
