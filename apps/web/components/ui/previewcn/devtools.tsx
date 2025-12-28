@@ -25,9 +25,5 @@ function DevtoolsInner() {
 }
 
 export function PreviewcnDevtools() {
-  if (!IS_DEV) {
-    return null;
-  }
-
   return <DevtoolsInner />;
 }
