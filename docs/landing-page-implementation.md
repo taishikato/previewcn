@@ -18,7 +18,7 @@ Create a dark, minimal landing page for previewcn at `apps/web/app/page.tsx`.
 │  │  Tagline: Real-time theme editor for shadcn/ui│  │
 │  │                                               │  │
 │  │  ┌─────────────────────────────────────────┐  │  │
-│  │  │  $ npx previewcn                   [📋] │  │  │
+│  │  │  $ npx previewcn@latest            [📋] │  │  │
 │  │  └─────────────────────────────────────────┘  │  │
 │  └───────────────────────────────────────────────┘  │
 ├─────────────────────────────────────────────────────┤
@@ -37,6 +37,9 @@ Create a dark, minimal landing page for previewcn at `apps/web/app/page.tsx`.
 │   │ ID: 200133...    │  │ ID: 200106...    │       │
 │   └──────────────────┘  └──────────────────┘       │
 │                                                     │
+├─────────────────────────────────────────────────────┤
+│                     FOOTER                           │
+│  Title | Description | Twitter | GitHub | Copyright │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -54,7 +57,7 @@ pnpm add react-tweet --filter web
 - Large title: "previewcn"
 - Subtitle: "Real-time theme editor for shadcn/ui"
 - Description: Brief value proposition
-- Command box with copy functionality: `npx previewcn`
+- Command box with copy functionality: `npx previewcn@latest`
 - GitHub link button (using shadcn Button component)
 
 #### 2.2 Demo Video Section (`apps/web/components/demo-video.tsx`)
@@ -68,9 +71,13 @@ pnpm add react-tweet --filter web
   - @shadcn: `2001339628746662345`
   - @aidenybai: `2001066897912279419`
 
+#### 2.4 Footer (`apps/web/components/footer.tsx`)
+- Title and description
+- Social links: Twitter (https://x.com/previewcn), GitHub
+- Copyright with current year
+
 ### Step 3: Update Main Page (`apps/web/app/page.tsx`)
-- Replace current ComponentExample with landing page sections
-- Compose Hero, DemoVideo, and SocialProof components
+- Compose Hero, DemoVideo, SocialProof, and Footer components
 
 ## Files to Create/Modify
 
@@ -79,6 +86,7 @@ pnpm add react-tweet --filter web
 | `apps/web/components/hero.tsx` | Create | Hero section with command |
 | `apps/web/components/demo-video.tsx` | Create | Video player component |
 | `apps/web/components/social-proof.tsx` | Create | Tweet cards section |
+| `apps/web/components/footer.tsx` | Create | Footer with links |
 | `apps/web/app/page.tsx` | Modify | Compose landing page |
 | `apps/web/components/ui/tweet-card.tsx` | Create | Shared tweet UI building blocks |
 | `apps/web/components/ui/client-tweet-card.tsx` | Create | Client-side tweet fetch/render |
