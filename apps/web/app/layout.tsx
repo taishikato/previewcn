@@ -43,7 +43,7 @@ export default function RootLayout({
           {children}
         </ThemeProvider>
 
-        {process.env.NODE_ENV === "development" && <PreviewcnDevtools />}
+        <PreviewcnDevtools />
       </body>
     </html>
   );

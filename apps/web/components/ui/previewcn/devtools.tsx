@@ -6,9 +6,6 @@ import { Trigger } from "./trigger";
 
 const Panel = lazy(() => import("./panel"));
 
-// Check if we're in development mode
-const IS_DEV = process.env.NODE_ENV === "development";
-
 function DevtoolsInner() {
   const [open, setOpen] = useState(false);
 
