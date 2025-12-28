@@ -169,8 +169,8 @@ export const TweetBody = ({ tweet }: { tweet: EnrichedTweet }) => (
 
 export const TweetMedia = ({ tweet }: { tweet: EnrichedTweet }) => {
   const videoSource = tweet.video?.variants?.[0]?.src;
-  // @ts-expect-error package doesn't have type definitions for card
   const cardThumbnailUrl =
+    // @ts-expect-error TODO: package doesn't have type definitions for card
     tweet?.card?.binding_values?.thumbnail_image_large?.image_value?.url;
   if (!videoSource && !tweet.photos && !cardThumbnailUrl) return null;
   return (
