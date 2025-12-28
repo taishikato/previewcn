@@ -1,0 +1,97 @@
+"use client";
+
+import { useState } from "react";
+
+import { cn } from "@/lib/utils";
+
+import { fontPresets } from "./presets/fonts";
+
+type FontSelectorProps = {
+  value: string | null;
+  onChange: (font: string) => void;
+};
+
+type FontMenuProps = {
+  value: string | null;
+  onSelect: (fontValue: string) => void;
+};
+
+function ChevronDownIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+function FontMenu({ value, onSelect }: FontMenuProps) {
+  return (
+    <div className="absolute top-[calc(100%+6px)] left-0 z-50 max-h-[220px] w-full animate-[previewcn-pop_0.14s_ease] overflow-y-auto rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.18_0.02_260)] p-1.5 shadow-[0_10px_26px_oklch(0_0_0/0.45)]">
+      {fontPresets.map((font) => {
+        const isSelected = value === font.value;
+        return (
+          <button
+            key={font.value}
+            onClick={() => onSelect(font.value)}
+            className={`flex w-full cursor-pointer items-center rounded-lg border border-transparent px-2 py-1.5 text-left text-xs text-[oklch(0.96_0_0)] transition-all duration-140 hover:bg-[oklch(0.24_0.02_260/0.95)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[oklch(0.72_0.15_265)] ${
+              isSelected
+                ? "border-[oklch(0.72_0.15_265)] bg-[oklch(0.72_0.15_265/0.18)]"
+                : ""
+            }`}
+          >
+            {font.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+export function FontSelector({ value, onChange }: FontSelectorProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const selectedFont = fontPresets.find((f) => f.value === value);
+  const displayLabel = selectedFont?.label ?? "Select font...";
+
+  const handleToggle = () => setIsOpen((open) => !open);
+
+  const handleSelect = (fontValue: string) => {
+    onChange(fontValue);
+    setIsOpen(false);
+  };
+
+  return (
+    <div
+      className={cn(
+        "relative grid gap-2.5 rounded-xl border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] p-3 shadow-[inset_0_1px_0_oklch(1_0_0/0.04)]",
+        isOpen ? "z-50" : "z-0"
+      )}
+    >
+      <label className="block text-xs font-semibold text-neutral-300">
+        Font
+      </label>
+      <div className="relative z-50">
+        <button
+          onClick={handleToggle}
+          className="inline-flex min-h-[30px] w-full cursor-pointer items-center justify-between gap-1.5 rounded-[10px] border border-[oklch(1_0_0/0.08)] bg-[oklch(0.2_0.02_260/0.9)] px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-[oklch(0.96_0_0)] shadow-[inset_0_1px_0_oklch(1_0_0/0.04)] transition-all duration-160 hover:border-[oklch(1_0_0/0.18)] hover:bg-[oklch(0.24_0.02_260/0.95)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[oklch(0.72_0.15_265)]"
+          aria-expanded={isOpen}
+        >
+          <span>{displayLabel}</span>
+          <ChevronDownIcon />
+        </button>
+
+        {isOpen && <FontMenu value={value} onSelect={handleSelect} />}
+      </div>
+    </div>
+  );
+}
