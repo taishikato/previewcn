@@ -1,4 +1,5 @@
 import { DemoVideo } from "@/components/demo-video";
+import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
 import { SocialProof } from "@/components/social-proof";
 
@@ -8,6 +9,7 @@ export default function Page() {
       <Hero />
       <DemoVideo />
       <SocialProof />
+      <Footer />
     </main>
   );
 }

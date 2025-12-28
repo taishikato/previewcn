@@ -3,10 +3,9 @@
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 const command = "npx previewcn";
-const githubUrl = "https://github.com/taishikato/previewcn";
 
 type GitHubIconProps = {
   className?: string;
@@ -51,7 +50,7 @@ export function Hero() {
         <button
           onClick={handleCopy}
           className={cn(
-            "group hover:border-foreground/50 flex items-center gap-3 rounded-lg border px-5 py-3 font-mono text-sm transition-all",
+            buttonVariants({ variant: "default", size: "lg" }),
             copied && "border-green-500"
           )}
         >
@@ -59,7 +58,7 @@ export function Hero() {
           <span>{command}</span>
           <span
             className={cn(
-              "text-muted-foreground group-hover:text-foreground ml-2 transition-colors",
+              "group-hover:text-foreground ml-2 transition-colors",
               copied && "text-green-500"
             )}
           >
@@ -96,8 +95,12 @@ export function Hero() {
           </span>
         </button>
 
-        <Button variant="outline" size="lg" asChild>
-          <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+        <Button variant="secondary" size="lg" asChild>
+          <a
+            href="https://github.com/taishikato/previewcn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <GitHubIcon className="size-4" />
             GitHub
           </a>
