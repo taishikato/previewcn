@@ -55,7 +55,6 @@ function applyThemeColors(colors: ThemeColors) {
   styleEl.textContent = `:root { ${lightCss} } .dark { ${darkCss} }`;
 }
 
-// Apply dark mode class to document
 export function applyDarkMode(darkMode: boolean) {
   const root = document.documentElement;
 
@@ -70,13 +69,11 @@ export function applyDarkMode(darkMode: boolean) {
   root.style.colorScheme = darkMode ? "dark" : "light";
 }
 
-// Apply radius to document
 export function applyRadius(radius: string) {
   const root = document.documentElement;
   root.style.setProperty("--radius", radius);
 }
 
-// Apply color preset to document
 export function applyColors(colorPresetName: string) {
   const preset = getColorPreset(colorPresetName);
   if (!preset) return;
@@ -97,7 +94,6 @@ function applyFontConfig(font: ThemePresetFont) {
     return;
   }
 
-  // Inject Google Fonts link if not already present
   const linkId = `previewcn-font-${fontId}`;
   if (!document.getElementById(linkId)) {
     const link = document.createElement("link");

@@ -116,7 +116,6 @@ export function useThemeState() {
   );
 
   const resetTheme = useCallback(() => {
-    // Remove stored config
     if (typeof window !== "undefined") {
       localStorage.removeItem(STORAGE_KEY);
     }
