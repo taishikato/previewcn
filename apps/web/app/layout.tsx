@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -46,6 +47,7 @@ export default function RootLayout({
 
         <PreviewcnDevtools />
       </body>
+      <GoogleAnalytics gaId="G-LS3L9R71VN" />
     </html>
   );
 }
