@@ -53,7 +53,6 @@ function applyThemeColors(colors: ThemeColors) {
   styleEl.textContent = `:root { ${lightCss} } .dark { ${darkCss} }`;
 }
 
-// Apply dark mode class to document
 export function applyDarkMode(darkMode: boolean) {
   const root = document.documentElement;
 
@@ -68,13 +67,11 @@ export function applyDarkMode(darkMode: boolean) {
   root.style.colorScheme = darkMode ? "dark" : "light";
 }
 
-// Apply radius to document
 export function applyRadius(radius: string) {
   const root = document.documentElement;
   root.style.setProperty("--radius", radius);
 }
 
-// Apply color preset to document
 export function applyColors(colorPresetName: string) {
   const preset = getColorPreset(colorPresetName);
   if (!preset) return;
@@ -90,13 +87,11 @@ export function applyPresetColors(preset: ThemePreset) {
 function applyFontConfig(font: ThemePresetFont) {
   const { fontFamily, googleFontsUrl, value: fontId } = font;
 
-  // Validate Google Fonts URL to prevent XSS attacks
   if (!googleFontsUrl.startsWith("https://fonts.googleapis.com/")) {
     console.warn("[PreviewCN] Invalid font URL");
     return;
   }
 
-  // Inject Google Fonts link if not already present
   const linkId = `previewcn-font-${fontId}`;
   if (!document.getElementById(linkId)) {
     const link = document.createElement("link");
@@ -121,7 +116,6 @@ function applyFontConfig(font: ThemePresetFont) {
   `;
 }
 
-// Apply font to document
 export function applyFont(fontId: string) {
   const fontPreset = getFontPreset(fontId);
   if (!fontPreset) return;
@@ -129,12 +123,10 @@ export function applyFont(fontId: string) {
   applyFontConfig(fontPreset);
 }
 
-// Apply font from theme preset (using preset's font config directly)
 export function applyPresetFont(font: ThemePresetFont) {
   applyFontConfig(font);
 }
 
-// Apply a complete theme preset (colors, radius, and optionally font)
 export function applyPreset(presetName: string) {
   const preset = getThemePreset(presetName);
   if (!preset) return;
@@ -147,7 +139,6 @@ export function applyPreset(presetName: string) {
   }
 }
 
-// Apply full theme config
 export function applyTheme(config: ThemeConfig) {
   const preset = config.preset ? getThemePreset(config.preset) : null;
 

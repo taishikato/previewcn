@@ -22,7 +22,6 @@ type PanelHeaderProps = PanelProps;
 type PanelState = ReturnType<typeof useThemeState>;
 
 type PanelSectionProps = {
-  delay: number;
   children: ReactNode;
   className?: string;
 };
@@ -38,14 +37,6 @@ const keyframesStyle = `
 @keyframes previewcn-slide-in-right {
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
-}
-@keyframes previewcn-rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes previewcn-pop {
-  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 `;
 
@@ -99,18 +90,8 @@ function usePanelKeyframes() {
   }, []);
 }
 
-function PanelSection({ delay, children, className }: PanelSectionProps) {
-  return (
-    <div
-      className={cn("relative", className)}
-      style={{
-        animation: "previewcn-rise 0.32s ease both",
-        animationDelay: `${delay}s`,
-      }}
-    >
-      {children}
-    </div>
-  );
+function PanelSection({ children, className }: PanelSectionProps) {
+  return <div className={cn("relative", className)}>{children}</div>;
 }
 
 function PanelHeader({ onClose }: PanelHeaderProps) {
@@ -123,7 +104,7 @@ function PanelHeader({ onClose }: PanelHeaderProps) {
       </div>
       <button
         onClick={onClose}
-        className="inline-flex size-7 cursor-pointer items-center justify-center rounded-[10px] border border-transparent bg-transparent text-neutral-400 transition-all duration-160 hover:border-neutral-50/10 hover:bg-neutral-800/90 hover:text-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
+        className="inline-flex size-7 cursor-pointer items-center justify-center rounded-[10px] border border-transparent bg-transparent text-neutral-400 transition-all hover:border-neutral-50/10 hover:bg-neutral-800/90 hover:text-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
         aria-label="Close"
       >
         <CloseIcon />
@@ -143,32 +124,27 @@ function PanelContent({
   const sections = [
     {
       key: "preset",
-      delay: 0.02,
       content: (
         <PresetSelector value={config.preset} onChange={setPresetTheme} />
       ),
     },
     {
       key: "color",
-      delay: 0.05,
       content: (
         <ColorPicker value={config.colorPreset} onChange={setColorPreset} />
       ),
     },
     {
       key: "radius",
-      delay: 0.08,
       content: <RadiusSelector value={config.radius} onChange={setRadius} />,
     },
     {
       key: "font",
-      delay: 0.11,
       className: "z-20",
       content: <FontSelector value={config.font} onChange={setFont} />,
     },
     {
       key: "mode",
-      delay: 0.14,
       content: <ModeToggle value={config.darkMode} onChange={setDarkMode} />,
     },
   ];
@@ -176,11 +152,7 @@ function PanelContent({
   return (
     <div className="grid flex-1 gap-4 overflow-y-auto p-4 [scrollbar-color:rgb(255_255_255/0.2)_transparent] [scrollbar-width:thin]">
       {sections.map((section) => (
-        <PanelSection
-          key={section.key}
-          delay={section.delay}
-          className={section.className}
-        >
+        <PanelSection key={section.key} className={section.className}>
           {section.content}
         </PanelSection>
       ))}
@@ -194,7 +166,7 @@ function PanelFooter({ config, onReset }: PanelFooterProps) {
       <CssExportButton config={config} />
       <button
         onClick={onReset}
-        className="inline-flex min-h-[30px] cursor-pointer items-center justify-center gap-1.5 rounded-[10px] border border-transparent bg-transparent px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-neutral-400 transition-all duration-160 hover:border-neutral-50/10 hover:bg-neutral-800/90 hover:text-neutral-50"
+        className="inline-flex min-h-[30px] cursor-pointer items-center justify-center gap-1.5 rounded-[10px] border border-transparent bg-transparent px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-neutral-400 transition-all hover:border-neutral-50/10 hover:bg-neutral-800/90 hover:text-neutral-50"
       >
         <RotateCcwIcon />
         <span>Reset</span>

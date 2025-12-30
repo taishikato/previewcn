@@ -27,6 +27,7 @@ function resolveExportTheme(config: ThemeConfig): ResolvedTheme | null {
   if (!colors) return null;
 
   const radius = config.radius ?? preset?.radius ?? "0.5rem";
+
   return { colors, radius };
 }
 
@@ -68,6 +69,7 @@ export function generateExportCss(config: ThemeConfig): string | null {
 export async function copyToClipboard(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
+
     return true;
   } catch {
     // Fallback for older browsers or non-HTTPS contexts

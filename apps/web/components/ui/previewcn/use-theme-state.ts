@@ -13,7 +13,6 @@ import {
   clearTheme,
 } from "./theme-applier";
 
-// LocalStorage key for persisting theme state
 const STORAGE_KEY = "previewcn-devtools-theme";
 
 function loadFromStorage(): Partial<ThemeConfig> {
@@ -117,7 +116,6 @@ export function useThemeState() {
   );
 
   const resetTheme = useCallback(() => {
-    // Remove stored config
     if (typeof window !== "undefined") {
       localStorage.removeItem(STORAGE_KEY);
     }
