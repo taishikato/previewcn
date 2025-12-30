@@ -194,7 +194,7 @@ export default function Panel({ onClose }: PanelProps) {
   usePanelKeyframes();
 
   return (
-    <div className="fixed top-0 right-0 z-99998 flex h-dvh w-80 animate-[previewcn-slide-in-right_0.3s_ease-out] flex-col overflow-hidden border-l border-neutral-50/10 bg-neutral-950 font-sans text-[12.5px] leading-[1.55] tracking-[0.01em] text-neutral-50 shadow-2xl">
+    <div className="fixed top-0 right-0 z-99998 flex h-dvh w-80 animate-[previewcn-slide-in-right_0.3s_ease-out] flex-col overflow-hidden border-l border-neutral-50/10 bg-neutral-950 font-['SF_Pro_Text','Segoe_UI',system-ui,sans-serif] text-[12.5px] leading-[1.55] tracking-[0.01em] text-neutral-50 shadow-2xl">
       <PanelHeader onClose={onClose} />
       <PanelContent
         config={config}
