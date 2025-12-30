@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Previewcn - realtime shadcn/ui theme editor on your app",
+  title: "Realtime shadcn/ui theme preview tool on your app - previewcn",
   description:
     "previewcn lets you preview different shadcn/ui themes directly in your app.",
 };
