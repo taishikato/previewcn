@@ -22,7 +22,6 @@ type PanelHeaderProps = PanelProps;
 type PanelState = ReturnType<typeof useThemeState>;
 
 type PanelSectionProps = {
-  delay: number;
   children: ReactNode;
   className?: string;
 };
@@ -153,11 +152,7 @@ function PanelContent({
   return (
     <div className="grid flex-1 gap-4 overflow-y-auto p-4 [scrollbar-color:rgb(255_255_255/0.2)_transparent] [scrollbar-width:thin]">
       {sections.map((section) => (
-        <PanelSection
-          key={section.key}
-          delay={section.delay}
-          className={section.className}
-        >
+        <PanelSection key={section.key} className={section.className}>
           {section.content}
         </PanelSection>
       ))}
