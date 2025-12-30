@@ -11,7 +11,7 @@ type PresetSelectorProps = {
 
 export function PresetSelector({ value, onChange }: PresetSelectorProps) {
   return (
-    <div className="relative grid gap-2.5 rounded-xl border border-neutral-50/10 bg-neutral-900 p-3">
+    <div className="relative grid gap-2.5 rounded-lg border border-neutral-50/10 bg-neutral-900 p-3">
       <span className="block text-xs font-semibold text-neutral-300">
         Presets
       </span>
@@ -27,7 +27,7 @@ export function PresetSelector({ value, onChange }: PresetSelectorProps) {
               key={preset.name}
               onClick={() => onChange(preset.name)}
               className={cn(
-                "flex min-h-[56px] w-full cursor-pointer flex-col items-center gap-1.5 rounded-[10px] border p-2 text-[11px] font-medium transition-all duration-160 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400",
+                "flex min-h-[56px] w-full cursor-pointer flex-col items-center gap-1.5 rounded-md border p-2 text-[11px] font-medium transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400",
                 isSelected
                   ? "border-violet-400 bg-neutral-800/95 shadow-lg ring-1 ring-violet-400"
                   : "border-neutral-50/10 bg-neutral-800/90 text-neutral-50 hover:border-neutral-50/20 hover:bg-neutral-800/95"

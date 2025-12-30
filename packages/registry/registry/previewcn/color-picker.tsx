@@ -11,7 +11,7 @@ type ColorPickerProps = {
 
 export function ColorPicker({ value, onChange }: ColorPickerProps) {
   return (
-    <div className="relative grid gap-2.5 rounded-xl border border-neutral-50/10 bg-neutral-900 p-3">
+    <div className="relative grid gap-2.5 rounded-lg border border-neutral-50/10 bg-neutral-900 p-3">
       <label className="block text-xs font-semibold text-neutral-300">
         Theme
       </label>
@@ -25,7 +25,7 @@ export function ColorPicker({ value, onChange }: ColorPickerProps) {
               key={preset.name}
               onClick={() => onChange(preset.name)}
               className={cn(
-                "aspect-square cursor-pointer rounded-lg border transition-all duration-160 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400",
+                "aspect-square cursor-pointer rounded-md border transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400",
                 isSelected
                   ? "border-violet-400 shadow-lg ring-1 ring-violet-400"
                   : "border-neutral-50/10 hover:border-neutral-50/20"

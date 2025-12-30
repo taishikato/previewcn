@@ -123,7 +123,7 @@ function PanelHeader({ onClose }: PanelHeaderProps) {
       </div>
       <button
         onClick={onClose}
-        className="inline-flex size-7 cursor-pointer items-center justify-center rounded-[10px] border border-transparent bg-transparent text-neutral-400 transition-all duration-160 hover:border-neutral-50/10 hover:bg-neutral-800/90 hover:text-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
+        className="inline-flex size-7 cursor-pointer items-center justify-center rounded-[10px] border border-transparent bg-transparent text-neutral-400 transition-all hover:border-neutral-50/10 hover:bg-neutral-800/90 hover:text-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
         aria-label="Close"
       >
         <CloseIcon />
@@ -194,7 +194,7 @@ function PanelFooter({ config, onReset }: PanelFooterProps) {
       <CssExportButton config={config} />
       <button
         onClick={onReset}
-        className="inline-flex min-h-[30px] cursor-pointer items-center justify-center gap-1.5 rounded-[10px] border border-transparent bg-transparent px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-neutral-400 transition-all duration-160 hover:border-neutral-50/10 hover:bg-neutral-800/90 hover:text-neutral-50"
+        className="inline-flex min-h-[30px] cursor-pointer items-center justify-center gap-1.5 rounded-[10px] border border-transparent bg-transparent px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-neutral-400 transition-all hover:border-neutral-50/10 hover:bg-neutral-800/90 hover:text-neutral-50"
       >
         <RotateCcwIcon />
         <span>Reset</span>

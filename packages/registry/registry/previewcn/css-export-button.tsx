@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { cn } from "@/lib/utils";
+
 import { copyToClipboard, generateExportCss } from "./css-export";
 import type { ThemeConfig } from "./theme-applier";
 
@@ -76,19 +78,17 @@ export function CssExportButton({ config }: CssExportButtonProps) {
     }
   };
 
-  const baseClass =
-    "inline-flex items-center justify-center gap-1.5 min-h-[30px] px-2.5 py-1.5 mr-auto rounded-[10px] border text-xs font-medium tracking-[0.01em] cursor-pointer transition-all duration-160";
-
-  const stateClass = copied
-    ? "border-emerald-500 text-emerald-500"
-    : isDisabled
-      ? "opacity-50 cursor-not-allowed border-neutral-50/10 bg-neutral-800/90 text-neutral-50"
-      : "border-neutral-50/10 bg-neutral-800/90 text-neutral-50 hover:bg-neutral-800/95 hover:border-neutral-50/20";
-
   return (
     <button
       onClick={handleCopy}
-      className={`${baseClass} ${stateClass}`}
+      className={cn(
+        "mr-auto inline-flex min-h-[30px] cursor-pointer items-center justify-center gap-1.5 rounded-[10px] border px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] transition-all",
+        copied
+          ? "border-emerald-500 text-emerald-500"
+          : isDisabled
+            ? "cursor-not-allowed border-neutral-50/10 bg-neutral-800/90 text-neutral-50 opacity-50"
+            : "border-neutral-50/10 bg-neutral-800/90 text-neutral-50 hover:border-neutral-50/20 hover:bg-neutral-800/95"
+      )}
       disabled={isDisabled}
       aria-label={label}
       title={isDisabled ? "Select a theme first" : "Copy CSS to clipboard"}
