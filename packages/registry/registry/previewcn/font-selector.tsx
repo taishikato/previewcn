@@ -44,7 +44,7 @@ function FontMenu({ value, onSelect }: FontMenuProps) {
             key={font.value}
             onClick={() => onSelect(font.value)}
             className={cn(
-              "flex w-full cursor-pointer items-center rounded-lg border border-transparent px-2 py-1.5 text-left text-xs text-neutral-50 transition-all duration-140 hover:bg-neutral-800/95 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-violet-400",
+              "flex w-full cursor-pointer items-center rounded-md border border-transparent px-2 py-1.5 text-left text-xs text-neutral-50 transition-all duration-140 hover:bg-neutral-800/95 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-violet-400",
               isSelected && "border-violet-400 bg-violet-400/20"
             )}
           >
