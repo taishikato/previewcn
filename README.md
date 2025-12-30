@@ -33,7 +33,7 @@ That's it! A floating palette icon will appear in the bottom-right corner of you
 
 If `npx previewcn@latest` doesn't work for your project (complex monorepo structure, custom configurations, etc.), sorry!
 
-But hey - You can install it manually:
+But hey - you can install it manually:
 
 **1. Run the shadcn add command:**
 
