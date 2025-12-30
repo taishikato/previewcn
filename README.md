@@ -29,6 +29,37 @@ pnpm dev
 
 That's it! A floating palette icon will appear in the bottom-right corner of your app.
 
+### Manual Installation
+
+If `npx previewcn@latest` doesn't work for your project (complex monorepo structure, custom configurations, etc.), sorry!
+
+But hey - You can install it manually:
+
+**1. Run the shadcn add command:**
+
+```bash
+npx -y shadcn@latest add -y https://www.previewcn.com/r/devtools.json --overwrite
+```
+
+**2. Add the devtools to your layout:**
+
+Open your `layout.tsx` (usually `app/layout.tsx` or `src/app/layout.tsx`) and add:
+
+```tsx
+import { PreviewcnDevtools } from "@/components/ui/previewcn"; // add this line
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        {process.env.NODE_ENV === "development" && <PreviewcnDevtools />} {/* add this line too! */}
+      </body>
+    </html>
+  );
+}
+```
+
 ## Requirements
 
 - Next.js with App Router
@@ -81,12 +112,6 @@ export default function RootLayout({ children }) {
 ```
 
 The component only renders in development mode and is completely removed from production builds.
-
-Under the hood, init runs:
-
-```bash
-npx -y shadcn@latest add -y https://www.previewcn.com/r/devtools.json --overwrite
-```
 
 ## CLI Commands
 
