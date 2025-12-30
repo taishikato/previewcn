@@ -92,7 +92,6 @@ export function applyPresetColors(preset: ThemePreset) {
 function applyFontConfig(font: ThemePresetFont) {
   const { fontFamily, googleFontsUrl, value: fontId } = font;
 
-  // Validate Google Fonts URL to prevent XSS attacks
   if (!googleFontsUrl.startsWith("https://fonts.googleapis.com/")) {
     console.warn("[PreviewCN] Invalid font URL");
     return;
@@ -123,7 +122,6 @@ function applyFontConfig(font: ThemePresetFont) {
   `;
 }
 
-// Apply font to document
 export function applyFont(fontId: string) {
   const fontPreset = getFontPreset(fontId);
   if (!fontPreset) return;
@@ -131,12 +129,10 @@ export function applyFont(fontId: string) {
   applyFontConfig(fontPreset);
 }
 
-// Apply font from theme preset (using preset's font config directly)
 export function applyPresetFont(font: ThemePresetFont) {
   applyFontConfig(font);
 }
 
-// Apply a complete theme preset (colors, radius, and optionally font)
 export function applyPreset(presetName: string) {
   const preset = getThemePreset(presetName);
   if (!preset) return;
@@ -149,7 +145,6 @@ export function applyPreset(presetName: string) {
   }
 }
 
-// Apply full theme config
 export function applyTheme(config: ThemeConfig) {
   const preset = config.preset ? getThemePreset(config.preset) : null;
 

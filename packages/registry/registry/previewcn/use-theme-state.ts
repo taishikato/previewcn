@@ -13,7 +13,6 @@ import {
   clearTheme,
 } from "./theme-applier";
 
-// LocalStorage key for persisting theme state
 const STORAGE_KEY = "previewcn-devtools-theme";
 
 function loadFromStorage(): Partial<ThemeConfig> {
