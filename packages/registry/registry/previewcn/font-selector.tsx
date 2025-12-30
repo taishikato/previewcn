@@ -36,7 +36,7 @@ function ChevronDownIcon() {
 
 function FontMenu({ value, onSelect }: FontMenuProps) {
   return (
-    <div className="absolute top-[calc(100%+6px)] left-0 z-50 max-h-[220px] w-full overflow-y-auto rounded-xl border border-neutral-50/10 bg-neutral-900 p-1.5">
+    <div className="absolute top-[calc(100%+6px)] left-0 z-50 max-h-[220px] w-full overflow-y-auto rounded-[6px] border border-neutral-50/10 bg-neutral-900 p-1.5">
       {fontPresets.map((font) => {
         const isSelected = value === font.value;
         return (
@@ -44,7 +44,7 @@ function FontMenu({ value, onSelect }: FontMenuProps) {
             key={font.value}
             onClick={() => onSelect(font.value)}
             className={cn(
-              "flex w-full cursor-pointer items-center rounded-md border border-transparent px-2 py-1.5 text-left text-xs text-neutral-50 transition-all duration-140 hover:bg-neutral-800/95 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-violet-400",
+              "flex w-full cursor-pointer items-center rounded-[6px] border border-transparent px-2 py-1.5 text-left text-xs text-neutral-50 transition-all duration-140 hover:bg-neutral-800/95 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-violet-400",
               isSelected && "border-violet-400 bg-violet-400/20"
             )}
           >
@@ -72,7 +72,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
   return (
     <div
       className={cn(
-        "relative grid gap-2.5 rounded-lg border border-neutral-50/10 bg-neutral-900 p-3",
+        "relative grid gap-2.5 rounded-[8px] border border-neutral-50/10 bg-neutral-900 p-3",
         isOpen ? "z-50" : "z-0"
       )}
     >
@@ -82,7 +82,7 @@ export function FontSelector({ value, onChange }: FontSelectorProps) {
       <div className="relative z-50">
         <button
           onClick={handleToggle}
-          className="inline-flex min-h-[30px] w-full cursor-pointer items-center justify-between gap-1.5 rounded-md border border-neutral-50/10 bg-neutral-900 px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-neutral-50 transition-all hover:border-neutral-50/20 hover:bg-neutral-800/95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
+          className="inline-flex min-h-[30px] w-full cursor-pointer items-center justify-between gap-1.5 rounded-[6px] border border-neutral-50/10 bg-neutral-900 px-2.5 py-1.5 text-xs font-medium tracking-[0.01em] text-neutral-50 transition-all hover:border-neutral-50/20 hover:bg-neutral-800/95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
           aria-expanded={isOpen}
         >
           <span>{displayLabel}</span>
