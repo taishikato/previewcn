@@ -94,7 +94,7 @@ A shadcn-style CLI that installs an embedded devtools panel via the shadcn regis
 #### 1.5 Real-time Preview
 - Direct DOM manipulation for instant updates
 - No iframe or postMessage overhead
-- Instant visual feedback (<16ms latency)
+- Instant visual feedback
 
 #### 1.6 CSS Export
 - One-click copy of generated CSS variables
