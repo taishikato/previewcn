@@ -39,14 +39,6 @@ const keyframesStyle = `
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
 }
-@keyframes previewcn-rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes previewcn-pop {
-  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
 `;
 
 function CloseIcon() {
@@ -99,18 +91,8 @@ function usePanelKeyframes() {
   }, []);
 }
 
-function PanelSection({ delay, children, className }: PanelSectionProps) {
-  return (
-    <div
-      className={cn("relative", className)}
-      style={{
-        animation: "previewcn-rise 0.32s ease both",
-        animationDelay: `${delay}s`,
-      }}
-    >
-      {children}
-    </div>
-  );
+function PanelSection({ children, className }: PanelSectionProps) {
+  return <div className={cn("relative", className)}>{children}</div>;
 }
 
 function PanelHeader({ onClose }: PanelHeaderProps) {
@@ -143,32 +125,27 @@ function PanelContent({
   const sections = [
     {
       key: "preset",
-      delay: 0.02,
       content: (
         <PresetSelector value={config.preset} onChange={setPresetTheme} />
       ),
     },
     {
       key: "color",
-      delay: 0.05,
       content: (
         <ColorPicker value={config.colorPreset} onChange={setColorPreset} />
       ),
     },
     {
       key: "radius",
-      delay: 0.08,
       content: <RadiusSelector value={config.radius} onChange={setRadius} />,
     },
     {
       key: "font",
-      delay: 0.11,
       className: "z-20",
       content: <FontSelector value={config.font} onChange={setFont} />,
     },
     {
       key: "mode",
-      delay: 0.14,
       content: <ModeToggle value={config.darkMode} onChange={setDarkMode} />,
     },
   ];
