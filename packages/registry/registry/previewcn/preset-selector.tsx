@@ -29,7 +29,7 @@ export function PresetSelector({ value, onChange }: PresetSelectorProps) {
               className={cn(
                 "flex min-h-[56px] w-full cursor-pointer flex-col items-center gap-1.5 rounded-md border p-2 text-[11px] font-medium transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400",
                 isSelected
-                  ? "border-violet-400 bg-neutral-800/95 shadow-lg ring-1 ring-violet-400"
+                  ? "border-violet-400 bg-neutral-800/95 ring-1 ring-violet-400"
                   : "border-neutral-50/10 bg-neutral-800/90 text-neutral-50 hover:border-neutral-50/20 hover:bg-neutral-800/95"
               )}
               aria-label={preset.label}

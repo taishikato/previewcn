@@ -27,7 +27,7 @@ export function ColorPicker({ value, onChange }: ColorPickerProps) {
               className={cn(
                 "aspect-square cursor-pointer rounded-md border transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400",
                 isSelected
-                  ? "border-violet-400 shadow-lg ring-1 ring-violet-400"
+                  ? "border-violet-400 ring-1 ring-violet-400"
                   : "border-neutral-50/10 hover:border-neutral-50/20"
               )}
               style={{ backgroundColor: primaryColor }}

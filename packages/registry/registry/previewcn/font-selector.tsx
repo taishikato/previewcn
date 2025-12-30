@@ -36,7 +36,7 @@ function ChevronDownIcon() {
 
 function FontMenu({ value, onSelect }: FontMenuProps) {
   return (
-    <div className="absolute top-[calc(100%+6px)] left-0 z-50 max-h-[220px] w-full animate-[previewcn-pop_0.14s_ease] overflow-y-auto rounded-xl border border-neutral-50/10 bg-neutral-900 p-1.5 shadow-lg">
+    <div className="absolute top-[calc(100%+6px)] left-0 z-50 max-h-[220px] w-full animate-[previewcn-pop_0.14s_ease] overflow-y-auto rounded-xl border border-neutral-50/10 bg-neutral-900 p-1.5">
       {fontPresets.map((font) => {
         const isSelected = value === font.value;
         return (
