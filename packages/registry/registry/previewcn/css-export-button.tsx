@@ -65,7 +65,7 @@ export function CssExportButton({ config }: CssExportButtonProps) {
   const label = copied ? "Copied!" : "Copy CSS";
 
   const handleCopy = async () => {
-    if (!exportCss) return;
+    if (isDisabled) return;
 
     const success = await copyToClipboard(exportCss);
 
