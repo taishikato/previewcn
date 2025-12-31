@@ -1,5 +1,3 @@
-<img width="1200" alt="previewcn" src="https://github.com/user-attachments/assets/b2d7b49e-82ef-4b1b-8fe4-9cca5c30c226" />
-
 # previewcn
 
 previewcn lets you preview different shadcn/ui themes **directly in your app** - not on pre-built demo components.
