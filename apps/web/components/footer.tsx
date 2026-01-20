@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button";
 
 const twitterUrl = "https://x.com/previewcn";
